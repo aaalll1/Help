@@ -88,7 +88,7 @@ async def next_set(_, query: CallbackQuery):
                 ],
                 [
                     InlineKeyboardButton("⦗ رجوع ⦘", callback_data="command_list"),
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="owner_commands"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next"),
                 ],
             ]
         )
@@ -134,7 +134,7 @@ async def next_set(_, query: CallbackQuery):
                 ],
                 [
                     InlineKeyboardButton("⦗ رجوع ⦘", callback_data="command_list"),
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="owner_commands"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next"),
                 ],
             ]
         )
