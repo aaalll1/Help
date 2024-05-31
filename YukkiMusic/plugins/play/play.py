@@ -34,7 +34,7 @@ from YukkiMusic.utils.inline.play import (
 from YukkiMusic.utils.inline.playlist import botplaylist_markup
 from YukkiMusic.utils.logger import play_logs
 from YukkiMusic.utils.stream.stream import stream
-
+from config import SUPPORT_CHANNEL 
 # Command
 PLAY_COMMAND = get_command("PLAY_COMMAND")
 
@@ -194,7 +194,7 @@ async def play_commnd(
             elif "https://youtu.be" in url:
                 videoid = url.split("/")[-1].split("?")[0]
                 details, track_id = await YouTube.track(
-                    f"https://www.youtube.com/watch?v={videoid}"
+                    f"https://t.me/{SUPPORT_CHANNEL}"
                 )
                 streamtype = "youtube"
                 img = details["thumb"]
