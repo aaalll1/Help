@@ -109,7 +109,7 @@ async def developer_commands_set(_, query: CallbackQuery):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next_admin"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="command_list"),
                 ],
             ]
         ),
