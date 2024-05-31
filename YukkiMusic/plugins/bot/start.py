@@ -147,7 +147,9 @@ async def user_commands_set(_, query: CallbackQuery):
 async def next_user_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة التحكم لأوامر الادمن")
     await query.edit_message_text(
-        """اوامر الادمرر""",
+        """- تم فتح لوحة التحكم ↓
+ – – – – – – 
+⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
