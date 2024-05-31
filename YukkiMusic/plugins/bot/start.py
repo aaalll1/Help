@@ -122,7 +122,7 @@ async def next_user_set(_, query: CallbackQuery):
                 ],
                 [
                     InlineKeyboardButton("⦗ رجوع ⦘", callback_data="home_start"),
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="developer_commands"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="developer_commands_info"),
                 ],
             ]
         ),
@@ -137,6 +137,7 @@ async def admin_commands_set(_, query: CallbackQuery):
             [
                 [
                     InlineKeyboardButton("⦗ رجوع ⦘", callback_data="next_user"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="developer_commands_info"),
                 ],
             ]
         ),
@@ -156,24 +157,15 @@ async def user_commands_set(_, query: CallbackQuery):
         ),
     )
 
-# هنا نضيف الزر الجديد المطلوب
 @app.on_callback_query(filters.regex("developer_commands_info"))
 async def developer_commands_info_set(_, query: CallbackQuery):
     await query.answer("المزيد من المعلومات حول أوامر المطورين")
     await query.edit_message_text(
-        f"""اوامر المطورين ↓
-
-1-› أولا ، أضفني الى مجموعتك
-2-› بعد ذالك قم برفعي كمشرف واعطائي صلاحيات مثل باقي البشر.
-3-› بعد ذالك اكتب `.تحديث` بيانات البوت
-3-› اضف سيدي ومولاي في مجموعتك او اكتب `.انضم` لدعوة المساعد
-4-› اذ لم تستطيع اضافة المساعد او واجهت مشاكل تحدث مع رئيس الوزراء  .
-
-""",
+        f""" تم تنصيب مطور""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="developer_commands"),
+                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="command_list")
                 ],
             ]
         ),
