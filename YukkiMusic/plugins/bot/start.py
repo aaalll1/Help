@@ -36,7 +36,7 @@ async def start_(c: Client, message: Message):
 async def start_set(_, query: CallbackQuery):
     await query.answer("القائمة الرئيسية")
     await query.edit_message_text(
-        f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯""",
+        f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯\n\nقم بأضافة شيئا حتى تتمكن من اختصار امر""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
@@ -58,7 +58,6 @@ async def commands_set(_, query: CallbackQuery):
     await query.answer("👍🏻قائمة الاوامر")
     await query.edit_message_text(
         f"""- تم فتح لوحة التحكم ↓
- – – – – – – 
 ⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
         reply_markup=InlineKeyboardMarkup(
             [
@@ -78,7 +77,6 @@ async def next_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة التحكم")
     await query.edit_message_text(
         f"""- تم فتح لوحة التحكم ↓
- – – – – – – 
 ⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
         reply_markup=InlineKeyboardMarkup(
             [
@@ -87,18 +85,17 @@ async def next_set(_, query: CallbackQuery):
                 ],
                 [
                     InlineKeyboardButton("⦗ رجوع ⦘", callback_data="command_list"),
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next1"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next"),
                 ],
             ]
         )
     )
 
-@app.on_callback_query(filters.regex("next1"))
-async def next1(_, query: CallbackQuery):
+@app.on_callback_query(filters.regex("next"))
+async def owner_commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة التحكم")
     await query.edit_message_text(
         f"""- تم فتح لوحة التحكم ↓
- – – – – – – 
 ⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
         reply_markup=InlineKeyboardMarkup(
             [
@@ -154,3 +151,6 @@ async def owner_commands_set(_, query: CallbackQuery):
             ]
         ),
     )
+
+# Run the app
+app.run()
