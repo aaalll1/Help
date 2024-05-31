@@ -151,6 +151,3 @@ async def owner_commands_set(_, query: CallbackQuery):
             ]
         ),
     )
-
-# Run the app
-app.run()
