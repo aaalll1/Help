@@ -88,7 +88,7 @@ async def command_list_next_set(_, query: CallbackQuery):
                 ],
                 [
                     InlineKeyboardButton("⦗ رجوع ⦘", callback_data="command_list"),
-                    InlineKeyboardButton("⦗ الرئيسية ⦘", callback_data="home_start"),
+                    InlineKeyboardButton("⦗ الرئيسية ⦘", callback_data="command_list_next"),
                 ],
             ]
         )
