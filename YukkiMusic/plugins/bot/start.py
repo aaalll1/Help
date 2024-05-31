@@ -8,11 +8,6 @@ async def add_served_user(user_id: int):
     # You can add user storage logic here if necessary
     pass
 
-# Define control panel text
-control_panel_text = """- تم فتح لوحة التحكم ↓
- – – – – – – 
-⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘"""
-
 # Command handlers
 @app.on_message(filters.command(["start", "help"]) & filters.private)
 async def start_(c: Client, message: Message):
@@ -62,7 +57,9 @@ async def start_set(_, query: CallbackQuery):
 async def commands_set(_, query: CallbackQuery):
     await query.answer("👍🏻قائمة الاوامر")
     await query.edit_message_text(
-        f"""{control_panel_text}""",
+        f"""- تم فتح لوحة التحكم ↓
+ – – – – – – 
+⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
@@ -70,17 +67,19 @@ async def commands_set(_, query: CallbackQuery):
                 ],
                 [
                     InlineKeyboardButton("⦗ رجوع ⦘", callback_data="home_start"),
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="command_list_next"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next"),
                 ],
             ]
         )
     )
 
-@app.on_callback_query(filters.regex("command_list_next"))
-async def command_list_next_set(_, query: CallbackQuery):
+@app.on_callback_query(filters.regex("next"))
+async def next_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة التحكم")
     await query.edit_message_text(
-        f"""{control_panel_text}""",
+        f"""- تم فتح لوحة التحكم ↓
+ – – – – – – 
+⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
@@ -88,7 +87,7 @@ async def command_list_next_set(_, query: CallbackQuery):
                 ],
                 [
                     InlineKeyboardButton("⦗ رجوع ⦘", callback_data="command_list"),
-                    InlineKeyboardButton("⦗ الرئيسية ⦘", callback_data="command_list_next"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="owner_commands"),
                 ],
             ]
         )
@@ -98,11 +97,11 @@ async def command_list_next_set(_, query: CallbackQuery):
 async def user_commands_set(_, query: CallbackQuery):
     await query.answer("اوامر التشغيل")
     await query.edit_message_text(
-        f"""هذه هي اوامر التشغيل""",
+        f"""هذا هي اوامر التشغيل""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="command_list_next")
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next")
                 ],
             ]
         ),
@@ -112,20 +111,14 @@ async def user_commands_set(_, query: CallbackQuery):
 async def developer_commands_set(_, query: CallbackQuery):
     await query.answer("اوامر المطورين")
     await query.edit_message_text(
-        f"""- تم فتح لوحة التحكم ↓
- – – – – – – 
-⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
+        f"""هذا هي اوامر المطوربن'""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ اوامر المالك ⦘", callback_data="owner_commands"),
-                ],
-                [
-                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="command_list"),
-                    InlineKeyboardButton("⦗ الرئيسية ⦘", callback_data="home_start"),
+                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="next")
                 ],
             ]
-        )
+        ),
     )
 
 @app.on_callback_query(filters.regex("owner_commands"))
@@ -136,8 +129,7 @@ async def owner_commands_set(_, query: CallbackQuery):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="developer_commands"),
-                    InlineKeyboardButton("⦗ الرئيسية ⦘", callback_data="home_start"),
+                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="next")
                 ],
             ]
         ),
