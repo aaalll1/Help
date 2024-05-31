@@ -153,17 +153,17 @@ async def next_user_set(_, query: CallbackQuery):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ اوامر الادمن ⦘", callback_data="developer_commands"),
+                    InlineKeyboardButton("⦗ اوامر الادمن ⦘", callback_data="developer"),
                 ],
                 [
                     InlineKeyboardButton("⦗ رجوع ⦘", callback_data="home_start"),
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="command_list"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next_user"),
                 ],
             ]
         ),
     )
 
-@app.on_callback_query(filters.regex("developer_commands"))
+@app.on_callback_query(filters.regex("developer"))
 async def user_commands_set(_, query: CallbackQuery):
     await query.answer("اوامر ادمن")
     await query.edit_message_text(
