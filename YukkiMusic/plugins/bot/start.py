@@ -20,8 +20,7 @@ async def start_(c: Client, message: Message):
             [
                 [
                     InlineKeyboardButton(text="⦗ اوامر البوت ⦘", callback_data="command_list")
-                ],
-                [
+                ],[
                     InlineKeyboardButton(text="⦗ قناة السورس ⦘", url=SUPPORT_CHANNEL),
                     InlineKeyboardButton(text="⦗ قناة التحديثات ⦘", url=SUPPORT_GROUP),
                 ],
@@ -33,11 +32,31 @@ async def start_(c: Client, message: Message):
     )
 
 # Callback query handlers
-@app.on_callback_query(filters.regex("home_start"))
-async def start_set(_, query: CallbackQuery):
+@app.on_callback_query()
+async def callback_handler(_, query: CallbackQuery):
+    data = query.data
+
+    # Check for the data and handle accordingly
+    if data == "home_start":
+        await home_start(query)
+    elif data == "command_list":
+        await command_list(query)
+    elif data == "next":
+        await next(query)
+    elif data == "user_command":
+        await user_command(query)
+    elif data == "developer_commands":
+        await developer_commands(query)
+    elif data == "owner_commands":
+        await owner_commands(query)
+
+async def home_start(query: CallbackQuery):
     await query.answer("القائمة الرئيسية")
-    await query.edit_message_text(
-        f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯""",
+    await query.edit_message_caption(
+        caption=f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯
+- تم فتح لوحة التحكم ↓
+ – – – – – – 
+⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
@@ -54,11 +73,10 @@ async def start_set(_, query: CallbackQuery):
         )
     )
 
-@app.on_callback_query(filters.regex("command_list"))
-async def commands_set(_, query: CallbackQuery):
+async def command_list(query: CallbackQuery):
     await query.answer("👍🏻قائمة الاوامر")
-    await query.edit_message_text(
-        f"""- تم فتح لوحة التحكم ↓
+    await query.edit_message_caption(
+        caption=f"""- تم فتح لوحة التحكم ↓
  – – – – – – 
 ⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
         reply_markup=InlineKeyboardMarkup(
@@ -68,17 +86,19 @@ async def commands_set(_, query: CallbackQuery):
                 ],
                 [
                     InlineKeyboardButton("⦗ رجوع ⦘", callback_data="home_start"),
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next_admin"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next"),
                 ],
             ]
-        )
+        ),
+        caption=f"""- تم فتح لوحة التحكم ↓
+ – – – – – – 
+⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘"""
     )
 
-@app.on_callback_query(filters.regex("next_admin"))
-async def next_admin_set(_, query: CallbackQuery):
-    await query.answer("تم فتح لوحة التحكم لأوامر المطورين")
-    await query.edit_message_text(
-        """- تم فتح لوحة التحكم ↓
+async def next(query: CallbackQuery):
+    await query.answer("تم فتح لوحة التحكم التالية")
+    await query.edit_message_caption(
+        caption=f"""- تم فتح لوحة التحكم ↓
  – – – – – – 
 ⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
         reply_markup=InlineKeyboardMarkup(
@@ -88,90 +108,59 @@ async def next_admin_set(_, query: CallbackQuery):
                 ],
                 [
                     InlineKeyboardButton("⦗ رجوع ⦘", callback_data="command_list"),
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next_user"),
-                ],
-            ]
-        )
-    )
-
-@app.on_callback_query(filters.regex("developer_commands"))
-async def developer_commands_set(_, query: CallbackQuery):
-    await query.answer("اوامر المطورين")
-    await query.edit_message_text(
-        f"""اوامر المطورين ↓""",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next_user"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="owner_commands"),
                 ],
             ]
         ),
-    )
-
-@app.on_callback_query(filters.regex("next_user"))
-async def next_user_set(_, query: CallbackQuery):
-    await query.answer("تم فتح لوحة التحكم لأوامر الادمن")
-    await query.edit_message_text(
-        """- تم فتح لوحة التحكم ↓
+        caption=f"""- تم فتح لوحة التحكم ↓
  – – – – – – 
-⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("⦗ اوامر الادمن ⦘", callback_data="admin_commands"),
-                ],
-                [
-                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="home_start"),
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="developer_commands_info"),
-                ],
-            ]
-        ),
+⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘"""
     )
 
-@app.on_callback_query(filters.regex("admin_commands"))
-async def admin_commands_set(_, query: CallbackQuery):
-    await query.answer("اوامر الادمن")
-    await query.edit_message_text(
-        f"""- تم فتح لوحة التحكم ↓
- – – – – – – 
-⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("⦗ اوامر الادمن ⦘", callback_data="admin_commands"),                    
-                ],
-                [
-                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="next_user"),
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="developer_commands_info"),
-                ],
-            ]
-        ),
-    )
-
-@app.on_callback_query(filters.regex("user_command"))
-async def user_commands_set(_, query: CallbackQuery):
+async def user_command(query: CallbackQuery):
     await query.answer("اوامر التشغيل")
-    await query.edit_message_text(
-        f"""اوامر التشغيل""",
+    await query.edit_message_caption(
+        caption=f"""هذه هي اوامر التشغيل""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="developer_commands_info")
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next")
                 ],
             ]
         ),
+        caption=f"""- تم فتح لوحة التحكم ↓
+ – – – – – – 
+⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘"""
     )
 
-@app.on_callback_query(filters.regex("developer_commands_info"))
-async def developer_commands_info_set(_, query: CallbackQuery):
-    await query.answer("المزيد من المعلومات حول أوامر المطورين")
-    await query.edit_message_text(
-        f"""المزيد من المعلومات حول أوامر المطورين""",
+async def developer_commands(query: CallbackQuery):
+    await query.answer("اوامر المطورين")
+    await query.edit_message_caption(
+        caption=f"""هذه هي اوامر المطورين""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="admin_commands")
+                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="next")
                 ],
             ]
         ),
+        caption=f"""- تم فتح لوحة التحكم ↓
+ – – – – – – 
+⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘"""
+    )
+
+async def owner_commands(query: CallbackQuery):
+    await query.answer("اوامر المالك")
+    await query.edit_message_caption(
+        caption=f"""هذه هي اوامر المالك""",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="next")
+                ],
+            ]
+        ),
+        caption=f"""- تم فتح لوحة التحكم ↓
+ – – – – – – 
+⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘"""
     )
