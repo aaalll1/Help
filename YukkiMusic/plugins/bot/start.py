@@ -32,7 +32,6 @@ async def start_(c: Client, message: Message):
         )
     )
 
-
 @app.on_callback_query(filters.regex("home_start"))
 async def start_set(_, query: CallbackQuery):
     await query.answer("القائمة الرئيسية")
@@ -54,6 +53,26 @@ async def start_set(_, query: CallbackQuery):
         )
     )
 
+@app.on_callback_query(filters.regex("command_list"))
+async def commands_set(_, query: CallbackQuery):
+    user_id = query.from_user.id
+    await query.answer("👍🏻قائمة الاوامر")
+    await query.edit_message_text(
+        f"""- تابع الازرار في الاسفل ↓
+
+يمديك تشوف كل اوامر البوت عن طريق إستخدام الأزرار أدناه .""",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton("⦗ اوامر التشغيل ⦘", callback_data="user_command"),
+                ],
+                [
+                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="home_start"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next"),
+                ],
+            ]
+        )
+    )
 
 @app.on_callback_query(filters.regex("next"))
 async def next_set(_, query: CallbackQuery):
