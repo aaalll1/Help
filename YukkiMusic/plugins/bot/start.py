@@ -136,7 +136,10 @@ async def admin_commands_set(_, query: CallbackQuery):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
+                    InlineKeyboardButton("⦗ اوامر الادمن ⦘", callback_data="admin_commands"),
                     InlineKeyboardButton("⦗ رجوع ⦘", callback_data="next_user"),
+                ],
+                [
                     InlineKeyboardButton("⦗ التالي ⦘", callback_data="developer_commands_info"),
                 ],
             ]
@@ -161,11 +164,11 @@ async def user_commands_set(_, query: CallbackQuery):
 async def developer_commands_info_set(_, query: CallbackQuery):
     await query.answer("المزيد من المعلومات حول أوامر المطورين")
     await query.edit_message_text(
-        f""" تم تنصيب مطور""",
+        f"""المزيد من المعلومات حول أوامر المطورين""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="command_list")
+                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="admin_commands")
                 ],
             ]
         ),
