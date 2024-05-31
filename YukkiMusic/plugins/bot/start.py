@@ -99,7 +99,8 @@ async def next(query: CallbackQuery):
                 InlineKeyboardButton("⦗ اوامر المطورين ⦘", callback_data="developer_commands"),
             ],
             [
-                InlineKeyboardButton("⦗ رجوع ⦘", callback_data="command_list"),
+                InlineKeyboardButton("⦗ رجوع ⦘", callback_data="home_start"),
+                InlineKeyboardButton("⦗ التالي ⦘", callback_data="next"),
             ],
         ]
     )
