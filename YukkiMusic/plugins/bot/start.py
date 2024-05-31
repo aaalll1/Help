@@ -89,7 +89,7 @@ async def commands_set(_, query: CallbackQuery):
                 ],
                 [
                     InlineKeyboardButton("⦗ الرجوع ⦘", callback_data="command_list"),
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="nextgh"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="ghaith"),
                 ],
             ]
         )
@@ -97,7 +97,7 @@ async def commands_set(_, query: CallbackQuery):
     
     
     
-@app.on_callback_query(filters.regex("nextgh"))
+@app.on_callback_query(filters.regex("ghaith"))
 async def commands_set(_, query: CallbackQuery):
     await query.answer("👍🏻قائمة الاوامر")
     await query.edit_message_text(
