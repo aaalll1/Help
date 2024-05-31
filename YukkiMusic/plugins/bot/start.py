@@ -122,6 +122,24 @@ async def developer_commands_set(_, query: CallbackQuery):
         ),
     )
 
+@app.on_callback_query(filters.regex("next"))
+async def next_set(_, query: CallbackQuery):
+    await query.answer("تم فتح لوحة التحكم")
+    await query.edit_message_text(
+        f"""{control_panel_text}""",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton("⦗ اوامر المالك ⦘", callback_data="owner_commands"),
+                ],
+                [
+                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="command_list"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="owner_commands"),
+                ],
+            ]
+        )
+    )
+
 @app.on_callback_query(filters.regex("owner_commands"))
 async def owner_commands_set(_, query: CallbackQuery):
     await query.answer("اوامر المالك")
@@ -135,3 +153,4 @@ async def owner_commands_set(_, query: CallbackQuery):
             ]
         ),
     )
+
