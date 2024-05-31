@@ -162,3 +162,17 @@ async def next_user_set(_, query: CallbackQuery):
             ]
         ),
     )
+
+@app.on_callback_query(filters.regex("developer_commands"))
+async def user_commands_set(_, query: CallbackQuery):
+    await query.answer("اوامر ادمن")
+    await query.edit_message_text(
+        f"""اوامر ادمن""",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next_user")
+                ],
+            ]
+        ),
+    )
