@@ -67,28 +67,44 @@ async def commands_set(_, query: CallbackQuery):
                     InlineKeyboardButton("⦗ اوامر التشغيل ⦘", callback_data="user_command"),
                 ],
                 [
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="developer_commands"),
                     InlineKeyboardButton("⦗ رجوع ⦘", callback_data="home_start"),
+                ],
+            ]
+        )
+    )
+
+@app.on_callback_query(filters.regex("developer_commands"))
+async def developer_commands_set(_, query: CallbackQuery):
+    await query.answer("اوامر المطورين")
+    await query.edit_message_text(
+        f"""- تابع الازرار في الاسفل ↓
+
+يمديك تشوف كل اوامر البوت عن طريق إستخدام الأزرار أدناه .""",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton("⦗ اوامر الادمن ⦘", callback_data="admin_commands"),
+                ],
+                [
+                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="command_list"),
                     InlineKeyboardButton("⦗ التالي ⦘", callback_data="next"),
                 ],
             ]
         )
     )
 
-@app.on_callback_query(filters.regex("next"))
-async def next_set(_, query: CallbackQuery):
-    await query.answer("تم فتح لوحة التحكم")
+@app.on_callback_query(filters.regex("admin_commands"))
+async def admin_commands_set(_, query: CallbackQuery):
+    await query.answer("اوامر الادمن")
     await query.edit_message_text(
-        """- تابع الازرار في الاسفل ↓
+        f"""- تابع الازرار في الاسفل ↓
 
 يمديك تشوف كل اوامر البوت عن طريق إستخدام الأزرار أدناه .""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ اوامر المطورين ⦘", callback_data="admin_commands"),
-                    InlineKeyboardButton("⦗ اوامر المالك ⦘", callback_data="developer_commands"),
-                ],
-                [
-                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="command_list"),
+                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="developer_commands"),
                     InlineKeyboardButton("⦗ التالي ⦘", callback_data="command_list"),
                 ],
             ]
@@ -96,58 +112,16 @@ async def next_set(_, query: CallbackQuery):
     )
 
 @app.on_callback_query(filters.regex("user_command"))
-async def guide_set(_, query: CallbackQuery):
+async def user_commands_set(_, query: CallbackQuery):
     await query.answer("اوامر التشغيل")
     await query.edit_message_text(
-        f"""طريقة التشغيل ، تابع في الاسفل ↓
+        f"""- تابع الازرار في الاسفل ↓
 
-1-› أولا ، أضفني الى مجموعتك
-2-› بعد ذالك قم برفعي كمشرف واعطائي صلاحيات مثل باقي البشر.
-3-› بعد ذالك اكتب `.تحديث` بيانات البوت
-3-› اضف سيدي ومولاي في مجموعتك او اكتب `.انضم` لدعوة المساعد
-4-› اذ لم تستطيع اضافة المساعد او واجهت مشاكل تحدث مع رئيس الوزراء  .
-
-""",
+يمديك تشوف كل اوامر البوت عن طريق إستخدام الأزرار أدناه .""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next")
-                ],
-            ]
-        ),
-    )
-
-@app.on_callback_query(filters.regex("admin_commands"))
-async def guide_set(_, query: CallbackQuery):
-    await query.answer("اوامر الادمن")
-    await query.edit_message_text(
-        f"""اوامر الادمن""",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="next")
-                ],
-            ]
-        ),
-    )
-
-@app.on_callback_query(filters.regex("developer_commands"))
-async def guide_set(_, query: CallbackQuery):
-    await query.answer("اوامر المطورين")
-    await query.edit_message_text(
-        f"""اوامر المطورين ↓
-
-1-› أولا ، أضفني الى مجموعتك
-2-› بعد ذالك قم برفعي كمشرف واعطائي صلاحيات مثل باقي البشر.
-3-› بعد ذالك اكتب `.تحديث` بيانات البوت
-3-› اضف سيدي ومولاي في مجموعتك او اكتب `.انضم` لدعوة المساعد
-4-› اذ لم تستطيع اضافة المساعد او واجهت مشاكل تحدث مع رئيس الوزراء  .
-
-""",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="next")
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next"),
                 ],
             ]
         ),
