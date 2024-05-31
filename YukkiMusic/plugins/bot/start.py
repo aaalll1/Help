@@ -17,7 +17,7 @@ async def start_(c: Client, message: Message):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(text="⦗ قائمة الأوامر ⦘", callback_data="command_list")
+                    InlineKeyboardButton(text="⦗ اوامر البوت ⦘", callback_data="command_list")
                 ],
                 [
                     InlineKeyboardButton(text="⦗ قناة السورس ⦘", url=SUPPORT_CHANNEL),
@@ -34,13 +34,13 @@ async def start_(c: Client, message: Message):
     
 @app.on_callback_query(filters.regex("home_start"))
 async def start_set(_, query: CallbackQuery):
-    await query.answer("القائمة الرئيسية")
+    await query.answer("قائمة التحكم")
     await query.edit_message_text(
         f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(text="⦗ قائمة الأوامر ⦘", callback_data="command_list")
+                    InlineKeyboardButton(text="⦗ اوامر البوت ⦘", callback_data="command_list")
                 ],
                 [
                     InlineKeyboardButton(text="⦗ قناة السورس ⦘", url=SUPPORT_CHANNEL),
@@ -56,7 +56,7 @@ async def start_set(_, query: CallbackQuery):
     
 @app.on_callback_query(filters.regex("command_list"))
 async def commands_set(_, query: CallbackQuery):
-    await query.answer("👍🏻قائمة الاوامر")
+    await query.answer("تم فتح لوحة التشغيل")
     await query.edit_message_text(
         f"""- تم فتح لوحة التحكم ↓
  – – – – – – 
@@ -77,7 +77,7 @@ async def commands_set(_, query: CallbackQuery):
     
 @app.on_callback_query(filters.regex("next"))
 async def commands_set(_, query: CallbackQuery):
-    await query.answer("👍🏻قائمة الاوامر")
+    await query.answer("تم فتح لوحة الأدمن")
     await query.edit_message_text(
         f"""- تم فتح لوحة التحكم ↓
  – – – – – – 
@@ -85,7 +85,7 @@ async def commands_set(_, query: CallbackQuery):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ أوامر المالك ⦘", callback_data="developer_commands"),
+                    InlineKeyboardButton("⦗ أوامر الأدمن ⦘", callback_data="developer_commands"),
                 ],
                 [
                     InlineKeyboardButton("⦗ الرجوع ⦘", callback_data="command_list"),
@@ -99,7 +99,7 @@ async def commands_set(_, query: CallbackQuery):
     
 @app.on_callback_query(filters.regex("ghaith"))
 async def commands_set(_, query: CallbackQuery):
-    await query.answer("👍🏻قائمة الاوامر")
+    await query.answer("تم فتح لوحة المطور")
     await query.edit_message_text(
         f"""- تم فتح لوحة التحكم ↓
  – – – – – – 
@@ -120,7 +120,7 @@ async def commands_set(_, query: CallbackQuery):
 
 @app.on_callback_query(filters.regex("user_command"))
 async def user_commands_set(_, query: CallbackQuery):
-    await query.answer("أوامر التشغيل")
+    await query.answer("تم فتح اوامر التشغيل")
     await query.edit_message_text(
         f"""هذا هي أوامر التشغيل
 شغل 
@@ -138,7 +138,7 @@ async def user_commands_set(_, query: CallbackQuery):
     
 @app.on_callback_query(filters.regex("developer_commands"))
 async def developer_commands_set(_, query: CallbackQuery):
-    await query.answer("اوامر المالك")
+    await query.answer("تم فتح اوامر الأدمن")
     await query.edit_message_text(
         f"""هذه هيه اوامر المالك
         
@@ -157,7 +157,7 @@ async def developer_commands_set(_, query: CallbackQuery):
     
 @app.on_callback_query(filters.regex("owner_commands"))
 async def owner_commands_set(_, query: CallbackQuery):
-    await query.answer("اوامر المطور")
+    await query.answer("تم فتح اوامر المطور")
     await query.edit_message_text(
         f"""هذه هيه اوامر المطور 
 
