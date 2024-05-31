@@ -133,9 +133,9 @@ async def admin_commands_set(_, query: CallbackQuery):
 async def user_commands_set(_, query: CallbackQuery):
     await query.answer("اوامر التشغيل")
     await query.edit_message_text(
-        f"""- تابع الازرار في الاسفل ↓
-
-يمديك تشوف كل اوامر البوت عن طريق إستخدام الأزرار أدناه .""",
+        f"""- تم فتح لوحة التحكم ↓
+ – – – – – – 
+⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
@@ -149,9 +149,9 @@ async def user_commands_set(_, query: CallbackQuery):
 async def next_user_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة التحكم لأوامر الادمن")
     await query.edit_message_text(
-        """- تابع الازرار في الاسفل ↓
-
-يمديك تشوف كل اوامر الادمن عن طريق إستخدام الأزرار أدناه .""",
+        """- تم فتح لوحة التحكم ↓
+ – – – – – – 
+⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
