@@ -7,8 +7,6 @@ from config import SUPPORT_GROUP, SUPPORT_CHANNEL, OWNER, START_IMG_URL
 async def add_served_user(user_id: int):
     pass
 
-
-
 @app.on_message(filters.command(["start", "help"]) & filters.private)
 async def start_(c: Client, message: Message):
     user_id = message.from_user.id
@@ -31,7 +29,9 @@ async def start_(c: Client, message: Message):
             ]
         )
     )
-# Callback query handlers
+    
+    
+    
 @app.on_callback_query(filters.regex("home_start"))
 async def start_set(_, query: CallbackQuery):
     await query.answer("القائمة الرئيسية")
@@ -54,7 +54,6 @@ async def start_set(_, query: CallbackQuery):
     )
     
     
-    
 @app.on_callback_query(filters.regex("command_list"))
 async def commands_set(_, query: CallbackQuery):
     await query.answer("👍🏻قائمة الاوامر")
@@ -74,44 +73,50 @@ async def commands_set(_, query: CallbackQuery):
             ]
         )
     )
+    
+    
 @app.on_callback_query(filters.regex("next"))
-async def next_set(_, query: CallbackQuery):
-    await query.answer("تم فتح لوحة التحكم")
+async def commands_set(_, query: CallbackQuery):
+    await query.answer("👍🏻قائمة الاوامر")
     await query.edit_message_text(
-        """- تم فتح لوحة التحكم ↓
+        f"""اليك قائمة اوامر المالك
  – – – – – – 
 ⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ أوامر المطورين ⦘", callback_data="developer_commands"),
+                    InlineKeyboardButton("⦗ أوامر المالك ⦘", callback_data="developer_commands"),
                 ],
                 [
                     InlineKeyboardButton("⦗ الرجوع ⦘", callback_data="command_list"),
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next1"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="nextgh"),
                 ],
             ]
         )
     )
-@app.on_callback_query(filters.regex("next1"))
-async def next1_set(_, query: CallbackQuery):
-    await query.answer("تم فتح لوحة التحكم")
+    
+    
+    
+@app.on_callback_query(filters.regex("nextgh"))
+async def commands_set(_, query: CallbackQuery):
+    await query.answer("👍🏻قائمة الاوامر")
     await query.edit_message_text(
-        """- تم فتح لوحة التحكم ↓
+        f"""اليك قائمة اوامر المطور
  – – – – – – 
 ⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ اوامر المالك ⦘", callback_data="owner_commands"),
+                    InlineKeyboardButton("⦗ اوامر المطور ⦘", callback_data="owner_commands"),
                 ],
                 [
-                    InlineKeyboardButton("⦗ الرجوع ⦘", callback_data="next"),
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="owner_commands"),
+                    InlineKeyboardButton("⦗ الرجوع ⦘", callback_data="home_start"),
                 ],
             ]
         )
     )
+    
+
 @app.on_callback_query(filters.regex("user_command"))
 async def user_commands_set(_, query: CallbackQuery):
     await query.answer("أوامر التشغيل")
@@ -130,14 +135,16 @@ async def user_commands_set(_, query: CallbackQuery):
         ),
     )
     
-    
-    
-    
 @app.on_callback_query(filters.regex("developer_commands"))
 async def developer_commands_set(_, query: CallbackQuery):
     await query.answer("اوامر المالك")
     await query.edit_message_text(
-        f"""هذه هيه اوامر المالك""",
+        f"""هذه هيه اوامر المالك
+        
+        
+منضر اوامر المالك
+
+""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
@@ -147,17 +154,15 @@ async def developer_commands_set(_, query: CallbackQuery):
         ),
     )
     
-    
-    
-    
-    
-    
-    
 @app.on_callback_query(filters.regex("owner_commands"))
 async def owner_commands_set(_, query: CallbackQuery):
     await query.answer("اوامر المطور")
     await query.edit_message_text(
-        f"""هذه هيه اوامر المطور """,
+        f"""هذه هيه اوامر المطور 
+
+اذاعه مطور 
+
+""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
