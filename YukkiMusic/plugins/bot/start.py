@@ -88,7 +88,7 @@ async def developer_commands_set(_, query: CallbackQuery):
                 ],
                 [
                     InlineKeyboardButton("⦗ رجوع ⦘", callback_data="command_list"),
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="admin_commands"),
                 ],
             ]
         )
@@ -104,7 +104,7 @@ async def admin_commands_set(_, query: CallbackQuery):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="developer_commands"),
+                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="home_start"),
                     InlineKeyboardButton("⦗ التالي ⦘", callback_data="command_list"),
                 ],
             ]
@@ -121,7 +121,7 @@ async def user_commands_set(_, query: CallbackQuery):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="command_list"),
                 ],
             ]
         ),
