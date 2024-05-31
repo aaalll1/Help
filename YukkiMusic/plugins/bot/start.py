@@ -85,14 +85,14 @@ async def next_set(_, query: CallbackQuery):
                 ],
                 [
                     InlineKeyboardButton("⦗ رجوع ⦘", callback_data="command_list"),
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next1"),
                 ],
             ]
         )
     )
 
-@app.on_callback_query(filters.regex("next"))
-async def owner_commands_set(_, query: CallbackQuery):
+@app.on_callback_query(filters.regex("next1"))
+async def next1_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة التحكم")
     await query.edit_message_text(
         f"""- تم فتح لوحة التحكم ↓
@@ -104,7 +104,7 @@ async def owner_commands_set(_, query: CallbackQuery):
                 ],
                 [
                     InlineKeyboardButton("⦗ رجوع ⦘", callback_data="developer_commands"),
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next2"),
                 ],
             ]
         )
@@ -146,8 +146,45 @@ async def owner_commands_set(_, query: CallbackQuery):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next")
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next2")
                 ],
             ]
         ),
     )
+
+@app.on_callback_query(filters.regex("next2"))
+async def next2_set(_, query: CallbackQuery):
+    await query.answer("تم فتح لوحة التحكم")
+    await query.edit_message_text(
+        f"""- تم فتح لوحة التحكم ↓
+⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton("⦗ اخرى ⦘", callback_data="other_commands"),
+                ],
+                [
+                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="owner_commands"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next3"),
+                ],
+            ]
+        )
+    )
+
+@app.on_callback_query(filters.regex("next3"))
+async def next3_set(_, query: CallbackQuery):
+    await query.answer("تم فتح لوحة التحكم")
+    await query.edit_message_text(
+        f"""- تم فتح لوحة التحكم ↓
+⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton("⦗ اخرى ⦘", callback_data="other_commands"),
+                ],
+                [
+                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="next2"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next4"),
+                ],
+            ]
+        )
