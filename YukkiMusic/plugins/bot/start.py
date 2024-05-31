@@ -97,19 +97,11 @@ async def next_admin_set(_, query: CallbackQuery):
 async def developer_commands_set(_, query: CallbackQuery):
     await query.answer("اوامر المطورين")
     await query.edit_message_text(
-        f"""اوامر المطورين ↓
-
-1-› أولا ، أضفني الى مجموعتك
-2-› بعد ذالك قم برفعي كمشرف واعطائي صلاحيات مثل باقي البشر.
-3-› بعد ذالك اكتب `.تحديث` بيانات البوت
-3-› اضف سيدي ومولاي في مجموعتك او اكتب `.انضم` لدعوة المساعد
-4-› اذ لم تستطيع اضافة المساعد او واجهت مشاكل تحدث مع رئيس الوزراء  .
-
-""",
+        f"""اوامر المطورين ↓""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="command_list"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next_user"),
                 ],
             ]
         ),
@@ -143,7 +135,22 @@ async def user_commands_set(_, query: CallbackQuery):
         ),
     )
 
-@app.on_callback_query(filters.regex("next_user"))
+@app.on_callback_query(filters.regex("developer"))
+async def user_commands_set(_, query: CallbackQuery):
+    await query.answer("اوامر ادمن")
+    await query.edit_message_text(
+        f"""اوامر المطور""",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="command_list")
+                ],
+            ]
+        ),
+    )
+
+
+@app.on_callback_query(filters.regex("developer"))
 async def next_user_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة التحكم لأوامر الادمن")
     await query.edit_message_text(
@@ -158,20 +165,6 @@ async def next_user_set(_, query: CallbackQuery):
                 [
                     InlineKeyboardButton("⦗ رجوع ⦘", callback_data="home_start"),
                     InlineKeyboardButton("⦗ التالي ⦘", callback_data="next_user"),
-                ],
-            ]
-        ),
-    )
-
-@app.on_callback_query(filters.regex("developer"))
-async def user_commands_set(_, query: CallbackQuery):
-    await query.answer("اوامر ادمن")
-    await query.edit_message_text(
-        f"""اوامر ادمن""",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next_user")
                 ],
             ]
         ),
