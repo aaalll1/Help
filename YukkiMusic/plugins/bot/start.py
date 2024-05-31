@@ -3,12 +3,12 @@ from pyrogram import Client, filters
 from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 from config import SUPPORT_GROUP, SUPPORT_CHANNEL, OWNER, START_IMG_URL
 
-# Dummy function add_served_user to avoid error
+# وهمي
 async def add_served_user(user_id: int):
-    # You can add user storage logic here if necessary
     pass
 
-# Command handlers
+
+
 @app.on_message(filters.command(["start", "help"]) & filters.private)
 async def start_(c: Client, message: Message):
     user_id = message.from_user.id
@@ -31,7 +31,6 @@ async def start_(c: Client, message: Message):
             ]
         )
     )
-
 # Callback query handlers
 @app.on_callback_query(filters.regex("home_start"))
 async def start_set(_, query: CallbackQuery):
@@ -53,12 +52,14 @@ async def start_set(_, query: CallbackQuery):
             ]
         )
     )
-
+    
+    
+    
 @app.on_callback_query(filters.regex("command_list"))
 async def commands_set(_, query: CallbackQuery):
     await query.answer("👍🏻قائمة الاوامر")
     await query.edit_message_text(
-        f"""- تم فتح لوحة التحكم ↓
+        f"""اليك قائمة اوامر التشغيل ↓
  – – – – – – 
 ⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
         reply_markup=InlineKeyboardMarkup(
@@ -73,7 +74,6 @@ async def commands_set(_, query: CallbackQuery):
             ]
         )
     )
-
 @app.on_callback_query(filters.regex("next"))
 async def next_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة التحكم")
@@ -88,31 +88,56 @@ async def next_set(_, query: CallbackQuery):
                 ],
                 [
                     InlineKeyboardButton("⦗ الرجوع ⦘", callback_data="command_list"),
-                    InlineKeyboardButton("⦗ أوامر المالك ⦘", callback_data="owner_commands"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next1"),
                 ],
             ]
         )
     )
-
+@app.on_callback_query(filters.regex("next1"))
+async def next1_set(_, query: CallbackQuery):
+    await query.answer("تم فتح لوحة التحكم")
+    await query.edit_message_text(
+        """- تم فتح لوحة التحكم ↓
+ – – – – – – 
+⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton("⦗ اوامر المالك ⦘", callback_data="owner_commands"),
+                ],
+                [
+                    InlineKeyboardButton("⦗ الرجوع ⦘", callback_data="next"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="owner_commands"),
+                ],
+            ]
+        )
+    )
 @app.on_callback_query(filters.regex("user_command"))
 async def user_commands_set(_, query: CallbackQuery):
     await query.answer("أوامر التشغيل")
     await query.edit_message_text(
-        f"""هذا هي أوامر التشغيل""",
+        f"""هذا هي أوامر التشغيل
+شغل 
+تشغيل 
+
+""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next")
+                    InlineKeyboardButton("⦗ الرجوع ⦘", callback_data="home_start")
                 ],
             ]
         ),
     )
-
+    
+    
+    
+    
 @app.on_callback_query(filters.regex("developer_commands"))
 async def developer_commands_set(_, query: CallbackQuery):
-    await query.answer("أوامر المطورين")
+    await query.answer("اوامر المالك")
     await query.edit_message_text(
-        f"""هذا هي أوامر المطورين""",
+        f"""هذه هيه اوامر المالك""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
@@ -121,12 +146,18 @@ async def developer_commands_set(_, query: CallbackQuery):
             ]
         ),
     )
-
+    
+    
+    
+    
+    
+    
+    
 @app.on_callback_query(filters.regex("owner_commands"))
 async def owner_commands_set(_, query: CallbackQuery):
-    await query.answer("أوامر المالك")
+    await query.answer("اوامر المطور")
     await query.edit_message_text(
-        f"""هذا هي أوامر المالك""",
+        f"""هذه هيه اوامر المطور """,
         reply_markup=InlineKeyboardMarkup(
             [
                 [
