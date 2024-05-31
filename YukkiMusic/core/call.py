@@ -28,7 +28,7 @@ from pytgcalls.types import (
     Update,
 )
 from pytgcalls.types.stream import StreamAudioEnded
-
+from config import SUPPORT_CHANNEL 
 import config
 from strings import get_string
 from YukkiMusic import LOGGER, YouTube, app
@@ -449,7 +449,7 @@ class Call(PyTgCalls):
                     photo=img,
                     caption=_["stream_1"].format(
                         title[:27],
-                        f"https://t.me/{app.username}?start=info_{videoid}",
+                        f"https://t.me/{SUPPORT_CHANNEL}",
                         check[0]["dur"],
                         user,
                     ),
@@ -508,7 +508,7 @@ class Call(PyTgCalls):
                     photo=img,
                     caption=_["stream_1"].format(
                         title[:27],
-                        f"https://t.me/{app.username}?start=info_{videoid}",
+                        f"https://t.me/{SUPPORT_CHANNEL}",
                         check[0]["dur"],
                         user,
                     ),
@@ -610,7 +610,7 @@ class Call(PyTgCalls):
                         photo=img,
                         caption=_["stream_1"].format(
                             title[:27],
-                            f"https://t.me/{app.username}?start=info_{videoid}",
+                            f"https://t.me/{SUPPORT_CHANNEL}",
                             check[0]["dur"],
                             user,
                         ),
