@@ -3,14 +3,12 @@ from pyrogram import Client, filters
 from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 from config import SUPPORT_GROUP, SUPPORT_CHANNEL, OWNER, START_IMG_URL
 
-# دالة وهمية add_served_user لتجنب الخطأ
+# Dummy function add_served_user to avoid error
 async def add_served_user(user_id: int):
-    # يمكنك إضافة منطق تخزين المستخدم هنا إذا لزم الأمر
+    # You can add user storage logic here if necessary
     pass
 
-@app.on_message(
-    filters.command(["start", "help"]) & filters.private
-)
+@app.on_message(filters.command(["start", "help"]) & filters.private)
 async def start_(c: Client, message: Message):
     user_id = message.from_user.id
     await add_served_user(user_id)
@@ -21,7 +19,8 @@ async def start_(c: Client, message: Message):
             [
                 [
                     InlineKeyboardButton(text="⦗ اوامر البوت ⦘", callback_data="command_list")
-                ],[
+                ],
+                [
                     InlineKeyboardButton(text="⦗ قناة السورس ⦘", url=SUPPORT_CHANNEL),
                     InlineKeyboardButton(text="⦗ قناة التحديثات ⦘", url=SUPPORT_GROUP),
                 ],
@@ -157,5 +156,11 @@ async def admin_commands_set(_, query: CallbackQuery):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="command_list"),
+                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="next_user"),
                 ],
+            ]
+        ),
+    )
+
+# Start the bot
+app.run()
