@@ -42,7 +42,7 @@ async def callback_handler(_, query: CallbackQuery):
     elif data == "command_list":
         await command_list(query)
     elif data == "next":
-        await next(query)
+        await next_(query)  # Changed to next_ to avoid conflict with Python keyword
     elif data == "user_command":
         await user_command(query)
     elif data == "developer_commands":
@@ -89,7 +89,7 @@ async def command_list(query: CallbackQuery):
     )
     await edit_message(query, text, markup)
 
-async def next(query: CallbackQuery):
+async def next_(query: CallbackQuery):
     text = """- تم فتح لوحة التحكم ↓
  – – – – – – 
 ⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘"""
@@ -100,7 +100,7 @@ async def next(query: CallbackQuery):
             ],
             [
                 InlineKeyboardButton("⦗ رجوع ⦘", callback_data="home_start"),
-                InlineKeyboardButton("⦗ التالي ⦘", callback_data="next"),
+                InlineKeyboardButton("⦗ الرئيسية ⦘", callback_data="home_start"),
             ],
         ]
     )
@@ -126,7 +126,7 @@ async def developer_commands(query: CallbackQuery):
             ],
             [
                 InlineKeyboardButton("⦗ رجوع ⦘", callback_data="home_start"),
-                InlineKeyboardButton("⦗ التالي ⦘", callback_data="next"),
+                InlineKeyboardButton("⦗ الرئيسية ⦘", callback_data="home_start"),
             ],
         ]
     )
@@ -137,7 +137,7 @@ async def owner_commands(query: CallbackQuery):
     markup = InlineKeyboardMarkup(
         [
             [
-                InlineKeyboardButton("⦗ رجوع ⦘", callback_data="command_list"),
+                InlineKeyboardButton("⦗ رجوع ⦘", callback_data="developer_commands"),
             ],
         ]
     )
