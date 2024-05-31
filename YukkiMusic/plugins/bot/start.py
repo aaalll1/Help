@@ -70,14 +70,14 @@ async def commands_set(_, query: CallbackQuery):
                 ],
                 [
                     InlineKeyboardButton("⦗ رجوع ⦘", callback_data="home_start"),
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="command_list_next"),
                 ],
             ]
         )
     )
 
-@app.on_callback_query(filters.regex("next"))
-async def next_set(_, query: CallbackQuery):
+@app.on_callback_query(filters.regex("command_list_next"))
+async def command_list_next_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة التحكم")
     await query.edit_message_text(
         f"""{control_panel_text}""",
@@ -88,7 +88,7 @@ async def next_set(_, query: CallbackQuery):
                 ],
                 [
                     InlineKeyboardButton("⦗ رجوع ⦘", callback_data="command_list"),
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next"),
+                    InlineKeyboardButton("⦗ الرئيسية ⦘", callback_data="home_start"),
                 ],
             ]
         )
@@ -102,7 +102,7 @@ async def user_commands_set(_, query: CallbackQuery):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next")
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="command_list_next")
                 ],
             ]
         ),
@@ -112,21 +112,9 @@ async def user_commands_set(_, query: CallbackQuery):
 async def developer_commands_set(_, query: CallbackQuery):
     await query.answer("اوامر المطورين")
     await query.edit_message_text(
-        f"""هذه هي اوامر المطورين""",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="next")
-                ],
-            ]
-        ),
-    )
-
-@app.on_callback_query(filters.regex("next"))
-async def next_set(_, query: CallbackQuery):
-    await query.answer("تم فتح لوحة التحكم")
-    await query.edit_message_text(
-        f"""{control_panel_text}""",
+        f"""- تم فتح لوحة التحكم ↓
+ – – – – – – 
+⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
@@ -134,7 +122,7 @@ async def next_set(_, query: CallbackQuery):
                 ],
                 [
                     InlineKeyboardButton("⦗ رجوع ⦘", callback_data="command_list"),
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next"),
+                    InlineKeyboardButton("⦗ الرئيسية ⦘", callback_data="home_start"),
                 ],
             ]
         )
@@ -144,13 +132,13 @@ async def next_set(_, query: CallbackQuery):
 async def owner_commands_set(_, query: CallbackQuery):
     await query.answer("اوامر المالك")
     await query.edit_message_text(
-        f"""هذه هي اوامر المالك""",
+        f"""هذا هي اوامر المالك""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="next")
+                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="developer_commands"),
+                    InlineKeyboardButton("⦗ الرئيسية ⦘", callback_data="home_start"),
                 ],
             ]
         ),
     )
-
