@@ -130,6 +130,3 @@ async def callback_handler(_, query: CallbackQuery):
                 ]
             ),
         )
-
-# Run the app
-app.run()
