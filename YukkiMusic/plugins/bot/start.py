@@ -8,6 +8,7 @@ async def add_served_user(user_id: int):
     # You can add user storage logic here if necessary
     pass
 
+# Command handlers
 @app.on_message(filters.command(["start", "help"]) & filters.private)
 async def start_(c: Client, message: Message):
     user_id = message.from_user.id
@@ -31,6 +32,7 @@ async def start_(c: Client, message: Message):
         )
     )
 
+# Callback query handlers
 @app.on_callback_query(filters.regex("home_start"))
 async def start_set(_, query: CallbackQuery):
     await query.answer("القائمة الرئيسية")
@@ -54,7 +56,6 @@ async def start_set(_, query: CallbackQuery):
 
 @app.on_callback_query(filters.regex("command_list"))
 async def commands_set(_, query: CallbackQuery):
-    user_id = query.from_user.id
     await query.answer("👍🏻قائمة الاوامر")
     await query.edit_message_text(
         f"""- تم فتح لوحة التحكم ↓
@@ -107,6 +108,26 @@ async def developer_commands_set(_, query: CallbackQuery):
         ),
     )
 
+@app.on_callback_query(filters.regex("next_user"))
+async def next_user_set(_, query: CallbackQuery):
+    await query.answer("تم فتح لوحة التحكم لأوامر الادمن")
+    await query.edit_message_text(
+        """- تم فتح لوحة التحكم ↓
+ – – – – – – 
+⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton("⦗ اوامر الادمن ⦘", callback_data="admin_commands"),
+                ],
+                [
+                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="home_start"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="developer_commands"),
+                ],
+            ]
+        ),
+    )
+
 @app.on_callback_query(filters.regex("admin_commands"))
 async def admin_commands_set(_, query: CallbackQuery):
     await query.answer("اوامر الادمن")
@@ -135,36 +156,24 @@ async def user_commands_set(_, query: CallbackQuery):
         ),
     )
 
-@app.on_callback_query(filters.regex("developer"))
-async def user_commands_set(_, query: CallbackQuery):
-    await query.answer("اوامر ادمن")
+# هنا نضيف الزر الجديد المطلوب
+@app.on_callback_query(filters.regex("developer_commands_info"))
+async def developer_commands_info_set(_, query: CallbackQuery):
+    await query.answer("المزيد من المعلومات حول أوامر المطورين")
     await query.edit_message_text(
-        f"""اوامر المطور""",
+        f"""اوامر المطورين ↓
+
+1-› أولا ، أضفني الى مجموعتك
+2-› بعد ذالك قم برفعي كمشرف واعطائي صلاحيات مثل باقي البشر.
+3-› بعد ذالك اكتب `.تحديث` بيانات البوت
+3-› اضف سيدي ومولاي في مجموعتك او اكتب `.انضم` لدعوة المساعد
+4-› اذ لم تستطيع اضافة المساعد او واجهت مشاكل تحدث مع رئيس الوزراء  .
+
+""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="command_list")
-                ],
-            ]
-        ),
-    )
-
-
-@app.on_callback_query(filters.regex("developer"))
-async def next_user_set(_, query: CallbackQuery):
-    await query.answer("تم فتح لوحة التحكم لأوامر الادمن")
-    await query.edit_message_text(
-        """- تم فتح لوحة التحكم ↓
- – – – – – – 
-⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("⦗ اوامر الادمن ⦘", callback_data="developer"),
-                ],
-                [
-                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="home_start"),
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next_user"),
+                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="developer_commands"),
                 ],
             ]
         ),
