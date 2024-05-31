@@ -82,7 +82,6 @@ async def command_list(query: CallbackQuery):
                 InlineKeyboardButton("⦗ اوامر التشغيل ⦘", callback_data="user_command"),
             ],
             [
-                InlineKeyboardButton("⦗ رجوع ⦘", callback_data="home_start"),
                 InlineKeyboardButton("⦗ التالي ⦘", callback_data="next"),
             ],
         ]
@@ -99,8 +98,7 @@ async def next_(query: CallbackQuery):
                 InlineKeyboardButton("⦗ اوامر المطورين ⦘", callback_data="developer_commands"),
             ],
             [
-                InlineKeyboardButton("⦗ رجوع ⦘", callback_data="home_start"),
-                InlineKeyboardButton("⦗ الرئيسية ⦘", callback_data="home_start"),
+                InlineKeyboardButton("⦗ التالي ⦘", callback_data="next"),
             ],
         ]
     )
@@ -125,7 +123,6 @@ async def developer_commands(query: CallbackQuery):
                 InlineKeyboardButton("⦗ اوامر المالك ⦘", callback_data="owner_commands"),
             ],
             [
-                InlineKeyboardButton("⦗ رجوع ⦘", callback_data="home_start"),
                 InlineKeyboardButton("⦗ الرئيسية ⦘", callback_data="home_start"),
             ],
         ]
