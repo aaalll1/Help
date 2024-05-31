@@ -161,6 +161,3 @@ async def admin_commands_set(_, query: CallbackQuery):
             ]
         ),
     )
-
-# Start the bot
-app.run()
