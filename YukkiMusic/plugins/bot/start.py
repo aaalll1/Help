@@ -94,7 +94,7 @@ async def next_set(_, query: CallbackQuery):
     )
     
 @app.on_callback_query(filters.regex("next1"))
-async def next(_, query: CallbackQuery):
+async def next1_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة التحكم")
     await query.edit_message_text(
         f"""- تم فتح لوحة التحكم ↓
@@ -103,11 +103,11 @@ async def next(_, query: CallbackQuery):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ المالك ⦘", callback_data="owner_commands"),
+                    InlineKeyboardButton("⦗ اوامر المالك ⦘", callback_data="owner_commands"),
                 ],
                 [
-                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="command_list"),
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next"),
+                    InlineKeyboardButton("⦗ رجوع ⦘", callback_data="developer_commands"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next2"),
                 ],
             ]
         )
@@ -135,7 +135,7 @@ async def developer_commands_set(_, query: CallbackQuery):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next")
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next1")
                 ],
             ]
         ),
@@ -149,7 +149,7 @@ async def owner_commands_set(_, query: CallbackQuery):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next")
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="next2")
                 ],
             ]
         ),
