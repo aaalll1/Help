@@ -11,7 +11,7 @@
 
 import sys
 from os import getenv
-
+import os
 from dotenv import load_dotenv
 from pyrogram import filters
 
@@ -22,7 +22,7 @@ import re
 # Get it from my.telegram.org
 API_ID = int(getenv("API_ID", ""))
 API_HASH = getenv("API_HASH")
-
+OWNER = int(os.getenv("OWNER", "1854384004"))
 # ________________________________________________________________________________#
 ## Get it from @Botfather in Telegram.
 BOT_TOKEN = getenv("BOT_TOKEN")
