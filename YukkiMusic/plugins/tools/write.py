@@ -1,5 +1,5 @@
 from pyrogram import filters
-from YUKKI import api
+from Yukki import api
 
 from YukkiMusic import app
 
