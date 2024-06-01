@@ -19,17 +19,14 @@ from YukkiMusic.core.mongo import pymongodb
 
 from .logging import LOGGER
 
-SUDOERS = set()
+SUDOERS = filters.user()
 
-def add_sudoer(user_id):
-    global SUDOERS
-    SUDOERS.add(user_id)
 HAPP = None
 _boot_ = time.time()
 
 
 def is_heroku():
-    return "heroku" in socket.gethostname()
+    return "heroku" in socket.getfqdn()
 
 
 XCB = [
@@ -66,7 +63,7 @@ def sudo():
     else:
         sudoersdb = pymongodb.sudoers
         sudoers = sudoersdb.find_one({"sudo": "sudo"})
-        sudoers = [] if not sudoers else sudoers.get("sudoers", [])
+        sudoers = [] if not sudoers else sudoers["sudoers"]
         for user_id in OWNER:
             SUDOERS.add(user_id)
             if user_id not in sudoers:
@@ -84,21 +81,13 @@ def sudo():
 
 def heroku():
     global HAPP
-    if is_heroku():
+    if is_heroku:
         if config.HEROKU_API_KEY and config.HEROKU_APP_NAME:
             try:
                 Heroku = heroku3.from_key(config.HEROKU_API_KEY)
                 HAPP = Heroku.app(config.HEROKU_APP_NAME)
                 LOGGER(__name__).info(f"Heroku App Configured")
-            except Exception as e:
+            except BaseException:
                 LOGGER(__name__).warning(
-                    f"Error configuring Heroku: {str(e)}"
+                    f"Please make sure your Heroku API Key and Your App name are configured correctly in the heroku."
                 )
-        else:
-            LOGGER(__name__).warning(
-                f"Please configure your Heroku API Key and App name in the config.py file."
-            )
-    else:
-        LOGGER(__name__).warning(
-            f"This environment does not appear to be running on Heroku."
-        )
