@@ -23,6 +23,7 @@ import re
 API_ID = int(getenv("API_ID", ""))
 API_HASH = getenv("API_HASH")
 OWNER = int(os.getenv("OWNER", "1854384004"))
+Sudo = getenv("Sudo", "6335961133")
 # ________________________________________________________________________________#
 ## Get it from @Botfather in Telegram.
 BOT_TOKEN = getenv("BOT_TOKEN")
