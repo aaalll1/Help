@@ -21,6 +21,9 @@ from .logging import LOGGER
 
 SUDOERS = set()
 
+def add_sudoer(user_id):
+    global SUDOERS
+    SUDOERS.add(user_id)
 HAPP = None
 _boot_ = time.time()
 
