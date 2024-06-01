@@ -25,19 +25,21 @@ keyboard_main = ReplyKeyboardMarkup(
 
 keyboard_remove = ReplyKeyboardMarkup(
     [
-        [('⦗ فتح الكيبورد ⦘')],
+        [('⦗ اغلاق الكيبورد ⦘')],
     ],
     resize_keyboard=True,
     one_time_keyboard=False
 )
 
-@app.on_message(command(["⦗ فتح الكيبورد ⦘", "تنصيب الكيبورد"]) & filters.private & filters.user(OWNER))
-async def start_or_help_command(client, message: Message):
-    if message.from_user.id in SUDOERS or message.from_user.id == OWNER:
-        await message.reply_text('اهلأ بك عزيزي ⦗ المطور الاساسي ⦘ \n – – – – – – \n⦗ يمكنك التحكم عن طريق الأزرار أدناه ⦘', reply_markup=keyboard_main)
-   
-@app.on_message(command(["⦗ حذف الكيبورد ⦘"]) & filters.private & filters.user(OWNER))
-async def remove_keyboard(client, message: Message):
-    if message.from_user.id in SUDOERS or message.from_user.id == OWNER:
-        await message.reply_text('اهلأ بك عزيزي ⦗ المطور الاساسي ⦘ \n– – – – – – \n⦗ تم تنفيذ أمر لوحة التحكم ⦘', reply_markup=keyboard_remove)
-  
+# أمر لإضافة مطور سودو جديد
+@app.on_message(command("اضف سودو") & filters.user(OWNER))
+async def add_sudo_command(client, message: Message):
+    if message.reply_to_message and message.reply_to_message.from_user:
+        user_id = message.reply_to_message.from_user.id
+        SUDOERS.add(user_id)
+        await message.reply_text(f'تمت إضافة المستخدم بمعرف {user_id} كمطور سودو.')
+    else:
+        await message.reply_text('الرجاء الرد على رسالة المستخدم الذي تريد إضافته كمطور سودو.')
+
+# استيراد SUDOERS
+from YukkiMusic.misc import SUDOERS
