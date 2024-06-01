@@ -152,35 +152,39 @@ class YouTubeAPI:
             result = []
         return result
 
-    async def track(self, link: str, videoid: Union[bool, str] = None):
-        if videoid:
-            link = self.base + link
-        if "&" in link:
-            link = link.split("&")[0]
-        parsed_url = urllib.parse.urlparse(link)
-        query = urllib.parse.parse_qs(parsed_url.query)
-        vidid = query.get("v", [None])[0]
-        
-        if not vidid:
-            vidid = link.split("/")[-1]
-        
-        results = VideosSearch(vidid, limit=1)
+async def track(self, link: str, videoid: Union[bool, str] = None):
+    if videoid:
+        link = self.base + link
+    if "&" in link:
+        link = link.split("&")[0]
+    parsed_url = urllib.parse.urlparse(link)
+    query = urllib.parse.parse_qs(parsed_url.query)
+    vidid = query.get("v", [None])[0]
 
-        for result in (await results.next())["result"]:
-            title = result["title"]
-            duration_min = result["duration"]
-            vidid = result["id"]
-            yturl = result["link"]
-            thumbnail = result["thumbnails"][0]["url"].split("?")[0]
+    if not vidid:
+        vidid = link.split("/")[-1]
 
-        track_details = {
-            "title": title,
-            "link": yturl,
-            "vidid": vidid,
-            "duration_min": duration_min,
-            "thumb": thumbnail,
-        }
-        return track_details, vidid
+    results = VideosSearch(vidid, limit=1)
+    title = None  # Ensure title is defined before the loop
+
+    for result in (await results.next())["result"]:
+        title = result["title"]
+        duration_min = result["duration"]
+        vidid = result["id"]
+        yturl = result["link"]
+        thumbnail = result["thumbnails"][0]["url"].split("?")[0]
+
+    if not title:  # If title is still None, handle this case (optional)
+        title = "Unknown Title"
+
+    track_details = {
+        "title": title,
+        "link": yturl,
+        "vidid": vidid,
+        "duration_min": duration_min,
+        "thumb": thumbnail,
+    }
+    return track_details, vidid
 
     async def formats(self, link: str, videoid: Union[bool, str] = None):
         if videoid:
