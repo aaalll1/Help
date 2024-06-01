@@ -1,23 +1,13 @@
-#
-# Copyright (C) 2021-present by TeamYukki@Github, < https://github.com/TeamYukki >.
-#
-# This file is part of < https://github.com/TeamYukki/YukkiMusicBot > project,
-# and is released under the "GNU v3.0 License Agreement".
-# Please see < https://github.com/TeamYukki/YukkiMusicBot/blob/master/LICENSE >
-#
-# All rights reserved.
-#
-
+# Import libraries
 import asyncio
 import os
 import re
+import urllib.parse
 from typing import Union
-
 from pyrogram.enums import MessageEntityType
 from pyrogram.types import Message
 from youtubesearchpython.__future__ import VideosSearch
 from yt_dlp import YoutubeDL
-
 import config
 from YukkiMusic.utils.database import is_on_off
 from YukkiMusic.utils.formatters import time_to_seconds
@@ -167,13 +157,22 @@ class YouTubeAPI:
             link = self.base + link
         if "&" in link:
             link = link.split("&")[0]
-        results = VideosSearch(link, limit=1)
+        parsed_url = urllib.parse.urlparse(link)
+        query = urllib.parse.parse_qs(parsed_url.query)
+        vidid = query.get("v", [None])[0]
+        
+        if not vidid:
+            vidid = link.split("/")[-1]
+        
+        results = VideosSearch(vidid, limit=1)
+
         for result in (await results.next())["result"]:
             title = result["title"]
             duration_min = result["duration"]
             vidid = result["id"]
             yturl = result["link"]
             thumbnail = result["thumbnails"][0]["url"].split("?")[0]
+
         track_details = {
             "title": title,
             "link": yturl,
@@ -254,6 +253,8 @@ class YouTubeAPI:
 
         def audio_dl():
             ydl_optssx = {
+                "format": "bestaudio/best
+                ydl_optssx = {
                 "format": "bestaudio/best",
                 "outtmpl": "downloads/%(id)s.%(ext)s",
                 "geo_bypass": True,
