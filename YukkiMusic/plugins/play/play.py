@@ -40,7 +40,6 @@ PLAY_COMMAND = get_command("PLAY_COMMAND")
 
 
 @app.on_message(
-@app.on_message(
     filters.command(
         [
             "play",
