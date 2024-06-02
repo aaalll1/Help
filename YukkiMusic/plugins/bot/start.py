@@ -7,43 +7,13 @@ from config import SUPPORT_GROUP, SUPPORT_CHANNEL, OWNER, START_IMG_URL
 async def add_served_user(user_id: int):
     pass
 
-# متغير لتخزين كلمة البداية الجديدة
-new_start_message = None
-
-# يحدث عند كتابة "تغيير الكلمة الجديدة" للمطور
-@app.on_message(filters.command("تغيير الكلمة الجديدة") & filters.user(OWNER))
-async def change_start_message(_, message: Message):
-    global new_start_message
-    new_start_message = None  # تأكد من إعادة تعيينها
-    await message.reply("أرسل كلمة البداية الجديدة لتحديثها.")
-
-# يحدث عندما يرد المطور بكلمة البداية الجديدة
-@app.on_message(filters.private & filters.user(OWNER))
-async def set_new_start_message(_, message: Message):
-    global new_start_message
-    new_start_message = message.text
-    await message.reply("تم تحديث كلمة البداية بنجاح!")
-
-# تعريف مرشح خاص للتحقق من عدم وجود أمر
-def no_command_filter(_, __, message: Message) -> bool:
-    return not message.text.startswith("/") if message.text else False
-
-# عند كتابة "/start" أو "/help" من قبل أي مستخدم
-@app.on_message(filters.command(["start", "help"]) & filters.private & filters.create(no_command_filter))
+@app.on_message(filters.command(["start", "help"]) & filters.private)
 async def start_(c: Client, message: Message):
-    global new_start_message
     user_id = message.from_user.id
     await add_served_user(user_id)
-    
-    # إذا كان هناك كلمة بداية جديدة، استخدمها، وإلا استخدم النص الأصلي
-    if new_start_message:
-        start_text = new_start_message
-    else:
-        start_text = f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯"""
-    
     await message.reply_photo(
         photo=START_IMG_URL,
-        caption=start_text,
+        caption=f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
@@ -59,15 +29,14 @@ async def start_(c: Client, message: Message):
             ]
         )
     )
-
-# تحديث رسالة البداية عند الضغط على "قائمة التحكم"
+    
+    
+    
 @app.on_callback_query(filters.regex("home_start"))
 async def start_set(_, query: CallbackQuery):
     await query.answer("قائمة التحكم")
-    global new_start_message
-    start_text = new_start_message if new_start_message else f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯"""
     await query.edit_message_text(
-        start_text,
+        f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
@@ -83,7 +52,8 @@ async def start_set(_, query: CallbackQuery):
             ]
         )
     )
-
+    
+    
 @app.on_callback_query(filters.regex("command_list"))
 async def commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة التشغيل")
