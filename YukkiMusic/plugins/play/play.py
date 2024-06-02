@@ -13,7 +13,7 @@ import string
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardMarkup, InputMediaPhoto, Message
 from pytgcalls.exceptions import NoActiveGroupCall
-from strings.filters import command
+
 import config
 from config import BANNED_USERS, lyrical
 from strings import get_command
@@ -76,10 +76,9 @@ PLAY_COMMAND = get_command("PLAY_COMMAND")
 @app.on_message(
     command(
         [
-            "شغل",
             "تشغيل",
+            "شغل",
             "cplay",
-            "cute",
             "cvplay",
             "playforce",
             "vplayforce",
@@ -159,6 +158,7 @@ async def play_commnd(
                 ex_type = type(e).__name__
                 err = e if ex_type == "AssistantErr" else _["general_2"].format(ex_type)
                 return await mystic.edit_text(err)
+            return await mystic.delete()
         return
     elif url:
         if await YouTube.exists(url):
@@ -390,7 +390,7 @@ async def play_commnd(
         except Exception as e:
             ex_type = type(e).__name__
             err = e if ex_type == "AssistantErr" else _["general_3"].format(ex_type)
-           return await mystic.edit_text(err)
+            return await mystic.edit_text(err)
         await mystic.delete()
         return await play_logs(message, streamtype=streamtype)
     else:
@@ -425,6 +425,7 @@ async def play_commnd(
                     "c" if channel else "g",
                     "f" if fplay else "d",
                 )
+                await mystic.delete()
                 await message.reply_photo(
                     photo=details["thumb"],
                     caption=_["play_11"].format(
@@ -442,6 +443,7 @@ async def play_commnd(
                     "c" if channel else "g",
                     "f" if fplay else "d",
                 )
+                await mystic.delete()
                 await message.reply_photo(
                     photo=img,
                     caption=cap,
