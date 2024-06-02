@@ -26,7 +26,7 @@ OWNER = int(os.getenv("OWNER", "1854384004"))
 # ________________________________________________________________________________#
 ## Get it from @Botfather in Telegram.
 BOT_TOKEN = getenv("BOT_TOKEN")
-Muntazer = int(getenv("Muntazer", "vvyvv6"))
+Muntazer = int(os.getenv("Muntazer", "vvyvv6")
 # ________________________________________________________________________________#
 
 ASSISTANT_PREFIX = getenv("ASSISTANT_PREFIX", ".")
