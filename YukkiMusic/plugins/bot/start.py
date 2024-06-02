@@ -2,18 +2,42 @@ from YukkiMusic import app
 from pyrogram import Client, filters
 from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 from config import SUPPORT_GROUP, SUPPORT_CHANNEL, OWNER, START_IMG_URL
-
+from strings.filters import command
 # وهمي
 async def add_served_user(user_id: int):
     pass
 
+
+
+new_start_message = None
+
+@app.on_message(command("⦗ تغيير كليشة ستارت ⦘") & filters.user(OWNER))
+async def change_start_message(_, message: Message):
+    global new_start_message
+    new_start_message = None 
+    await message.reply("مرحبا عزيزي المطور الأساسي \nارسل الآن كليشة ستارت الجديدة .")
+
+@app.on_message(filters.private & filters.user(OWNER) & ~filters.command)
+async def set_new_start_message(_, message: Message):
+    global new_start_message
+    if new_start_message is None:
+        new_start_message = message.text
+        await message.reply("- تم بنجاح ارسل /start ")
+   
 @app.on_message(filters.command(["start", "help"]) & filters.private)
 async def start_(c: Client, message: Message):
+    global new_start_message
     user_id = message.from_user.id
     await add_served_user(user_id)
+    
+    if new_start_message:
+        start_text = new_start_message
+    else:
+        start_text = f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯"""
+    
     await message.reply_photo(
         photo=START_IMG_URL,
-        caption=f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯""",
+        caption=start_text,
         reply_markup=InlineKeyboardMarkup(
             [
                 [
@@ -29,14 +53,16 @@ async def start_(c: Client, message: Message):
             ]
         )
     )
-    
+
     
     
 @app.on_callback_query(filters.regex("home_start"))
 async def start_set(_, query: CallbackQuery):
     await query.answer("قائمة التحكم")
+    global new_start_message
+    start_text = new_start_message if new_start_message else f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯"""
     await query.edit_message_text(
-        f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯""",
+        start_text,
         reply_markup=InlineKeyboardMarkup(
             [
                 [
@@ -52,6 +78,7 @@ async def start_set(_, query: CallbackQuery):
             ]
         )
     )
+
     
     
 @app.on_callback_query(filters.regex("command_list"))
