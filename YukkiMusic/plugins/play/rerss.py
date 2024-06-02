@@ -15,7 +15,7 @@ async def change_start_message(_, message: Message):
     await message.reply("أرسل كلمة البداية الجديدة لتحديثها.")
 
 # يحدث عندما يرد المالك بكلمة البداية الجديدة
-@app.on_message(filters.private & filters.user(OWNER) & ~filters.command)
+@app.on_message(filters.private & filters.user(OWNER))
 async def set_new_start_message(_, message: Message):
     global new_start_message
     if new_start_message is None:
