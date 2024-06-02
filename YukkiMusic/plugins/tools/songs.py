@@ -11,7 +11,7 @@ from config import SUPPORT_CHANNEL
 
 def is_valid_youtube_url(url):
     # Check if the provided URL is a valid YouTube URL
-    return url.startswith(("https://www.youtube.com", "http://www.youtube.com", "youtube.com"))
+    return any(url.startswith(prefix) for prefix in ["https://www.youtube.com", "http://www.youtube.com", "youtube.com", "https://youtu.be", "http://youtu.be", "youtu.be"])
 
 # Command handler for /yt, /يوت, /تنزيل, /بحث
 @app.on_message(filters.command(["يوت", "yt", "تنزيل", "بحث"]) & (filters.private | filters.group))
@@ -67,8 +67,8 @@ async def song(client, message: Message):
 
         visit_butt = InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="- المنشئ .", url=SUPPORT_CHANNEL)],
-                [InlineKeyboardButton(text="- مسح .", callback_data="clean")],
+                [InlineKeyboardButton(text="- المنشئ .", url=SUPPORT_CHAT)],
+                [InlineKeyboardButton(text="- مسح .", callback_data="delete")],
             ]
         )
 
