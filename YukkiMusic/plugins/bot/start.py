@@ -3,9 +3,6 @@ from pyrogram import Client, filters
 from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 from config import SUPPORT_GROUP, SUPPORT_CHANNEL, OWNER, START_IMG_URL
 
-# Variable to store the current start message
-current_start_message = None
-
 # وهمي
 async def add_served_user(user_id: int):
     pass
@@ -14,10 +11,7 @@ async def add_served_user(user_id: int):
 async def start_(c: Client, message: Message):
     user_id = message.from_user.id
     await add_served_user(user_id)
-    global current_start_message
-    if current_start_message:
-        await current_start_message.delete()  # Delete the old start message
-    current_start_message = await message.reply_photo(
+    await message.reply_photo(
         photo=START_IMG_URL,
         caption=f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯""",
         reply_markup=InlineKeyboardMarkup(
@@ -35,23 +29,9 @@ async def start_(c: Client, message: Message):
             ]
         )
     )
-
-# Command for the owner to update the start message
-@app.on_message(filters.command("update_start") & filters.private & filters.user(int(OWNER)))
-async def update_start_command(c: Client, message: Message):
-    await message.reply("قم بإرسال رسالة الستارت الجديدة الآن.")
-
-# Handler for the new start message sent by the owner
-@app.on_message(filters.private & filters.user(int(OWNER)) & ~filters.command)
-async def update_start_message(c: Client, message: Message):
-    global current_start_message
-    if current_start_message:
-        await current_start_message.delete()  # Delete the old start message
-    current_start_message = await message.reply(
-        "تم حفظ رسالة الستارت الجديدة."
-    )
-
-# Callback query handlers
+    
+    
+    
 @app.on_callback_query(filters.regex("home_start"))
 async def start_set(_, query: CallbackQuery):
     await query.answer("قائمة التحكم")
@@ -72,8 +52,8 @@ async def start_set(_, query: CallbackQuery):
             ]
         )
     )
-
-# Callback query handlers for navigation
+    
+    
 @app.on_callback_query(filters.regex("command_list"))
 async def commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة التشغيل")
@@ -93,7 +73,8 @@ async def commands_set(_, query: CallbackQuery):
             ]
         )
     )
-
+    
+    
 @app.on_callback_query(filters.regex("next"))
 async def commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة الأدمن")
@@ -113,7 +94,9 @@ async def commands_set(_, query: CallbackQuery):
             ]
         )
     )
-
+    
+    
+    
 @app.on_callback_query(filters.regex("ghaith"))
 async def commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة المطور")
@@ -133,6 +116,7 @@ async def commands_set(_, query: CallbackQuery):
             ]
         )
     )
+    
 
 @app.on_callback_query(filters.regex("user_command"))
 async def user_commands_set(_, query: CallbackQuery):
@@ -151,7 +135,7 @@ async def user_commands_set(_, query: CallbackQuery):
             ]
         ),
     )
-
+    
 @app.on_callback_query(filters.regex("developer_commands"))
 async def developer_commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح اوامر الأدمن")
@@ -170,7 +154,7 @@ async def developer_commands_set(_, query: CallbackQuery):
             ]
         ),
     )
-
+    
 @app.on_callback_query(filters.regex("owner_commands"))
 async def owner_commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح اوامر المطور")
