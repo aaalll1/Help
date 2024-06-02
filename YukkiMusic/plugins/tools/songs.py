@@ -7,16 +7,16 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from YukkiMusic import app
 from strings.filters import command
 
-# دالة لفحص ما إذا كانت الرسالة تأتي من الخاص أو من قناة أو مجموعة
-private chat, group, or channel
-def is_private_or_group_or_channel(_, __, message: Message):
+# دالة لفحص ما إذا كانت الرسالة تأتي من الخاص أو من قناة أو 
+# Function to check if the message is from private chat, group, or channel
+def is_private_or_group_or_channel(message: Message):
     return message.chat.type in {"private", "group", "supergroup", "channel"}
 
 # Function to check if the URL is a valid YouTube URL
 def is_valid_youtube_url(url):
     return url.startswith(("https://www.youtube.com", "http://www.youtube.com", "youtube.com"))
 
-@app.on_message(command(["يوت", "yt", "تنزيل", "بحث"]) & filters.create(is_private_or_group_or_channel))
+@app.on_message(filters.command(["يوت", "yt", "تنزيل", "بحث"]) & filters.create(is_private_or_group_or_channel))
 async def song(_, message: Message):
     try:
         await message.delete()
