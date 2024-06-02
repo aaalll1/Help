@@ -7,7 +7,7 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from youtube_search import YoutubeSearch
 from config import SUPPORT_CHANNEL
-
+from strings.filters import command
 from urllib.parse import urlparse
 
 def is_valid_youtube_url(url):
@@ -74,7 +74,7 @@ async def song(_, message: Message):
 
         visit_butt = InlineKeyboardMarkup(
     [
-        [InlineKeyboardButton(text="- المنشئ .", url=SUPPORT_CHAT)],
+        [InlineKeyboardButton(text="- المنشئ .", url=SUPPORT_CHANNEL)],
     ]
 )
         # Reply to the user who initiated the search
