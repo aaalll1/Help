@@ -7,8 +7,9 @@ from config import SUPPORT_GROUP, SUPPORT_CHANNEL, OWNER, START_IMG_URL
 async def add_served_user(user_id: int):
     pass
 
+# Start command handler
 @app.on_message(filters.command(["start", "help"]) & filters.private)
-async def start_(c: Client, message: Message):
+async def start_command_handler(c: Client, message: Message):
     user_id = message.from_user.id
     await add_served_user(user_id)
     await message.reply_photo(
@@ -29,31 +30,48 @@ async def start_(c: Client, message: Message):
             ]
         )
     )
-    
-    
-    
-@app.on_callback_query(filters.regex("home_start"))
-async def start_set(_, query: CallbackQuery):
-    await query.answer("قائمة التحكم")
-    await query.edit_message_text(
-        f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯""",
-        reply_markup=InlineKeyboardMarkup(
-            [
+
+# Change start message command handler
+@app.on_message(filters.command("change_start_message") & filters.private)
+async def change_start_message_command_handler(c: Client, message: Message):
+    await message.reply_text("قم بارسال الكليشة الجديدة ليتم تعيينها كرسالة البداية.")
+
+# Handler for receiving the new start message
+@app.on_message(filters.private & ~filters.callback_query)
+async def receive_new_start_message(c: Client, message: Message):
+    if message.text:
+        # Save the new start message to use later
+        global START_MESSAGE
+        START_MESSAGE = message.text
+        await message.reply_text("تم تغيير الكليشة بنجاح.")
+
+# Start command handler to display the new start message
+@app.on_message(filters.command("start") & filters.private)
+async def start_command_handler_v2(c: Client, message: Message):
+    if "START_MESSAGE" in globals():
+        await message.reply_text(START_MESSAGE)
+    else:
+        user_id = message.from_user.id
+        await add_served_user(user_id)
+        await message.reply_photo(
+            photo=START_IMG_URL,
+            caption=f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯""",
+            reply_markup=InlineKeyboardMarkup(
                 [
-                    InlineKeyboardButton(text="⦗ اوامر البوت ⦘", callback_data="command_list")
-                ],
-                [
-                    InlineKeyboardButton(text="⦗ قناة السورس ⦘", url=SUPPORT_CHANNEL),
-                    InlineKeyboardButton(text="⦗ قناة التحديثات ⦘", url=SUPPORT_GROUP),
-                ],
-                [
-                    InlineKeyboardButton(text="⦗ مطور البوت ⦘", user_id=int(OWNER)),
-                ],
-            ]
+                    [
+                        InlineKeyboardButton(text="⦗ اوامر البوت ⦘", callback_data="command_list")
+                    ],
+                    [
+                        InlineKeyboardButton(text="⦗ قناة السورس ⦘", url=SUPPORT_CHANNEL),
+                        InlineKeyboardButton(text="⦗ قناة التحديثات ⦘", url=SUPPORT_GROUP),
+                    ],
+                    [
+                        InlineKeyboardButton(text="⦗ مطور البوت ⦘", user_id=int(OWNER)),
+                    ],
+                ]
+            )
         )
-    )
-    
-    
+
 @app.on_callback_query(filters.regex("command_list"))
 async def commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة التشغيل")
