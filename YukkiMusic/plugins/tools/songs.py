@@ -10,18 +10,17 @@ from YukkiMusic.utils.stream.stream import stream
 from YukkiMusic.utils import time_to_seconds
 
 # Function to check if the URL is a valid YouTube URL
-def is_valid_youtube_url(url):
-    return url.startswith(("https://www.youtube.com", "http://www.youtube.com", "youtube.com"))
+import os
+import re
+import requests
+import yt_dlp
+from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from YukkiMusic import app
+from YukkiMusic.utils import time_to_seconds
 
 # Command handler to search and send audio
 @app.on_message(filters.command(["يوت", "yt", "تنزيل", "بحث"]))
-async def song_group(client, message: Message):
-    await song(client, message)
-
-@app.on_message(filters.command(["يوت", "yt", "تنزيل", "بحث"]) & filters.private)
-async def song_private(client, message: Message):
-    await song(client, message)
-
 async def song(client, message: Message):
     try:
         await message.delete()
@@ -30,23 +29,19 @@ async def song(client, message: Message):
     m = await message.reply_text("- يتم البحث الآن .", quote=True)
 
     query = " ".join(str(i) for i in message.command[1:])
-    ydl_opts = {"format": "bestaudio[ext=m4a]"}
+    ydl_opts = {
+        "format": "bestaudio[ext=m4a]",
+        "default_search": "auto",  # This tells yt-dlp to handle the query as a search term
+    }
 
     try:
-        if is_valid_youtube_url(query):
-            # If it's a valid YouTube URL, use it directly
-            link = query
-        else:
-            # Otherwise, perform a search using the provided keyword
-            with yt_dlp.YoutubeDL() as ydl:
-                info_dict = ydl.extract_info(query, download=False)
-                if "_type" in info_dict and info_dict["_type"] == "playlist":
-                    link = info_dict["entries"][0]["url"]
-                else:
-                    link = info_dict["url"]
-
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(link, download=False)
+            info_dict = ydl.extract_info(query, download=False)
+            if "_type" in info_dict and info_dict["_type"] == "playlist":
+                link = info_dict["entries"][0]["url"]
+            else:
+                link = info_dict["url"]
+
             title = info_dict.get('title', 'Unknown')
             thumbnail = info_dict.get('thumbnails', [])[0]['url']
             thumb_name = f"{title}.jpg"
