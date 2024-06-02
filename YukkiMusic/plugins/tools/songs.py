@@ -8,6 +8,7 @@ from pyrogram.raw.functions.messages import GetWebPagePreview
 from youtube_search import YoutubeSearch
 from YukkiMusic import app
 
+
 def is_valid_youtube_url(url):
     # Check if the provided URL is a valid YouTube URL
     return re.match(r'^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$', url)
