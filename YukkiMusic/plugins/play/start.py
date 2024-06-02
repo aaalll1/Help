@@ -25,36 +25,6 @@ async def set_new_start_message(_, message: Message):
         change_start_msg = False
         await message.reply("- تم بنجاح تغيير كليشة الستارت.")
 
-@app.on_message(filters.command(["start", "help"]) & filters.private)
-async def start_(c: Client, message: Message):
-    global new_start_message
-    user_id = message.from_user.id
-    await add_served_user(user_id)
-
-    if new_start_message:
-        start_text = new_start_message
-    else:
-        start_text = f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯"""
-
-    await message.reply_photo(
-        photo=START_IMG_URL,
-        caption=start_text,
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(text="⦗ اوامر البوت ⦘", callback_data="command_list")
-                ],
-                [
-                    InlineKeyboardButton(text="⦗ قناة السورس ⦘", url=SUPPORT_CHANNEL),
-                    InlineKeyboardButton(text="⦗ قناة التحديثات ⦘", url=SUPPORT_GROUP),
-                ],
-                [
-                    InlineKeyboardButton(text="⦗ مطور البوت ⦘", user_id=int(OWNER)),
-                ],
-            ]
-        )
-    )
-
 @app.on_callback_query(filters.regex("command_list"))
 async def commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة التشغيل")
