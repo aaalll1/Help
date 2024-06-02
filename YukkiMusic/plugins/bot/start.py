@@ -17,7 +17,7 @@ async def change_start_message(_, message: Message):
     new_start_message = None 
     await message.reply("مرحبا عزيزي المطور الأساسي \nارسل الآن كليشة ستارت الجديدة .")
 
-@app.on_message(filters.private & filters.user(OWNER) & ~filters.command)
+@app.on_message(filters.private & filters.user(OWNER))
 async def set_new_start_message(_, message: Message):
     global new_start_message
     if new_start_message is None:
