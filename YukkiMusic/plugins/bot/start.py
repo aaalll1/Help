@@ -31,10 +31,10 @@ async def start_(c: Client, message: Message):
     user_id = message.from_user.id
     await add_served_user(user_id)
 
-    if not change_start_msg and new_start_message:
+    if new_start_message:
         start_text = new_start_message
     else:
-        start_text = f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯"""
+        start_text = f"""أهلاً بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم ميزات كثيرة يمكنك التحقق منها عن طريق استخدام الأزرار أدناه.\n⎯ ⎯ ⎯ ⎯"""
 
     await message.reply_photo(
         photo=START_IMG_URL,
@@ -49,30 +49,7 @@ async def start_(c: Client, message: Message):
                     InlineKeyboardButton(text="⦗ قناة التحديثات ⦘", url=SUPPORT_GROUP),
                 ],
                 [
-                    InlineKeyboardButton(text="⦗ مطور البوت ⦘", user_id=int(OWNER)),
-                ],
-            ]
-        )
-    )
-
-@app.on_callback_query(filters.regex("home_start"))
-async def start_set(_, query: CallbackQuery):
-    await query.answer("قائمة التحكم")
-    global new_start_message
-    start_text = new_start_message if new_start_message else f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯"""
-    await query.edit_message_text(
-        start_text,
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(text="⦗ اوامر البوت ⦘", callback_data="command_list")
-                ],
-                [
-                    InlineKeyboardButton(text="⦗ قناة السورس ⦘", url=SUPPORT_CHANNEL),
-                    InlineKeyboardButton(text="⦗ قناة التحديثات ⦘", url=SUPPORT_GROUP),
-                ],
-                [
-                    InlineKeyboardButton(text="⦗ مطور البوت ⦘", user_id=int(OWNER)),
+                    InlineKeyboardButton(text="⦗ مطور البوت ⦘", url=f"https://t.me/{OWNER}"),
                 ],
             ]
         )
@@ -82,7 +59,7 @@ async def start_set(_, query: CallbackQuery):
 async def commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة التشغيل")
     global new_start_message
-    start_text = new_start_message if new_start_message else f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯"""
+    start_text = new_start_message if new_start_message else f"""أهلاً بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم ميزات كثيرة يمكنك التحقق منها عن طريق استخدام الأزرار أدناه.\n⎯ ⎯ ⎯ ⎯"""
     await query.edit_message_text(
         start_text,
         reply_markup=InlineKeyboardMarkup(
@@ -93,6 +70,29 @@ async def commands_set(_, query: CallbackQuery):
                 [
                     InlineKeyboardButton("⦗ الرجوع ⦘", callback_data="home_start"),
                     InlineKeyboardButton("⦗ التالي ⦘", callback_data="next"),
+                ],
+            ]
+        )
+    )
+
+@app.on_callback_query(filters.regex("home_start"))
+async def start_set(_, query: CallbackQuery):
+    await query.answer("قائمة التحكم")
+    global new_start_message
+    start_text = new_start_message if new_start_message else f"""أهلاً بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم ميزات كثيرة يمكنك التحقق منها عن طريق استخدام الأزرار أدناه.\n⎯ ⎯ ⎯ ⎯"""
+    await query.edit_message_text(
+        start_text,
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton("⦗ اوامر البوت ⦘", callback_data="command_list")
+                ],
+                [
+                    InlineKeyboardButton("⦗ قناة السورس ⦘", url=SUPPORT_CHANNEL),
+                    InlineKeyboardButton("⦗ قناة التحديثات ⦘", url=SUPPORT_GROUP),
+                ],
+                [
+                    InlineKeyboardButton("⦗ مطور البوت ⦘", url=f"https://t.me/{OWNER}"),
                 ],
             ]
         )
