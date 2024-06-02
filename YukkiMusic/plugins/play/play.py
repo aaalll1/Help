@@ -124,7 +124,7 @@ async def play_commnd(
         else None
     )
     if audio_telegram:
-        if audio_telegram.file_size > 30004857:
+        if audio_telegram.file_size > 30004857600:
             return await mystic.edit_text(_["play_5"])
         duration_min = seconds_to_min(audio_telegram.duration)
         if (audio_telegram.duration) > config.DURATION_LIMIT:
