@@ -8,10 +8,11 @@ from YukkiMusic import app
 from strings.filters import command
 
 # دالة لفحص ما إذا كانت الرسالة تأتي من الخاص أو من قناة أو مجموعة
-def is_private_or_group_or_channel(message: Message):
+private chat, group, or channel
+def is_private_or_group_or_channel(_, __, message: Message):
     return message.chat.type in {"private", "group", "supergroup", "channel"}
 
-# دالة لفحص ما إذا كانت الرابط صالحة ليوتيوب
+# Function to check if the URL is a valid YouTube URL
 def is_valid_youtube_url(url):
     return url.startswith(("https://www.youtube.com", "http://www.youtube.com", "youtube.com"))
 
