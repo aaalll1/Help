@@ -50,7 +50,7 @@ async def song(_, message: Message):
         title = info_dict.get('title', 'Unknown')
         duration = info_dict.get('duration')
 
-        rep = f"• by : {message.from_user.first_name}"
+        rep = f"**- الأسم :** [{title[:23]}]({link})\n**- الوقت :** `{duration}`\n**- بواسطة  :** {message.from_user.first_name}"
 
         secmul, dur, dur_arr = 1, 0, str(duration).split(":")
         for i in range(len(dur_arr) - 1, -1, -1):
@@ -64,11 +64,9 @@ async def song(_, message: Message):
         )
 
         # Reply to the user who initiated the search
-        await message.reply_audio(
-            audio=audio_file,
-            caption=rep,
-            title=title,
-            duration=dur,
+        await app.send_message(
+            chat_id=message.chat.id,
+            text=rep,
             reply_markup=share_button,
         )
 
@@ -122,8 +120,9 @@ async def video_search(client, message):
         return await msg.edit(f"🚫 **error:** Thumb file not found!")
     
     await msg.edit("- تم الرفع انتضر قليلاً .")
-    await message.reply_video(
-        file_name,
+    await app.send_video(
+        chat_id=message.chat.id,
+        video=file_name,
         duration=int(ytdl_data["duration"]),
         thumb=thumb_path,
         caption=ytdl_data["title"],
