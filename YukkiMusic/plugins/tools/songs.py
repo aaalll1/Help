@@ -8,6 +8,14 @@ from pyrogram.raw.functions.messages import GetWebPagePreview
 from youtube_search import YoutubeSearch
 from YukkiMusic import app
 
+import os
+import re
+import requests
+import yt_dlp
+from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from pyrogram.raw.functions.messages import GetWebPagePreview
+from youtube_search import YoutubeSearch
 
 def is_valid_youtube_url(url):
     # Check if the provided URL is a valid YouTube URL
@@ -30,7 +38,6 @@ async def song(_, message: Message):
             link = query
         else:
             # Otherwise, perform a search using the provided keyword
-            # Using pyrogram to get results for channels, groups and bot's private chats.
             preview = await app.send(GetWebPagePreview(query))
             if not preview:
                 raise Exception("- لايوجد بحث .")
@@ -60,7 +67,7 @@ async def song(_, message: Message):
 
         share_button = InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="مشاركة الصوت", switch_inline_query=audio_file)],
+                [InlineKeyboardButton(text="مشاركة الصوت", switch_inline_query=f"{audio_file}")],
             ]
         )
 
@@ -101,7 +108,7 @@ async def video_search(client, message):
         link = f"https://youtube.com{results[0]['url_suffix']}"
         title = results[0]["title"][:40]
         thumbnail = results[0]["thumbnails"][0]
-        # إزالة الأحرف غير الصحيحة من اسم الملف
+        # Remove invalid characters from file name
         title = re.sub(r'[\\/*?:"<>|]', '', title)
         thumb_name = f"thumb{title}.jpg"
         thumb = requests.get(thumbnail, allow_redirects=True)
