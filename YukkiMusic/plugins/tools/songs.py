@@ -9,26 +9,19 @@ from pyrogram.errors import UserNotParticipant, ChatAdminRequired, ChatWriteForb
 from YukkiMusic.utils.stream.stream import stream
 from YukkiMusic.utils import time_to_seconds
 
-# Function to check if the message is from private chat, group, or channel
-def is_private_or_group_or_channel(_, __, message: Message):
-    return message.chat.type in {"private", "group", "supergroup", "channel"}
-
 # Function to check if the URL is a valid YouTube URL
 def is_valid_youtube_url(url):
     return url.startswith(("https://www.youtube.com", "http://www.youtube.com", "youtube.com"))
 
-# Function to send audio to voice call
-async def send_audio(chat_id, audio_file, caption, thumbnail, title, duration, share_button):
-    try:
-        await app.send_chat_action(chat_id, "upload_audio")
-        with open(audio_file, "rb") as f:
-            await app.send_audio(chat_id, audio=f, caption=caption, duration=duration,
-                                 thumb=thumbnail, title=title, reply_markup=share_button)
-    except Exception as e:
-        print(f"Error in sending audio: {e}")
-
 # Command handler to search and send audio
-@app.on_message(filters.command(["يوت", "yt", "تنزيل", "بحث"]) & filters.create(is_private_or_group_or_channel))
+@app.on_message(filters.command(["يوت", "yt", "تنزيل", "بحث"]))
+async def song_group(client, message: Message):
+    await song(client, message)
+
+@app.on_message(filters.command(["يوت", "yt", "تنزيل", "بحث"]) & filters.private)
+async def song_private(client, message: Message):
+    await song(client, message)
+
 async def song(client, message: Message):
     try:
         await message.delete()
@@ -107,6 +100,12 @@ async def song(client, message: Message):
         error_message = f"- فشل في حذف الملفات المؤقتة. \n\n**السبب :** `{ex}`"
         await m.edit_text(error_message)
 
-# Run the app
-if __name__ == "__main__":
-    app.run()
+# Function to send audio to voice call
+async def send_audio(chat_id, audio_file, caption, thumbnail, title, duration, share_button):
+    try:
+        await app.send_chat_action(chat_id, "upload_audio")
+        with open(audio_file, "rb") as f:
+            await app.send_audio(chat_id, audio=f, caption=caption, duration=duration,
+                                 thumb=thumbnail, title=title, reply_markup=share_button)
+    except Exception as e:
+        print(f"Error in sending audio: {e}")
