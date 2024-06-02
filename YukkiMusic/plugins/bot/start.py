@@ -83,7 +83,7 @@ async def start_set(_, query: CallbackQuery):
             ]
         )
     )
-    
+
 @app.on_callback_query(filters.regex("command_list"))
 async def commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة التشغيل")
