@@ -24,8 +24,12 @@ async def set_new_start_message(_, message: Message):
     new_start_message = message.text
     await message.reply("تم تحديث كلمة البداية بنجاح!")
 
+# تعريف مرشح خاص للتحقق من عدم وجود أمر
+def no_command_filter(_, __, message: Message) -> bool:
+    return not message.text.startswith("/") if message.text else False
+
 # عند كتابة "/start" أو "/help" من قبل أي مستخدم
-@app.on_message(filters.command(["start", "help"]) & filters.private)
+@app.on_message(filters.command(["start", "help"]) & filters.private & filters.create(no_command_filter))
 async def start_(c: Client, message: Message):
     global new_start_message
     user_id = message.from_user.id
@@ -79,7 +83,6 @@ async def start_set(_, query: CallbackQuery):
             ]
         )
     )
-    
     
 @app.on_callback_query(filters.regex("command_list"))
 async def commands_set(_, query: CallbackQuery):
