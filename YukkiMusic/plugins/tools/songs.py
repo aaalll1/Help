@@ -8,6 +8,12 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from youtube_search import YoutubeSearch
 from config import SUPPORT_CHANNEL
 
+def extract_video_id(url):
+    # Extract video ID from various YouTube URL formats
+    # https://stackoverflow.com/a/7936523
+    query = url.split("?")[-1]
+    return re.search("(?<=v=|\/videos\/|embed\/|youtu.be\/|\/v\/|\/e\/|watch\?v=|youtube.com\/watch\?v=|youtu.be\/)[^#\&\?]*", query).group(0)
+
 def is_valid_youtube_url(url):
     # Check if the provided URL is a valid YouTube URL
     return any(url.startswith(prefix) for prefix in ["https://www.youtube.com", "http://www.youtube.com", "youtube.com", "https://youtu.be", "http://youtu.be", "youtu.be"])
@@ -33,9 +39,10 @@ async def song(client, message: Message):
     try:
         if is_valid_youtube_url(query):
             # If it's a valid YouTube URL, use it directly
-            link = query
+            video_id = extract_video_id(query)
+            link = f"https://youtube.com/watch?v={video_id}"
         else:
-            # Otherwise, perform a search using the provided keyword
+            # Perform a search using the provided keyword
             results = YoutubeSearch(query, max_results=5).to_dict()
             if not results:
                 raise Exception("- لايوجد بحث .")
@@ -111,67 +118,3 @@ async def song(client, message: Message):
     except Exception as ex:
         error_message = f"- فشل في حذف الملفات المؤقتة. \n\n**السبب :** `{ex}`"
         await m.edit_text(error_message)
-
-# Command handler for /video, /تحميل
-@app.on_message(filters.command(["تحميل", "video"]) & (filters.private))
-async def video_search(client, message):
-    ydl_opts = {
-        "format": "best",
-        "keepvideo": True,
-        "prefer_ffmpeg": True,
-        "geo_bypass": True,
-        "outtmpl": "%(title)s.%(ext)s",
-        "quiet": True,
-    }
-    query = " ".join(message.command[1:])
-    try:
-        results = YoutubeSearch(query, max_results=1).to_dict()
-        link = f"https://youtube.com{results[0]['url_suffix']}"
-        title = results[0]["title"][:40]
-        thumbnail = results[0]["thumbnails"][0]
-        # Remove invalid characters from the file name
-        title = re.sub(r'[\\/*?:"<>|]', '', title)
-        thumb_name = f"thumb{title}.jpg"
-        thumb = requests.get(thumbnail, allow_redirects=True)
-        with open(thumb_name, "wb") as file:
-            file.write(thumb.content)
-        results[0]["duration"]
-        results[0]["url_suffix"]
-        results[0]["views"]
-        message.from_user.mention
-    except Exception as e:
-        print(e)
-    try:
-        msg = await message.reply("- يتم البحث الان .")
-        with yt_dlp.YoutubeDL(ydl_opts) as ytdl:
-            ytdl_data = ytdl.extract_info(link, download=True)
-            file_name = ytdl.prepare_filename(ytdl_data)
-    except Exception as e:
-        return await msg.edit(f"🚫 **error:** {e}")
-    thumb_path = f"thumb{title}.jpg"
-    if not os.path.exists(thumb_path):
-        return await msg.edit(f"🚫 **error:** Thumb file not found!")
-    
-    await msg.edit("- تم الرفع انتضر قليلاً .")
-    if message.chat.type == "private":
-        await message.reply_video(
-            file_name,
-            duration=int(ytdl_data["duration"]),
-            thumb=thumb_path,
-            caption=ytdl_data["title"],
-        )
-    else:
-        await m.reply_video(
-            file_name,
-            duration=int(ytdl_data["duration"]),
-            thumb=thumb_path,
-            caption=ytdl_data["title"],
-            quote=True,
-        )
-    try:
-        os.remove(file_name)
-        os.remove(thumb_path)
-        await msg.delete()
-    except Exception as ex:
-        print(f"- فشل : {ex}")
-
