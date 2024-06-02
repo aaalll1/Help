@@ -2,57 +2,39 @@ import os
 import re
 import requests
 import yt_dlp
-from pyrogram import filters
+from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from YukkiMusic import app
-import random
-import string
-
-from pyrogram import filters
-from pyrogram.types import InlineKeyboardMarkup, InputMediaPhoto, Message
-from pytgcalls.exceptions import NoActiveGroupCall
-from strings.filters import command
-import config
-from config import BANNED_USERS, lyrical
-from strings import get_command
-from YukkiMusic import Apple, Resso, SoundCloud, Spotify, Telegram, YouTube, app
-from YukkiMusic.core.call import Yukki
-from YukkiMusic.utils import seconds_to_min, time_to_seconds
-from YukkiMusic.utils.channelplay import get_channeplayCB
-from YukkiMusic.utils.database import is_video_allowed
-from YukkiMusic.utils.decorators.language import languageCB
-from YukkiMusic.utils.decorators.play import PlayWrapper
-from YukkiMusic.utils.formatters import formats
-from YukkiMusic.utils.inline.play import (
-    livestream_markup,
-    playlist_markup,
-    slider_markup,
-    track_markup,
-)
-from YukkiMusic.utils.inline.playlist import botplaylist_markup
-from YukkiMusic.utils.logger import play_logs
-from YukkiMusic.utils.stream.stream import stream
-from config import SUPPORT_CHANNEL 
-from config import Muntazer
 from pyrogram.errors import UserNotParticipant, ChatAdminRequired, ChatWriteForbidden
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from YukkiMusic.utils.stream.stream import stream
+from YukkiMusic.utils import time_to_seconds
 
-# دالة لفحص ما إذا كانت الرسالة تأتي من الخاص أو من قناة أو 
 # Function to check if the message is from private chat, group, or channel
-def is_private_or_group_or_channel(message: Message):
+def is_private_or_group_or_channel(_, __, message: Message):
     return message.chat.type in {"private", "group", "supergroup", "channel"}
 
 # Function to check if the URL is a valid YouTube URL
 def is_valid_youtube_url(url):
     return url.startswith(("https://www.youtube.com", "http://www.youtube.com", "youtube.com"))
 
+# Function to send audio to voice call
+async def send_audio(chat_id, audio_file, caption, thumbnail, title, duration, share_button):
+    try:
+        await app.send_chat_action(chat_id, "upload_audio")
+        with open(audio_file, "rb") as f:
+            await app.send_audio(chat_id, audio=f, caption=caption, duration=duration,
+                                 thumb=thumbnail, title=title, reply_markup=share_button)
+    except Exception as e:
+        print(f"Error in sending audio: {e}")
+
+# Command handler to search and send audio
 @app.on_message(filters.command(["يوت", "yt", "تنزيل", "بحث"]) & filters.create(is_private_or_group_or_channel))
-async def song(_, message: Message):
+async def song(client, message: Message):
     try:
         await message.delete()
     except:
         pass
-    m = await message.reply_text("- يتم البحث الان .", quote=True)
+    m = await message.reply_text("- يتم البحث الآن .", quote=True)
 
     query = " ".join(str(i) for i in message.command[1:])
     ydl_opts = {"format": "bestaudio[ext=m4a]"}
@@ -85,7 +67,7 @@ async def song(_, message: Message):
         error_message = f"- فشل .\n\n**السبب :** `{ex}`"
         return await m.edit_text(error_message)
 
-    await m.edit_text("- تم الرفع انتضر قليلاً .")
+    await m.edit_text("- تم الرفع انتظر قليلاً .")
     audio_file = ''
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -125,12 +107,6 @@ async def song(_, message: Message):
         error_message = f"- فشل في حذف الملفات المؤقتة. \n\n**السبب :** `{ex}`"
         await m.edit_text(error_message)
 
-# يتم إرسال الصوت إلى المكالمة الصوتية
-async def send_audio(chat_id, audio_file, caption, thumbnail, title, duration, share_button):
-    try:
-        await app.send_chat_action(chat_id, "upload_audio")
-        with open(audio_file, "rb") as f:
-            await app.send_audio(chat_id, audio=f, caption=caption, duration=duration,
-                                 thumb=thumbnail, title=title, reply_markup=share_button)
-    except Exception as e:
-        print(f"Error in sending audio: {e}")
+# Run the app
+if __name__ == "__main__":
+    app.run()
