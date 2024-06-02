@@ -4,8 +4,8 @@ import requests
 import yt_dlp
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from AarohiX import app
-from config import SUPPORT_CHAT
+from YukkiMusic import app
+from strings.filters import command
 
 # دالة لفحص ما إذا كانت الرسالة تأتي من الخاص أو من قناة أو مجموعة
 def is_private_or_group_or_channel(message: Message):
@@ -15,7 +15,7 @@ def is_private_or_group_or_channel(message: Message):
 def is_valid_youtube_url(url):
     return url.startswith(("https://www.youtube.com", "http://www.youtube.com", "youtube.com"))
 
-@app.on_message(filters.command(["يوت", "yt", "تنزيل", "بحث"]) & filters.create(is_private_or_group_or_channel))
+@app.on_message(command(["يوت", "yt", "تنزيل", "بحث"]) & filters.create(is_private_or_group_or_channel))
 async def song(_, message: Message):
     try:
         await message.delete()
