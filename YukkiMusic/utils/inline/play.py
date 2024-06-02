@@ -50,7 +50,7 @@ def stream_markup(_, videoid, chat_id):
     buttons = [
         [
             InlineKeyboardButton(
-                text="⦗ احفظ الأغنية ⦘", callback_data=f"add_playlist {videoid}"
+                text="", callback_data=f"add_playlist {videoid}"
             ),
         ],
         [
