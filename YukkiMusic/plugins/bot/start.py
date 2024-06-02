@@ -37,7 +37,8 @@ async def change_start_message_command_handler(c: Client, message: Message):
     await message.reply_text("قم بارسال الكليشة الجديدة ليتم تعيينها كرسالة البداية.")
 
 # Handler for receiving the new start message
-@app.on_message(filters.private & ~filters.callback_query)
+@app.on_message(filters.private 
+)
 async def receive_new_start_message(c: Client, message: Message):
     if message.text:
         # Save the new start message to use later
