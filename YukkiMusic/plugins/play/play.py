@@ -13,7 +13,7 @@ import string
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardMarkup, InputMediaPhoto, Message
 from pytgcalls.exceptions import NoActiveGroupCall
-
+from strings.filters import command
 import config
 from config import BANNED_USERS, lyrical
 from strings import get_command
@@ -34,16 +34,48 @@ from YukkiMusic.utils.inline.play import (
 from YukkiMusic.utils.inline.playlist import botplaylist_markup
 from YukkiMusic.utils.logger import play_logs
 from YukkiMusic.utils.stream.stream import stream
+from config import Muntazer
+from pyrogram.errors import UserNotParticipant, ChatAdminRequired, ChatWriteForbidden
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+
+
+async def must_join_channel(app, msg):
+    if not Muntazer:
+        return
+    try:
+        if msg.from_user is None:
+            return
+        try:
+            await app.get_chat_member(Muntazer, msg.from_user.id)
+        except UserNotParticipant:
+            if Muntazer.isalpha():
+                link = "https://t.me/" + Muntazer
+            else:
+                chat_info = await app.get_chat(Muntazer)
+                link = chat_info.invite_link
+            try:
+                await msg.reply(
+                    f"~︙عليك الأشتراك في قناة البوت \n~︙قناة البوت : @{Muntazer}.",
+                    disable_web_page_preview=True,
+                    reply_markup=InlineKeyboardMarkup([
+                        [InlineKeyboardButton("⦗ قناة الاشتراك ⦘", url=link)]
+                    ])
+                )
+                await msg.stop_propagation()
+            except ChatWriteForbidden:
+                pass
+    except ChatAdminRequired:
+        print(f"I m not admin in the MUST_JOIN chat {Muntazer}!")
+
 
 # Command
 PLAY_COMMAND = get_command("PLAY_COMMAND")
 
-
 @app.on_message(
-    filters.command(
+    command(
         [
-            "play",
-            "vplay",
+            "تشغيل",
+            "فيديو",
             "cplay",
             "cute",
             "cvplay",
@@ -68,6 +100,9 @@ async def play_commnd(
     url,
     fplay,
 ):
+    
+await must_join_channel(client, message) 
+
     mystic = await message.reply_text(
         _["play_2"].format(channel) if channel else _["play_1"]
     )
@@ -75,8 +110,8 @@ async def play_commnd(
     slider = None
     plist_type = None
     spotify = None
-    user_id = message.from_user.id
-    user_name = message.from_user.first_name
+    user_id = message.from_user.id if message.from_user else "1121532100"
+    user_name = message.from_user.first_name if message.from_user else None
     audio_telegram = (
         (message.reply_to_message.audio or message.reply_to_message.voice)
         if message.reply_to_message
