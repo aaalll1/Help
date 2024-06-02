@@ -50,7 +50,7 @@ async def song(_, message: Message):
         title = info_dict.get('title', 'Unknown')
         duration = info_dict.get('duration')
 
-        rep = f"**- الأسم :** [{title[:23]}]({link})\n**- الوقت :** `{duration}`\n**- بواسطة  :** {message.from_user.first_name}"
+        rep = f"• by : {message.from_user.first_name}"
 
         secmul, dur, dur_arr = 1, 0, str(duration).split(":")
         for i in range(len(dur_arr) - 1, -1, -1):
