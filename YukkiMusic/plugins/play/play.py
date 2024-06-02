@@ -13,7 +13,7 @@ import string
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardMarkup, InputMediaPhoto, Message
 from pytgcalls.exceptions import NoActiveGroupCall
-from strings.filters import command
+
 import config
 from config import BANNED_USERS, lyrical
 from strings import get_command
@@ -34,6 +34,7 @@ from YukkiMusic.utils.inline.play import (
 from YukkiMusic.utils.inline.playlist import botplaylist_markup
 from YukkiMusic.utils.logger import play_logs
 from YukkiMusic.utils.stream.stream import stream
+from config import SUPPORT_CHANNEL 
 from config import Muntazer
 from pyrogram.errors import UserNotParticipant, ChatAdminRequired, ChatWriteForbidden
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -71,20 +72,19 @@ async def must_join_channel(app, msg):
 # Command
 PLAY_COMMAND = get_command("PLAY_COMMAND")
 
+
 @app.on_message(
     command(
         [
             "تشغيل",
-            "فيديو",
+            "شغل",
             "cplay",
-            "cute",
             "cvplay",
             "playforce",
             "vplayforce",
             "cplayforce",
             "cvplayforce",
-        ],
-        prefixes=["/", "!", "%", ",", "", ".", "@", "#"],
+        ]
     )
     & ~BANNED_USERS
 )
@@ -100,9 +100,9 @@ async def play_commnd(
     url,
     fplay,
 ):
+    # التحقق من اشتراك المستخدم في القناة المطلوبة
+    await must_join_channel(client, message)
     
-await must_join_channel(client, message) 
-
     mystic = await message.reply_text(
         _["play_2"].format(channel) if channel else _["play_1"]
     )
@@ -123,18 +123,18 @@ await must_join_channel(client, message)
         else None
     )
     if audio_telegram:
-        if audio_telegram.file_size > config.TG_AUDIO_FILESIZE_LIMIT:
+        if audio_telegram.file_size > 30004857600:
             return await mystic.edit_text(_["play_5"])
         duration_min = seconds_to_min(audio_telegram.duration)
         if (audio_telegram.duration) > config.DURATION_LIMIT:
             return await mystic.edit_text(
-                _["play_6"].format(config.DURATION_LIMIT_MIN, duration_min)
+                _["play_6"].format(config.DURATION_LIMIT_MIN, app.mention)
             )
         file_path = await Telegram.get_filepath(audio=audio_telegram)
         if await Telegram.download(_, message, mystic, file_path):
             message_link = await Telegram.get_link(message)
             file_name = await Telegram.get_filename(audio_telegram, audio=True)
-            dur = await Telegram.get_duration(audio_telegram)
+            dur = await Telegram.get_duration(audio_telegram, file_path)
             details = {
                 "title": file_name,
                 "link": message_link,
@@ -156,53 +156,7 @@ await must_join_channel(client, message)
                 )
             except Exception as e:
                 ex_type = type(e).__name__
-                err = e if ex_type == "AssistantErr" else _["general_3"].format(ex_type)
-                return await mystic.edit_text(err)
-            return await mystic.delete()
-        return
-    elif video_telegram:
-        if not await is_video_allowed(message.chat.id):
-            return await mystic.edit_text(_["play_3"])
-        if message.reply_to_message.document:
-            try:
-                ext = video_telegram.file_name.split(".")[-1]
-                if ext.lower() not in formats:
-                    return await mystic.edit_text(
-                        _["play_8"].format(f"{' | '.join(formats)}")
-                    )
-            except:
-                return await mystic.edit_text(
-                    _["play_8"].format(f"{' | '.join(formats)}")
-                )
-        if video_telegram.file_size > config.TG_VIDEO_FILESIZE_LIMIT:
-            return await mystic.edit_text(_["play_9"])
-        file_path = await Telegram.get_filepath(video=video_telegram)
-        if await Telegram.download(_, message, mystic, file_path):
-            message_link = await Telegram.get_link(message)
-            file_name = await Telegram.get_filename(video_telegram)
-            dur = await Telegram.get_duration(video_telegram)
-            details = {
-                "title": file_name,
-                "link": message_link,
-                "path": file_path,
-                "dur": dur,
-            }
-            try:
-                await stream(
-                    _,
-                    mystic,
-                    user_id,
-                    details,
-                    chat_id,
-                    user_name,
-                    message.chat.id,
-                    video=True,
-                    streamtype="telegram",
-                    forceplay=fplay,
-                )
-            except Exception as e:
-                ex_type = type(e).__name__
-                err = e if ex_type == "AssistantErr" else _["general_3"].format(ex_type)
+                err = e if ex_type == "AssistantErr" else _["general_2"].format(ex_type)
                 return await mystic.edit_text(err)
             return await mystic.delete()
         return
@@ -215,8 +169,7 @@ await must_join_channel(client, message)
                         config.PLAYLIST_FETCH_LIMIT,
                         message.from_user.id,
                     )
-                except Exception as e:
-                    print(e)
+                except:
                     return await mystic.edit_text(_["play_3"])
                 streamtype = "playlist"
                 plist_type = "yt"
@@ -225,27 +178,24 @@ await must_join_channel(client, message)
                 else:
                     plist_id = url.split("=")[1]
                 img = config.PLAYLIST_IMG_URL
-                cap = _["play_10"]
+                cap = _["play_9"]
             elif "https://youtu.be" in url:
                 videoid = url.split("/")[-1].split("?")[0]
-                details, track_id = await YouTube.track(
-                    f"https://www.youtube.com/watch?v={videoid}"
-                )
+                details, track_id = await YouTube.track(f"https://www.youtube.com/watch?v={videoid}")
                 streamtype = "youtube"
                 img = details["thumb"]
                 cap = _["play_11"].format(
                     details["title"],
                     details["duration_min"],
-                )
+                )    
             else:
                 try:
                     details, track_id = await YouTube.track(url)
-                except Exception as e:
-                    print(e)
+                except:
                     return await mystic.edit_text(_["play_3"])
                 streamtype = "youtube"
                 img = details["thumb"]
-                cap = _["play_11"].format(
+                cap = _["play_10"].format(
                     details["title"],
                     details["duration_min"],
                 )
