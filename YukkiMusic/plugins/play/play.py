@@ -72,7 +72,6 @@ async def must_join_channel(app, msg):
 # Command
 PLAY_COMMAND = get_command("PLAY_COMMAND")
 
-
 @app.on_message(
     command(
         [
@@ -134,7 +133,7 @@ async def play_commnd(
         if await Telegram.download(_, message, mystic, file_path):
             message_link = await Telegram.get_link(message)
             file_name = await Telegram.get_filename(audio_telegram, audio=True)
-            dur = await Telegram.get_duration(audio_telegram, file_path)
+            dur = await Telegram.get_duration(audio_telegram)  # Remove file_path from here
             details = {
                 "title": file_name,
                 "link": message_link,
