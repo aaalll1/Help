@@ -3,11 +3,10 @@ from pyrogram import Client, filters
 from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 from config import SUPPORT_GROUP, SUPPORT_CHANNEL, OWNER, START_IMG_URL
 from strings.filters import command
-# وهمي
+
+# دالة وهمية
 async def add_served_user(user_id: int):
     pass
-
-
 
 new_start_message = None
 
@@ -15,15 +14,14 @@ new_start_message = None
 async def change_start_message(_, message: Message):
     global new_start_message
     new_start_message = None 
-    await message.reply("مرحبا عزيزي المطور الأساسي \nارسل الآن كليشة ستارت الجديدة .")
+    await message.reply("مرحبا عزيزي المطور الأساسي \nارسل الآن كليشة ستارت الجديدة.")
 
 @app.on_message(filters.private & filters.user(OWNER))
 async def set_new_start_message(_, message: Message):
     global new_start_message
-    if new_start_message is None:
-        new_start_message = message.text
-        await message.reply("- تم بنجاح ارسل /start ")
-   
+    new_start_message = message.text
+    await message.reply("- تم بنجاح ارسل /start")
+
 @app.on_message(filters.command(["start", "help"]) & filters.private)
 async def start_(c: Client, message: Message):
     global new_start_message
@@ -54,8 +52,6 @@ async def start_(c: Client, message: Message):
         )
     )
 
-    
-    
 @app.on_callback_query(filters.regex("home_start"))
 async def start_set(_, query: CallbackQuery):
     await query.answer("قائمة التحكم")
@@ -79,15 +75,13 @@ async def start_set(_, query: CallbackQuery):
         )
     )
 
-    
-    
 @app.on_callback_query(filters.regex("command_list"))
 async def commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة التشغيل")
+    global new_start_message
+    start_text = new_start_message if new_start_message else f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯"""
     await query.edit_message_text(
-        f"""- تم فتح لوحة التحكم ↓
- – – – – – – 
-⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
+        start_text,
         reply_markup=InlineKeyboardMarkup(
             [
                 [
@@ -100,8 +94,7 @@ async def commands_set(_, query: CallbackQuery):
             ]
         )
     )
-    
-    
+
 @app.on_callback_query(filters.regex("next"))
 async def commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة الأدمن")
@@ -121,9 +114,7 @@ async def commands_set(_, query: CallbackQuery):
             ]
         )
     )
-    
-    
-    
+
 @app.on_callback_query(filters.regex("ghaith"))
 async def commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة المطور")
@@ -143,7 +134,6 @@ async def commands_set(_, query: CallbackQuery):
             ]
         )
     )
-    
 
 @app.on_callback_query(filters.regex("user_command"))
 async def user_commands_set(_, query: CallbackQuery):
@@ -162,7 +152,7 @@ async def user_commands_set(_, query: CallbackQuery):
             ]
         ),
     )
-    
+
 @app.on_callback_query(filters.regex("developer_commands"))
 async def developer_commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح اوامر الأدمن")
@@ -181,7 +171,7 @@ async def developer_commands_set(_, query: CallbackQuery):
             ]
         ),
     )
-    
+
 @app.on_callback_query(filters.regex("owner_commands"))
 async def owner_commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح اوامر المطور")
@@ -199,3 +189,5 @@ async def owner_commands_set(_, query: CallbackQuery):
             ]
         ),
     )
+
+# شغ
