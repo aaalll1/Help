@@ -1,28 +1,21 @@
-import os
-import re
-import requests
-import yt_dlp
-from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from pyrogram.raw.functions.messages import GetWebPagePreview
-from youtube_search import YoutubeSearch
 from YukkiMusic import app
-
 import os
 import re
 import requests
 import yt_dlp
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from pyrogram.raw.functions.messages import GetWebPagePreview
 from youtube_search import YoutubeSearch
+from config import SUPPORT_CHANNEL
+
 
 def is_valid_youtube_url(url):
     # Check if the provided URL is a valid YouTube URL
-    return re.match(r'^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$', url)
+    return url.startswith(("https://www.youtube.com", "http://www.youtube.com", "youtube.com"))
 
-@app.on_message(filters.command(["يوت", "yt", "تنزيل", "بحث"]))
-async def song(_, message: Message):
+# Command handler for /yt, /يوت, /تنزيل, /بحث
+@app.on_message(filters.command(["يوت", "yt", "تنزيل", "بحث"]) & (filters.private | filters.group))
+async def song(client, message: Message):
     try:
         await message.delete()
     except:
@@ -38,11 +31,21 @@ async def song(_, message: Message):
             link = query
         else:
             # Otherwise, perform a search using the provided keyword
-            preview = await app.send(GetWebPagePreview(query))
-            if not preview:
+            results = YoutubeSearch(query, max_results=5).to_dict()
+            if not results:
                 raise Exception("- لايوجد بحث .")
             
-            link = preview
+            link = f"https://youtube.com{results[0]['url_suffix']}"
+
+        title = results[0]["title"][:40]
+        thumbnail = results[0]["thumbnails"][0]
+        thumb_name = f"{title}.jpg"
+        # Replace invalid characters in the filename
+        thumb_name = thumb_name.replace("/", "")
+        thumb = requests.get(thumbnail, allow_redirects=True)
+        open(thumb_name, "wb").write(thumb.content)
+        duration = results[0]["duration"]
+
     except Exception as ex:
         error_message = f"- فشل .\n\n**السبب :** `{ex}`"
         return await m.edit_text(error_message)
@@ -55,28 +58,40 @@ async def song(_, message: Message):
             audio_file = ydl.prepare_filename(info_dict)
             ydl.process_info(info_dict)
 
-        title = info_dict.get('title', 'Unknown')
-        duration = info_dict.get('duration')
-
         rep = f"**- الأسم :** [{title[:23]}]({link})\n**- الوقت :** `{duration}`\n**- بواسطة  :** {message.from_user.first_name}"
 
-        secmul, dur, dur_arr = 1, 0, str(duration).split(":")
+        secmul, dur, dur_arr = 1, 0, duration.split(":")
         for i in range(len(dur_arr) - 1, -1, -1):
             dur += int(dur_arr[i]) * secmul
             secmul *= 60
 
-        share_button = InlineKeyboardMarkup(
+        visit_butt = InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="مشاركة الصوت", switch_inline_query=f"{audio_file}")],
+                [InlineKeyboardButton(text="- المنشئ .", url=SUPPORT_CHANNEL)],
+                [InlineKeyboardButton(text="- مسح .", callback_data="clean")],
             ]
         )
 
         # Reply to the user who initiated the search
-        await app.send_message(
-            chat_id=message.chat.id,
-            text=rep,
-            reply_markup=share_button,
-        )
+        if message.chat.type == "private":
+            await message.reply_audio(
+                audio=audio_file,
+                caption=rep,
+                thumb=thumb_name,
+                title=title,
+                duration=dur,
+                reply_markup=visit_butt,
+            )
+        else:
+            await m.reply_audio(
+                audio=audio_file,
+                caption=rep,
+                thumb=thumb_name,
+                title=title,
+                duration=dur,
+                reply_markup=visit_butt,
+                quote=True,
+            )
 
         await m.delete()
 
@@ -88,11 +103,13 @@ async def song(_, message: Message):
     try:
         if audio_file:
             os.remove(audio_file)
+        os.remove(thumb_name)
     except Exception as ex:
         error_message = f"- فشل في حذف الملفات المؤقتة. \n\n**السبب :** `{ex}`"
         await m.edit_text(error_message)
 
-@app.on_message(filters.command(["تحميل", "video"]))
+# Command handler for /video, /تحميل
+@app.on_message(filters.command(["تحميل", "video"]) & (filters.private | filters.group))
 async def video_search(client, message):
     ydl_opts = {
         "format": "best",
@@ -108,12 +125,16 @@ async def video_search(client, message):
         link = f"https://youtube.com{results[0]['url_suffix']}"
         title = results[0]["title"][:40]
         thumbnail = results[0]["thumbnails"][0]
-        # Remove invalid characters from file name
+        # Remove invalid characters from the file name
         title = re.sub(r'[\\/*?:"<>|]', '', title)
         thumb_name = f"thumb{title}.jpg"
         thumb = requests.get(thumbnail, allow_redirects=True)
         with open(thumb_name, "wb") as file:
             file.write(thumb.content)
+        results[0]["duration"]
+        results[0]["url_suffix"]
+        results[0]["views"]
+        message.from_user.mention
     except Exception as e:
         print(e)
     try:
@@ -128,13 +149,21 @@ async def video_search(client, message):
         return await msg.edit(f"🚫 **error:** Thumb file not found!")
     
     await msg.edit("- تم الرفع انتضر قليلاً .")
-    await app.send_video(
-        chat_id=message.chat.id,
-        video=file_name,
-        duration=int(ytdl_data["duration"]),
-        thumb=thumb_path,
-        caption=ytdl_data["title"],
-    )
+    if message.chat.type == "private":
+        await message.reply_video(
+            file_name,
+            duration=int(ytdl_data["duration"]),
+            thumb=thumb_path,
+            caption=ytdl_data["title"],
+        )
+    else:
+        await m.reply_video(
+            file_name,
+            duration=int(ytdl_data["duration"]),
+            thumb=thumb_path,
+            caption=ytdl_data["title"],
+            quote=True,
+        )
     try:
         os.remove(file_name)
         os.remove(thumb_path)
