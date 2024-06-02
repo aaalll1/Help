@@ -8,7 +8,6 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from youtube_search import YoutubeSearch
 from config import SUPPORT_CHANNEL
 
-
 def is_valid_youtube_url(url):
     # Check if the provided URL is a valid YouTube URL
     return any(url.startswith(prefix) for prefix in ["https://www.youtube.com", "http://www.youtube.com", "youtube.com", "https://youtu.be", "http://youtu.be", "youtu.be"])
@@ -74,7 +73,6 @@ async def song(client, message: Message):
         visit_butt = InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton(text="- المنشئ .", url=SUPPORT_CHANNEL)],
-                [InlineKeyboardButton(text="- مسح .", callback_data="delete")],
             ]
         )
 
@@ -115,7 +113,7 @@ async def song(client, message: Message):
         await m.edit_text(error_message)
 
 # Command handler for /video, /تحميل
-@app.on_message(filters.command(["تحميل", "video"]) & (filters.private | filters.group))
+@app.on_message(filters.command(["تحميل", "video"]) & (filters.private))
 async def video_search(client, message):
     ydl_opts = {
         "format": "best",
@@ -176,3 +174,4 @@ async def video_search(client, message):
         await msg.delete()
     except Exception as ex:
         print(f"- فشل : {ex}")
+
