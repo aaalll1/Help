@@ -31,6 +31,7 @@ async def song(client, message: Message):
     query = " ".join(str(i) for i in message.command[1:])
     ydl_opts = {
         "format": "bestaudio[ext=m4a]",
+        "outtmpl": "audio.m4a",  # Filename template for downloaded files
         "default_search": "auto",  # This tells yt-dlp to handle the query as a search term
     }
 
@@ -44,9 +45,9 @@ async def song(client, message: Message):
 
             title = info_dict.get('title', 'Unknown')
             thumbnail = info_dict.get('thumbnails', [])[0]['url']
-            thumb_name = f"{title}.jpg"
+            thumb_name = f"{title[:50]}.jpg"  # Limit thumbnail name length
             # Replace invalid characters in the filename
-            thumb_name = thumb_name.replace("/", "")
+            thumb_name = re.sub(r'[\\/:"*?<>|]+', '', thumb_name)
             thumb = requests.get(thumbnail, allow_redirects=True)
             open(thumb_name, "wb").write(thumb.content)
             duration = info_dict.get('duration')
