@@ -23,7 +23,13 @@ async def song(client, message: Message):
     m = await message.reply_text("- يتم البحث الان .", quote=True)
 
     query = " ".join(str(i) for i in message.command[1:])
-    ydl_opts = {"format": "bestaudio[ext=m4a]"}
+    ydl_opts = {
+        "format": "bestaudio[ext=m4a]",
+        "prefer_ffmpeg": True,
+        "geo_bypass": True,
+        "outtmpl": "%(title)s.%(ext)s",
+        "quiet": True,
+    }
 
     try:
         if is_valid_youtube_url(query):
@@ -67,7 +73,7 @@ async def song(client, message: Message):
 
         visit_butt = InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="- المنشئ .", url=SUPPORT_CHAT)],
+                [InlineKeyboardButton(text="- المنشئ .", url=SUPPORT_CHANNEL)],
                 [InlineKeyboardButton(text="- مسح .", callback_data="delete")],
             ]
         )
@@ -114,10 +120,10 @@ async def video_search(client, message):
     ydl_opts = {
         "format": "best",
         "keepvideo": True,
-        "prefer_ffmpeg": False,
+        "prefer_ffmpeg": True,
         "geo_bypass": True,
         "outtmpl": "%(title)s.%(ext)s",
-        "quite": True,
+        "quiet": True,
     }
     query = " ".join(message.command[1:])
     try:
