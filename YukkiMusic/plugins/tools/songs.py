@@ -44,14 +44,13 @@ def is_valid_youtube_url(url):
     # Check if the provided URL is a valid YouTube URL
     return re.match(r'(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/', url)
 
-
 @app.on_message(filters.command(["يوت", "yt", "تنزيل", "بحث"]))
 async def song(_, message: Message):
     try:
         await message.delete()
     except:
         pass
-    
+
     # تحقق من الاشتراك الإجباري
     await must_join_channel(app, message)
 
@@ -64,12 +63,13 @@ async def song(_, message: Message):
         if is_valid_youtube_url(query):
             # If it's a valid YouTube URL, use it directly
             link = query
+            results = None  # قم بتعيين قيمة None لـ results
         else:
             # Otherwise, perform a search using the provided keyword
             results = YoutubeSearch(query, max_results=5).to_dict()
             if not results:
                 raise Exception("- لايوجد بحث .")
-            
+
             link = f"https://youtube.com{results[0]['url_suffix']}"
 
         title = results[0]["title"][:40]
@@ -145,7 +145,7 @@ async def video_search(client, message):
     try:
         # تحقق من الاشتراك الإجباري
         await must_join_channel(app, message)
-  
+
         results = YoutubeSearch(query, max_results=1).to_dict()
         link = f"https://youtube.com{results[0]['url_suffix']}"
         title = results[0]["title"][:40]
@@ -169,7 +169,7 @@ async def video_search(client, message):
     thumb_path = f"thumb{title}.jpg"
     if not os.path.exists(thumb_path):
         return await msg.edit(f"🚫 **error:** Thumb file not found!")
-    
+
     await msg.edit("- تم الرفع انتضر قليلاً .")
     await message.reply_video(
         file_name,
