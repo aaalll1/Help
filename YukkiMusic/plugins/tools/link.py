@@ -5,71 +5,34 @@ from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from youtube_dl import YoutubeDL
 from youtube_search import YoutubeSearch
-from config import SUPPORT_CHANNEL, Muntazer
-from pyrogram.errors import UserNotParticipant, ChatWriteForbidden
+from config import SUPPORT_CHANNEL
 from strings.filters import command
 import re
-
-# دالة للتحقق من اشتراك المستخدم في القناة
-async def must_join_channel(app, msg):
-    if not Muntazer:
-        return
-    try:
-        if msg.from_user is None:
-            return
-        
-        try:
-            await app.get_chat_member(Muntazer, msg.from_user.id)
-        except UserNotParticipant:
-            if Muntazer.isalpha():
-                link = "https://t.me/" + Muntazer
-            else:
-                chat_info = await app.get_chat(Muntazer)
-                link = chat_info.invite_link
-            try:
-                await msg.reply(
-                    f"~︙عليك الأشتراك في قناة البوت \n~︙قناة البوت : @{Muntazer}.",
-                    disable_web_page_preview=True,
-                    reply_markup=InlineKeyboardMarkup([
-                        [InlineKeyboardButton("⦗ قناة البوت ⦘", url=link)]
-                    ])
-                )
-                await msg.stop_propagation()
-            except ChatWriteForbidden:
-                pass
-    except Exception as ex:
-        print(f"Error: {str(ex)}")
-
+import os.path
 
 def is_valid_youtube_url(url):
     # Check if the provided URL is a valid YouTube URL
-    youtube_regex = (
-        r'(https?://)?(www\.)?'
-        '(youtube|youtu|youtube-nocookie)\.(com|be)/'
-        '(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})'
-    )
-    return re.match(youtube_regex, url)
+    return url.startswith(("https://www.youtube.com", "http://www.youtube.com", "youtube.com"))
 
-
-@app.on_message(command(["يوتيوب", "رابط"]))
+@app.on_message(command(["رابط"]))
 async def song(_, message: Message):
     try:
         await message.delete()
     except:
         pass
     
-    # تحقق من الاشتراك الإجباري
-    await must_join_channel(app, message)
-
-    m = await message.reply_text("⦗ جارِ التحميل، يرجى الانتظار قليلاً ... ⦘", quote=True)
+    m = await message.reply_text("⦗ جارِ البحث يرجى الانتضار ⦘", quote=True)
 
     query = " ".join(str(i) for i in message.command[1:])
+    ydl_opts = {"format": "bestaudio[ext=m4a]"}
 
     try:
         if is_valid_youtube_url(query):
+            # If it's a valid YouTube URL, use it directly
             link = query
         else:
-            results = YoutubeSearch(query, max_results=1).to_dict()
+            # Otherwise, perform a search using the provided keyword
+            results = YoutubeSearch(query, max_results=5).to_dict()
             if not results:
                 raise Exception("- لايوجد بحث .")
             
@@ -78,6 +41,7 @@ async def song(_, message: Message):
         title = results[0]["title"][:40]
         thumbnail = results[0]["thumbnails"][0]
         thumb_name = f"{title}.jpg"
+        # Replace invalid characters in the filename
         thumb_name = thumb_name.replace("/", "")
         thumb = requests.get(thumbnail, allow_redirects=True)
         open(thumb_name, "wb").write(thumb.content)
@@ -87,21 +51,14 @@ async def song(_, message: Message):
         error_message = f"- فشل .\n\n**السبب :** `{ex}`"
         return await m.edit_text(error_message)
 
+    await m.edit_text("⦗ جارِ التحميل، يرجى الانتظار قليلاً ... ⦘")
+    audio_file = ''
     try:
-        ydl_opts = {
-            'format': 'bestaudio/best',
-            'outtmpl': '%(title)s.%(ext)s',
-            'noplaylist': True,
-            'postprocessors': [{
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'mp3',
-                'preferredquality': '320',
-            }],
-        }
-        with YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(link, download=True)
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info_dict = ydl.extract_info(link, download=False)
             audio_file = ydl.prepare_filename(info_dict)
-        
+            ydl.process_info(info_dict)
+
         rep = f"**• by :** {message.from_user.first_name}"
 
         secmul, dur, dur_arr = 1, 0, duration.split(":")
@@ -114,7 +71,7 @@ async def song(_, message: Message):
                 [InlineKeyboardButton(text="⦗ Источник ⦘", url=SUPPORT_CHANNEL)],
             ]
         )
-
+        # Reply to the user who initiated the search
         await message.reply_audio(
             audio=audio_file,
             caption=rep,
