@@ -216,7 +216,7 @@ async def handle_text_message(client, message):
     else:
         return
 
-@app.on_message(command(["معقول", "search"]))
+@app.on_message(filters.command(["معقول", "search"]))
 async def download_video(_, message: Message):
     ydl_opts = {
         "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio",
