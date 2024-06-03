@@ -164,31 +164,32 @@ async def video_search(client, message):
         results[0]["duration"]
         results[0]["url_suffix"]
         results[0]["views"]
-        message.from_user.mention
-    except Exception as e:
-        print(e)
-    try:
+        
         msg = await message.reply("⦗ جارِ البحث يرجى الانتضار ⦘")
-        with yt_dlp.YoutubeDL(ydl_opts) as ytdl:
-            ytdl_data = ytdl.extract_info(link, download=True)
-            file_name = ytdl.prepare_filename(ytdl_data)
+        try:
+            with yt_dlp.YoutubeDL(ydl_opts) as ytdl:
+                ytdl_data = ytdl.extract_info(link, download=True)
+                file_name = ytdl.prepare_filename(ytdl_data)
+        except Exception as e:
+            return await msg.edit(f"🚫 **error:** {e}")
+        
+        thumb_path = f"thumb{title}.jpg"
+        if not os.path.exists(thumb_path):
+            return await msg.edit(f"🚫 **error:** Thumb file not found!")
+        
+        await msg.edit("⦗ جارِ التحميل، يرجى الانتظار قليلاً ... ⦘")
+        await message.reply_video(
+            file_name,
+            duration=int(ytdl_data["duration"]),
+            thumb=thumb_path,
+            caption=ytdl_data["title"],
+        )
+        try:
+            os.remove(file_name)
+            os.remove(thumb_path)
+            await msg.delete()
+        except Exception as ex:
+            print(f"- فشل : {ex}")
+
     except Exception as e:
         return await msg.edit(f"🚫 **error:** {e}")
-    
-    thumb_path = f"thumb{title}.jpg"
-    if not os.path.exists(thumb_path):
-        return await msg.edit(f"🚫 **error:** Thumb file not found!")
-    
-    await msg.edit("⦗ جارِ التحميل، يرجى الانتظار قليلاً ... ⦘")
-    await message.reply_video(
-        file_name,
-        duration=int(ytdl_data["duration"]),
-        thumb=thumb_path,
-        caption=ytdl_data["title"],
-    )
-    try:
-        os.remove(file_name)
-        os.remove(thumb_path)
-        await msg.delete()
-    except Exception as ex:
-        print(f"- فشل : {ex}")
