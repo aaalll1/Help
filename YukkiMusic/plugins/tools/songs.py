@@ -50,7 +50,7 @@ async def song(_, message: Message):
         await message.delete()
     except:
         pass
-
+    
     # تحقق من الاشتراك الإجباري
     await must_join_channel(app, message)
 
@@ -63,24 +63,27 @@ async def song(_, message: Message):
         if is_valid_youtube_url(query):
             # If it's a valid YouTube URL, use it directly
             link = query
-            results = None  # قم بتعيين قيمة None لـ results
+            results = None  # تعيين قيمة None لـ results
         else:
             # Otherwise, perform a search using the provided keyword
             results = YoutubeSearch(query, max_results=5).to_dict()
             if not results:
                 raise Exception("- لايوجد بحث .")
-
+            
             link = f"https://youtube.com{results[0]['url_suffix']}"
 
-        title = results[0]["title"][:40]
-        thumbnail = results[0]["thumbnails"][0]
-        thumb_name = f"{title}.jpg"
-        # Replace invalid characters in the filename
-        thumb_name = thumb_name.replace("/", "")
-        thumb = requests.get(thumbnail, allow_redirects=True)
-        open(thumb_name, "wb").write(thumb.content)
-        duration = results[0]["duration"]
-
+        if results:
+            title = results[0]["title"][:40]
+            thumbnail = results[0]["thumbnails"][0]
+            thumb_name = f"{title}.jpg"
+            # Replace invalid characters in the filename
+            thumb_name = thumb_name.replace("/", "")
+            thumb = requests.get(thumbnail, allow_redirects=True)
+            open(thumb_name, "wb").write(thumb.content)
+            duration = results[0]["duration"]
+        else:
+            raise Exception("- لايوجد بحث .")
+        
     except Exception as ex:
         error_message = f"- فشل .\n\n**السبب :** `{ex}`"
         return await m.edit_text(error_message)
@@ -105,7 +108,7 @@ async def song(_, message: Message):
                 [InlineKeyboardButton(text="- المنشئ .", url=SUPPORT_CHANNEL)],
             ]
         )
-        # Reply to the user who initiated the search
+        # الرد على المستخدم الذي بدأ البحث
         await message.reply_audio(
             audio=audio_file,
             caption=rep,
@@ -121,7 +124,7 @@ async def song(_, message: Message):
         error_message = f"- فشل في تحميل الفيديو من YouTube. \n\n**السبب :** `{ex}`"
         await m.edit_text(error_message)
 
-    # Remove temporary files after audio upload
+    # إزالة الملفات المؤقتة بعد رفع الصوت
     try:
         if audio_file:
             os.remove(audio_file)
