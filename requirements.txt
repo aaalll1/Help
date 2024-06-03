@@ -39,6 +39,7 @@ telegraph==2.2.0
 tgcrypto
 urllib3
 yt-dlp
+youtube_dl
 #youtube-search-python
 #youtube_search
 git+https://github.com/alexmercerind/youtube-search-python@main
