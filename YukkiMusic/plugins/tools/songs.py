@@ -156,8 +156,30 @@ async def video_to_audio(link):
         print(f"Error: {e}")
         return None, None, None
 
+async def video_to_audio(link):
+    try:
+        ydl_opts = {
+            "format": "bestaudio[ext=m4a]",
+            "default_search": "auto",
+        }
+
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info_dict = ydl.extract_info(link, download=False)
+            if 'entries' in info_dict:
+                video_url = info_dict['entries'][0]['webpage_url']
+            else:
+                video_url = info_dict.get('webpage_url', None)
+            audio_file = ydl.prepare_filename(info_dict)
+            ydl.process_info(info_dict)
+
+        return audio_file, info_dict["title"], info_dict["duration"]
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return None, None, None
+
 # دالة للتحميل وإرسال الملف الصوتي أو الفيديو
-@app.on_message(filters.command(["رابط", "يوتيوب"]) & filters.regex(r'https?://(?:www\.)?youtube\.com\S+'))
+@app.on_message(command(["رابط", "يوتيوب"]) & filters.regex(r'https?://(?:www\.)?youtube\.com\S+'))
 async def youtube_audio(client, message: Message):
     try:
         await message.delete()
