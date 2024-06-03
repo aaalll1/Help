@@ -2,10 +2,41 @@ import os
 import requests
 import yt_dlp
 from pyrogram import filters
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, Chat
 from youtube_search import YoutubeSearch
 from YukkiMusic import app
-from config import SUPPORT_CHANNEL
+from config import SUPPORT_CHANNEL, Muntazer
+from pyrogram.errors import ChatWriteForbidden, UserNotParticipant
+
+
+# دالة للتحقق من اشتراك المستخدم في القناة
+async def must_join_channel(app, msg):
+    if not Muntazer:
+        return
+    try:
+        if msg.from_user is None:
+            return
+        
+        try:
+            if isinstance(Muntazer, str) and not Muntazer.isdigit():
+                link = f"https://t.me/{Muntazer}"
+            else:
+                await app.get_chat_member(Muntazer.id, msg.from_user.id)
+                link = Muntazer.invite_link
+            
+            await msg.reply(
+                f"~︙عليك الأشتراك في قناة البوت \n~︙قناة البوت : @{Muntazer.username}.",
+                disable_web_page_preview=True,
+                reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton("⦗ قناة البوت ⦘", url=link)]
+                ])
+            )
+            await msg.stop_propagation()
+        except UserNotParticipant:
+            pass
+    except ChatWriteForbidden:
+        print(f"I'm not admin in the MUST_JOIN chat {Muntazer}!")
+
 
 def is_valid_youtube_url(url):
     # Check if the provided URL is a valid YouTube URL
@@ -18,6 +49,9 @@ async def song(_, message: Message):
         await message.delete()
     except:
         pass
+    
+    # تحقق من الاشتراك الإجباري
+    await must_join_channel(app, message)
 
     m = await message.reply_text("⦗ جارِ البحث يرجى الانتضار ⦘", quote=True)
 
@@ -42,7 +76,7 @@ async def song(_, message: Message):
             info_dict = ydl.extract_info(query, download=False)
             if 'entries' in info_dict:
                 info_dict = info_dict['entries'][0]
-            link = info_dict['formats'][0]['url']
+            link = info_dict['url']
             title = info_dict['title']
             thumbnail = info_dict['thumbnail']
             duration = info_dict['duration']
