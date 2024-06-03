@@ -98,7 +98,8 @@ async def commands_set(_, query: CallbackQuery):
     
     
 @app.on_callback_query(filters.regex("ghaith"))
-async def commands_set(_, query: CallbackQuery):
+   async def commands_set(_, query: CallbackQuery):
+   if query.from_user.id == int(OWNER):
     await query.answer("تم فتح لوحة المطور")
     await query.edit_message_text(
         f"""- تم فتح لوحة التحكم ↓
@@ -116,7 +117,9 @@ async def commands_set(_, query: CallbackQuery):
             ]
         )
     )
-    
+   else:
+
+       await query.answer("✓ هذا الزر خاص بمطور البوت .", show_alert=True)
 
 @app.on_callback_query(filters.regex("user_command"))
 async def user_commands_set(_, query: CallbackQuery):
