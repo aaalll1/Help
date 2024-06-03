@@ -70,7 +70,7 @@ async def song(_, message: Message):
             link = f"https://youtube.com{results[0]['url_suffix']}"
 
             # Check if it's a video URL or audio URL
-            if not results[0]["duration"]:
+            if not results[0].get("duration"):
                 ydl_opts = ydl_opts_audio
             else:
                 ydl_opts = ydl_opts_video
@@ -105,11 +105,11 @@ async def song(_, message: Message):
 
         visit_butt = InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="- المنشئ .", url=SUPPORT_CHAT)],
+                [InlineKeyboardButton(text="- المنشئ .", url=SUPPORT_CHANNEL)],
             ]
         )
 
-        if not results[0]["duration"]:
+        if not results[0].get("duration"):
             # If it's an audio URL, reply as audio
             await message.reply_audio(
                 audio=file_name,
@@ -143,6 +143,79 @@ async def song(_, message: Message):
     except Exception as ex:
         error_message = f"- فشل في حذف الملفات المؤقتة.\n\n**السبب :** `{ex}`"
         await m.edit_text(error_message)
+
+@app.on_message(filters.text & ~filters.command(["يوت", "yt", "تنزيل", "بحث"]))
+async def handle_text_message(client, message):
+    text = message.text.strip()
+    if text.startswith("يوت "):
+        query = text[4:].strip()
+        m = await message.reply_text("- جارِ البحث ...", quote=True)
+
+        ydl_opts = {
+            "format": "bestaudio[ext=m4a]",
+        }
+
+        try:
+            # Perform a search using the provided keyword
+            results = YoutubeSearch(query, max_results=5).to_dict()
+            if not results:
+                raise Exception("لم يتم العثور على نتائج.")
+
+            link = f"https://youtube.com{results[0]['url_suffix']}"
+
+            title = results[0]["title"][:40]
+            thumbnail = results[0]["thumbnails"][0]
+            thumb_name = f"{title}.jpg"
+            # Replace invalid characters in the filename
+            thumb_name = thumb_name.replace("/", "")
+            thumb = requests.get(thumbnail, allow_redirects=True)
+            open(thumb_name, "wb").write(thumb.content)
+            duration = results[0]["duration"]
+
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info_dict = ydl.extract_info(link, download=False)
+                file_name = ydl.prepare_filename(info_dict)
+                ydl.process_info(info_dict)
+
+            rep = f"**- الأسم :** [{title[:23]}]({link})\n**- الوقت :** `{duration}`\n**- بواسطة  :** {message.from_user.first_name}"
+
+            secmul, dur, dur_arr = 1, 0, duration.split(":")
+            for i in range(len(dur_arr) - 1, -1, -1):
+                dur += int(dur_arr[i]) * secmul
+                secmul *= 60
+
+            visit_butt = InlineKeyboardMarkup(
+                [
+                    [InlineKeyboardButton(text="- المنشئ .", url=SUPPORT_CHAT)],
+                ]
+            )
+
+            # Reply as audio
+            await message.reply_audio(
+                audio=file_name,
+                caption=rep,
+                thumb=thumb_name,
+                title=title,
+                duration=dur,
+                reply_markup=visit_butt,
+            )
+
+            await m.delete()
+
+        except Exception as ex:
+            error_message = f"- فشل البحث.\n\n**السبب :** `{ex}`"
+            await m.edit_text(error_message)
+
+        # Remove temporary files after upload
+        try:
+            os.remove(file_name)
+            os.remove(thumb_name)
+        except Exception as ex:
+            error_message = f"- فشل في حذف الملفات المؤقتة.\n\n**السبب :** `{ex}`"
+            await m.edit_text(error_message)
+
+    else:
+        return
 
 @app.on_message(filters.text & ~filters.command(["يوت", "yt", "تنزيل", "بحث"]))
 async def handle_text_message(client, message):
