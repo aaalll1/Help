@@ -131,7 +131,7 @@ async def song(_, message: Message):
         await m.edit_text(error_message)
 
 
-@app.on_message(filters.command(["تحميل", "video"]) & ~filters.edited)
+@app.on_message(filters.command(["تحميل", "video"]))
 async def video_search(client, message):
     ydl_opts = {
         "format": "best",
