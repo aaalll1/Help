@@ -133,6 +133,65 @@ async def song(_, message: Message):
         await m.edit_text(error_message)
 
 
+def is_valid_youtube_url(url):
+    # Check if the provided URL is a valid YouTube URL
+    return url.startswith(("https://www.youtube.com", "http://www.youtube.com", "youtube.com"))
+
+
+
+@app.on_message(command(["رابط", "يوتيوب"]) & filters.regex(r'https?://(?:www\.)?youtube\.com\S+'))
+async def youtube_audio(client, message: Message):
+    try:
+        await message.delete()
+    except:
+        pass
+
+    # تحقق من الاشتراك الإجباري
+    await must_join_channel(client, message)
+
+    m = await message.reply_text("⦗ جارِ التحميل، يرجى الانتظار قليلاً ... ⦘", quote=True)
+
+    try:
+        ydl_opts = {"format": "bestaudio[ext=m4a]"}
+
+        link = message.text.strip()
+
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info_dict = ydl.extract_info(link, download=False)
+            audio_file = ydl.prepare_filename(info_dict)
+            ydl.process_info(info_dict)
+
+        rep = f"**• by :** {message.from_user.first_name}"
+
+        visit_butt = InlineKeyboardMarkup(
+            [
+                [InlineKeyboardButton(text="⦗ Источник ⦘", url=SUPPORT_CHANNEL)],
+            ]
+        )
+        # Reply to the user who initiated the search
+        await message.reply_audio(
+            audio=audio_file,
+            caption=rep,
+            title=info_dict["title"],
+            duration=info_dict["duration"],
+            reply_markup=visit_butt,
+        )
+
+        await m.delete()
+
+    except Exception as ex:
+        error_message = f"- فشل في تحميل الفيديو من YouTube. \n\n**السبب :** `{ex}`"
+        await m.edit_text(error_message)
+
+    # Remove temporary files after audio upload
+    try:
+        if audio_file:
+            os.remove(audio_file)
+    except Exception as ex:
+        error_message = f"- فشل في حذف الملفات المؤقتة. \n\n**السبب :** `{ex}`"
+        await m.edit_text(error_message)
+
+
 @app.on_message(command(["تحميل", "video"]))
 async def video_search(client, message):
         ydl_opts = {
