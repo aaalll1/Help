@@ -151,6 +151,8 @@ async def youtube_audio(client, message: Message):
 
     m = await message.reply_text("⦗ جارِ التحميل، يرجى الانتظار قليلاً ... ⦘", quote=True)
 
+    audio_file = None  # قيمة افتراضية لـ audio_file
+
     try:
         ydl_opts = {"format": "bestaudio[ext=m4a]"}
 
@@ -168,7 +170,7 @@ async def youtube_audio(client, message: Message):
                 [InlineKeyboardButton(text="⦗ Источник ⦘", url=SUPPORT_CHANNEL)],
             ]
         )
-        # Reply to the user who initiated the search
+        # الرد على المستخدم الذي بدأ البحث
         await message.reply_audio(
             audio=audio_file,
             caption=rep,
@@ -183,9 +185,9 @@ async def youtube_audio(client, message: Message):
         error_message = f"- فشل في تحميل الفيديو من YouTube. \n\n**السبب :** `{ex}`"
         await m.edit_text(error_message)
 
-    # Remove temporary files after audio upload
+    # حذف الملفات المؤقتة بعد تحميل الصوت
     try:
-        if audio_file:
+        if audio_file and os.path.exists(audio_file):
             os.remove(audio_file)
     except Exception as ex:
         error_message = f"- فشل في حذف الملفات المؤقتة. \n\n**السبب :** `{ex}`"
