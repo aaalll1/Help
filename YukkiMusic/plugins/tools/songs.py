@@ -39,7 +39,7 @@ async def must_join_channel(app, msg):
             except ChatWriteForbidden:
                 pass
     except ChatAdminRequired:
-        print(f"I m not admin in the MUST_JOIN chat {Muntazer}!")
+        print(f"I'm not admin in the MUST_JOIN chat {Muntazer}!")
 
 
 def is_valid_youtube_url(url):
@@ -83,42 +83,53 @@ async def song(_, message: Message):
         open(thumb_name, "wb").write(thumb.content)
         duration = results[0]["duration"]
 
-        # Check if message.from_user is not None before using it
-        rep = f"**• by :** {message.from_user.first_name} \n⎯ ⎯ ⎯ ⎯\n• ch : @{Muntazer} ."
+        # Download audio file
+        audio_file = ''
+        try:
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info_dict = ydl.extract_info(link, download=False)
+                audio_file = ydl.prepare_filename(info_dict)
+                ydl.process_info(info_dict)
 
-        secmul, dur, dur_arr = 1, 0, duration.split(":")
-        for i in range(len(dur_arr) - 1, -1, -1):
-            dur += int(dur_arr[i]) * secmul
-            secmul *= 60
+            rep = f"**• by :** {message.from_user.first_name} \n⎯ ⎯ ⎯ ⎯\n• ch : @{Muntazer} ."
 
-        visit_butt = InlineKeyboardMarkup(
-            [
-                [InlineKeyboardButton(text="⦗ Источник ⦘", url=SUPPORT_CHANNEL)],
-            ]
-        )
-        # Reply to the user who initiated the search
-        await message.reply_audio(
-            audio=audio_file,
-            caption=rep,
-            thumb=thumb_name,
-            title=title,
-            duration=dur,
-            reply_markup=visit_butt,
-        )
+            secmul, dur, dur_arr = 1, 0, duration.split(":")
+            for i in range(len(dur_arr) - 1, -1, -1):
+                dur += int(dur_arr[i]) * secmul
+                secmul *= 60
 
-        await m.delete()
+            visit_butt = InlineKeyboardMarkup(
+                [
+                    [InlineKeyboardButton(text="⦗ Источник ⦘", url=SUPPORT_CHANNEL)],
+                ]
+            )
+            # Reply to the user who initiated the search
+            await message.reply_audio(
+                audio=audio_file,
+                caption=rep,
+                thumb=thumb_name,
+                title=title,
+                duration=dur,
+                reply_markup=visit_butt,
+            )
+
+            await m.delete()
+
+            # Remove temporary files after audio upload
+            try:
+                if audio_file:
+                    os.remove(audio_file)
+                os.remove(thumb_name)
+            except Exception as ex:
+                error_message = f"- فشل في حذف الملفات المؤقتة. \n\n**السبب :** `{ex}`"
+                await m.edit_text(error_message)
+
+        except Exception as ex:
+            error_message = f"- فشل في تحميل الفيديو من YouTube. \n\n**السبب :** `{ex}`"
+            await m.edit_text(error_message)
 
     except Exception as ex:
-        error_message = f"- فشل في تحميل الفيديو من YouTube. \n\n**السبب :** `{ex}`"
-        await m.edit_text(error_message)
-
-    # Remove temporary files after audio upload
-    try:
-        if audio_file:
-            os.remove(audio_file)
-        os.remove(thumb_name)
-    except Exception as ex:
-        error_message = f"- فشل في حذف الملفات المؤقتة. \n\n**السبب :** `{ex}`"
+        error_message = f"- فشل .\n\n**السبب :** `{ex}`"
         await m.edit_text(error_message)
 
 @app.on_message(command(["تحميل", "video"]))
