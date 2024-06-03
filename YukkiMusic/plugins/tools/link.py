@@ -8,6 +8,7 @@ from youtube_search import YoutubeSearch
 from config import SUPPORT_CHANNEL, Muntazer
 from pyrogram.errors import UserNotParticipant, ChatWriteForbidden
 from strings.filters import command
+import re
 
 # دالة للتحقق من اشتراك المستخدم في القناة
 async def must_join_channel(app, msg):
@@ -42,7 +43,12 @@ async def must_join_channel(app, msg):
 
 def is_valid_youtube_url(url):
     # Check if the provided URL is a valid YouTube URL
-    return url.startswith(("https://www.youtube.com", "http://www.youtube.com", "youtube.com"))
+    youtube_regex = (
+        r'(https?://)?(www\.)?'
+        '(youtube|youtu|youtube-nocookie)\.(com|be)/'
+        '(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})'
+    )
+    return re.match(youtube_regex, url)
 
 
 @app.on_message(command(["يوتيوب", "رابط"]))
@@ -55,7 +61,7 @@ async def song(_, message: Message):
     # تحقق من الاشتراك الإجباري
     await must_join_channel(app, message)
 
-    m = await message.reply_text("⦗ جارِ البحث يرجى الانتضار ⦘", quote=True)
+    m = await message.reply_text("⦗ جارِ التحميل، يرجى الانتظار قليلاً ... ⦘", quote=True)
 
     query = " ".join(str(i) for i in message.command[1:])
 
@@ -80,8 +86,6 @@ async def song(_, message: Message):
     except Exception as ex:
         error_message = f"- فشل .\n\n**السبب :** `{ex}`"
         return await m.edit_text(error_message)
-
-    await m.edit_text("⦗ جارِ التحميل، يرجى الانتظار قليلاً ... ⦘")
 
     try:
         ydl_opts = {
