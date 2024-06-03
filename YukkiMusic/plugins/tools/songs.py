@@ -44,6 +44,7 @@ def is_valid_youtube_url(url):
     # Check if the provided URL is a valid YouTube URL
     return re.match(r'(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/', url)
 
+
 @app.on_message(filters.command(["يوت", "yt", "تنزيل", "بحث"]))
 async def song(_, message: Message):
     try:
@@ -63,7 +64,6 @@ async def song(_, message: Message):
         if is_valid_youtube_url(query):
             # If it's a valid YouTube URL, use it directly
             link = query
-            results = None  # تعيين قيمة None لـ results
         else:
             # Otherwise, perform a search using the provided keyword
             results = YoutubeSearch(query, max_results=5).to_dict()
@@ -72,18 +72,30 @@ async def song(_, message: Message):
             
             link = f"https://youtube.com{results[0]['url_suffix']}"
 
-        if results:
-            title = results[0]["title"][:40]
-            thumbnail = results[0]["thumbnails"][0]
-            thumb_name = f"{title}.jpg"
-            # Replace invalid characters in the filename
-            thumb_name = thumb_name.replace("/", "")
-            thumb = requests.get(thumbnail, allow_redirects=True)
-            open(thumb_name, "wb").write(thumb.content)
-            duration = results[0]["duration"]
-        else:
-            raise Exception("- لايوجد بحث .")
-        
+        if is_valid_youtube_url(link):
+            # Check if the link is a video or audio
+            if "/watch?v=" in link:
+                search_type = "video"
+            else:
+                search_type = "audio"
+
+            if search_type == "video" and "بحث" in query:
+                ydl_opts = {"format": "bestaudio[ext=m4a]"}
+                search_type = "video"
+            else:
+                ydl_opts = {"format": "bestaudio[ext=m4a]"}
+
+            # Extract information if it's a search query
+            if not is_valid_youtube_url(query):
+                title = results[0]["title"][:40]
+                thumbnail = results[0]["thumbnails"][0]
+                thumb_name = f"{title}.jpg"
+                # Replace invalid characters in the filename
+                thumb_name = thumb_name.replace("/", "")
+                thumb = requests.get(thumbnail, allow_redirects=True)
+                open(thumb_name, "wb").write(thumb.content)
+                duration = results[0]["duration"]
+
     except Exception as ex:
         error_message = f"- فشل .\n\n**السبب :** `{ex}`"
         return await m.edit_text(error_message)
@@ -96,42 +108,70 @@ async def song(_, message: Message):
             audio_file = ydl.prepare_filename(info_dict)
             ydl.process_info(info_dict)
 
-        rep = f"**- الأسم :** [{title[:23]}]({link})\n**- الوقت :** `{duration}`\n**- بواسطة  :** {message.from_user.first_name}"
+        if search_type == "video":
+            msg = await message.reply("- يتم البحث الان .")
+            try:
+                with yt_dlp.YoutubeDL(ydl_opts) as ytdl:
+                    ytdl_data = ytdl.extract_info(link, download=True)
+                    file_name = ytdl.prepare_filename(ytdl_data)
+            except Exception as e:
+                return await msg.edit(f"🚫 **error:** {e}")
 
-        secmul, dur, dur_arr = 1, 0, duration.split(":")
-        for i in range(len(dur_arr) - 1, -1, -1):
-            dur += int(dur_arr[i]) * secmul
-            secmul *= 60
+            thumb_path = f"thumb{title}.jpg"
+            if not os.path.exists(thumb_path):
+                return await msg.edit(f"🚫 **error:** Thumb file not found!")
 
-        visit_butt = InlineKeyboardMarkup(
-            [
-                [InlineKeyboardButton(text="- المنشئ .", url=SUPPORT_CHANNEL)],
-            ]
-        )
-        # الرد على المستخدم الذي بدأ البحث
-        await message.reply_audio(
-            audio=audio_file,
-            caption=rep,
-            thumb=thumb_name,
-            title=title,
-            duration=dur,
-            reply_markup=visit_butt,
-        )
+            await msg.edit("- تم الرفع انتضر قليلاً .")
+            await message.reply_video(
+                file_name,
+                duration=int(ytdl_data["duration"]),
+                thumb=thumb_path,
+                caption=ytdl_data["title"],
+            )
+            try:
+                os.remove(file_name)
+                os.remove(thumb_path)
+                await msg.delete()
+            except Exception as ex:
+                print(f"- فشل : {ex}")
 
-        await m.delete()
+        elif search_type == "audio":
+            rep = f"**- الأسم :** [{title[:23]}]({link})\n**- الوقت :** `{duration}`\n**- بواسطة  :** {message.from_user.first_name}"
+
+            secmul, dur, dur_arr = 1, 0, duration.split(":")
+            for i in range(len(dur_arr) - 1, -1, -1):
+                dur += int(dur_arr[i]) * secmul
+                secmul *= 60
+
+            visit_butt = InlineKeyboardMarkup(
+                [
+                    [InlineKeyboardButton(text="- المنشئ .", url=SUPPORT_CHANNEL)],
+                ]
+            )
+            # الرد على المستخدم الذي بدأ البحث
+            await message.reply_audio(
+                audio=audio_file,
+                caption=rep,
+                thumb=thumb_name,
+                title=title,
+                duration=dur,
+                reply_markup=visit_butt,
+            )
 
     except Exception as ex:
-        error_message = f"- فشل في تحميل الفيديو من YouTube. \n\n**السبب :** `{ex}`"
+        error_message = f"- فشل في تحميل الفيديو أو الصوت من YouTube. \n\n**السبب :** `{ex}`"
         await m.edit_text(error_message)
 
-    # إزالة الملفات المؤقتة بعد رفع الصوت
+    # إزالة الملفات المؤقتة بعد رفع الصوت أو الفيديو
     try:
         if audio_file:
             os.remove(audio_file)
-        os.remove(thumb_name)
+        if thumb_name:
+            os.remove(thumb_name)
     except Exception as ex:
         error_message = f"- فشل في حذف الملفات المؤقتة. \n\n**السبب :** `{ex}`"
         await m.edit_text(error_message)
+
 
 
 @app.on_message(filters.command(["تحميل", "video"]))
