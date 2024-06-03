@@ -83,18 +83,7 @@ async def song(_, message: Message):
         open(thumb_name, "wb").write(thumb.content)
         duration = results[0]["duration"]
 
-    except Exception as ex:
-        error_message = f"- فشل .\n\n**السبب :** `{ex}`"
-        return await m.edit_text(error_message)
-
-    await m.edit_text("⦗ جارِ التحميل، يرجى الانتظار قليلاً ... ⦘")
-    audio_file = ''
-    try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(link, download=False)
-            audio_file = ydl.prepare_filename(info_dict)
-            ydl.process_info(info_dict)
-
+        # Check if message.from_user is not None before using it
         rep = f"**• by :** {message.from_user.first_name} \n⎯ ⎯ ⎯ ⎯\n• ch : @{Muntazer} ."
 
         secmul, dur, dur_arr = 1, 0, duration.split(":")
@@ -120,7 +109,7 @@ async def song(_, message: Message):
         await m.delete()
 
     except Exception as ex:
-        error_message = f"- فشل في تحميل الفيدي من YouTube. \n\n**السبب :** `{ex}`"
+        error_message = f"- فشل في تحميل الفيديو من YouTube. \n\n**السبب :** `{ex}`"
         await m.edit_text(error_message)
 
     # Remove temporary files after audio upload
@@ -131,7 +120,6 @@ async def song(_, message: Message):
     except Exception as ex:
         error_message = f"- فشل في حذف الملفات المؤقتة. \n\n**السبب :** `{ex}`"
         await m.edit_text(error_message)
-
 
 @app.on_message(command(["تحميل", "video"]))
 async def video_search(client, message):
