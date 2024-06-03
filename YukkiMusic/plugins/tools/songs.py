@@ -45,7 +45,7 @@ def is_valid_youtube_url(url):
     return re.match(r'(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/', url)
 
 
-@app.on_message(filters.command(["يوت", "yt", "تنزيل", "بحث"]) & ~filters.edited)
+@app.on_message(filters.command(["يوت", "yt", "تنزيل", "بحث"]))
 async def song(_, message: Message):
     try:
         await message.delete()
