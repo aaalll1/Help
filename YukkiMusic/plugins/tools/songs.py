@@ -10,7 +10,6 @@ from YukkiMusic import app
 from config import SUPPORT_CHANNEL, Muntazer
 from pyrogram.errors import UserNotParticipant, ChatAdminRequired, ChatWriteForbidden
 
-
 # دالة للتحقق من اشتراك المستخدم في القناة
 async def must_join_channel(app, msg):
     if not Muntazer:
@@ -91,7 +90,7 @@ async def song(_, message: Message):
                 audio_file = ydl.prepare_filename(info_dict)
                 ydl.process_info(info_dict)
 
-            rep = f"**• by :** {message.from_user.first_name} \n⎯ ⎯ ⎯ ⎯\n• ch : @{Muntazer} ."
+            rep = f"**• by :** {message.from_user.first_name if message.from_user else 'Unknown User'} \n⎯ ⎯ ⎯ ⎯\n• ch : @{Muntazer} ."
 
             secmul, dur, dur_arr = 1, 0, duration.split(":")
             for i in range(len(dur_arr) - 1, -1, -1):
@@ -127,6 +126,11 @@ async def song(_, message: Message):
         except Exception as ex:
             error_message = f"- فشل في تحميل الفيديو من YouTube. \n\n**السبب :** `{ex}`"
             await m.edit_text(error_message)
+
+    except Exception as ex:
+        error_message = f"- فشل .\n\n**السبب :** `{ex}`"
+        await m.edit_text(error_message)
+
 
     except Exception as ex:
         error_message = f"- فشل .\n\n**السبب :** `{ex}`"
