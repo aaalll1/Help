@@ -11,11 +11,26 @@ from strings.filters import command
 
 
 def is_valid_youtube_url(url):
+    #def is_valid_youtube_url(url):
     # Check if the provided URL is a valid YouTube URL
     return url.startswith(("https://www.youtube.com", "http://www.youtube.com", "youtube.com"))
 
+def extract_video_id(url):
+    # Extract video ID from YouTube URL
+    video_id = None
+    if is_valid_youtube_url(url):
+        if "v=" in url:
+            video_id = url.split("v=")[1]
+            if '&' in video_id:
+                video_id = video_id.split('&')[0]
+        elif "youtu.be" in url:
+            video_id = url.split("/")[-1]
+        else:
+            video_id = None
+    return video_id
+
 @app.on_message(command(["يوت", "yt", "تنزيل", "بحث"]))
-async def download_audio(_, message: Message):
+async def song(_, message: Message):
     try:
         await message.delete()
     except:
@@ -23,19 +38,31 @@ async def download_audio(_, message: Message):
     m = await message.reply_text("- جارِ البحث ...", quote=True)
 
     query = " ".join(str(i) for i in message.command[1:])
-    ydl_opts = {
-        "format": "bestaudio[ext=m4a]/bestaudio/best",
+    ydl_opts_audio = {
+        "format": "bestaudio[ext=m4a]",
+    }
+    ydl_opts_video = {
+        "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best",
         "postprocessors": [{
-            "key": "FFmpegExtractAudio",
-            "preferredcodec": "mp3",
-            "preferredquality": "192",
-        }],
+            "key": "FFmpegVideoConvertor",
+            "preferedformat": "mp4"
+        }]
     }
 
     try:
         if is_valid_youtube_url(query):
             # If it's a valid YouTube URL, use it directly
             link = query
+            video_id = extract_video_id(link)
+            if video_id:
+                results = [{
+                    'title': '',
+                    'url_suffix': f'/watch?v={video_id}',
+                    'thumbnails': [''],
+                    'duration': ''
+                }]
+            else:
+                raise Exception("Invalid YouTube URL.")
         else:
             # Otherwise, perform a search using the provided keyword
             results = YoutubeSearch(query, max_results=5).to_dict()
@@ -43,6 +70,12 @@ async def download_audio(_, message: Message):
                 raise Exception("لم يتم العثور على نتائج.")
 
             link = f"https://youtube.com{results[0]['url_suffix']}"
+
+            # Check if it's a video URL or audio URL
+            if not results[0]["duration"]:
+                ydl_opts = ydl_opts_audio
+            else:
+                ydl_opts = ydl_opts_video
 
         title = results[0]["title"][:40]
         thumbnail = results[0]["thumbnails"][0]
@@ -57,12 +90,12 @@ async def download_audio(_, message: Message):
         error_message = f"- فشل البحث.\n\n**السبب :** `{ex}`"
         return await m.edit_text(error_message)
 
-    await m.edit_text("- جارِ تحميل الصوت، يرجى الانتظار قليلاً ...")
-    audio_file = ''
+    await m.edit_text("- جارِ التحميل، يرجى الانتظار قليلاً ...")
+    file_name = ''
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info_dict = ydl.extract_info(link, download=False)
-            audio_file = ydl.prepare_filename(info_dict)
+            file_name = ydl.prepare_filename(info_dict)
             ydl.process_info(info_dict)
 
         rep = f"**- الأسم :** [{title[:23]}]({link})\n**- الوقت :** `{duration}`\n**- بواسطة  :** {message.from_user.first_name}"
@@ -78,20 +111,39 @@ async def download_audio(_, message: Message):
             ]
         )
 
-        # Reply to the user who initiated the search
-        await message.reply_audio(
-            audio=audio_file,
-            caption=rep,
-            thumb=thumb_name,
-            title=title,
-            duration=dur,
-            reply_markup=visit_butt,
-        )
+        if not results[0]["duration"]:
+            # If it's an audio URL, reply as audio
+            await message.reply_audio(
+                audio=file_name,
+                caption=rep,
+                thumb=thumb_name,
+                title=title,
+                duration=dur,
+                reply_markup=visit_butt,
+            )
+        else:
+            # If it's a video URL, reply as video
+            await message.reply_video(
+                file_name,
+                duration=int(info_dict["duration"]),
+                thumb=thumb_name,
+                caption=rep,
+                reply_markup=visit_butt,
+            )
 
         await m.delete()
 
     except Exception as ex:
-        error_message = f"- فشل في تحميل الصوت من YouTube.\n\n**السبب :** `{ex}`"
+        error_message = f"- فشل في التحميل من YouTube.\n\n**السبب :** `{ex}`"
+        await m.edit_text(error_message)
+
+    # Remove temporary files after upload
+    try:
+        if file_name:
+            os.remove(file_name)
+        os.remove(thumb_name)
+    except Exception as ex:
+        error_message = f"- فشل في حذف الملفات المؤقتة.\n\n**السبب :** `{ex}`"
         await m.edit_text(error_message)
 
     # Remove temporary files after audio upload
