@@ -60,23 +60,33 @@ async def song(_, message: Message):
     query = " ".join(str(i) for i in message.command[1:])
 
     try:
-        if not is_valid_youtube_url(query):
-            raise ValueError("- الرابط غير صالح.")
-        
-        ydl_opts = {"format": "bestaudio[ext=m4a]"}
+        ydl_opts = {
+            "format": "bestaudio/best",
+            "outtmpl": "%(title)s.%(ext)s",
+            "restrictfilenames": True,
+            "noplaylist": True,
+            "nocheckcertificate": True,
+            "ignoreerrors": False,
+            "logtostderr": False,
+            "quiet": True,
+            "no_warnings": True,
+            "default_search": "auto",
+            "source_address": "0.0.0.0",  # bind to ipv4 since ipv6 addresses cause issues sometimes
+        }
 
-        results = YoutubeSearch(query, max_results=1).to_dict()
-        if not results:
-            raise ValueError("- لايوجد بحث.")
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info_dict = ydl.extract_info(query, download=False)
+            if 'entries' in info_dict:
+                info_dict = info_dict['entries'][0]
+            link = info_dict['formats'][0]['url']
+            title = info_dict['title']
+            thumbnail = info_dict['thumbnail']
+            duration = info_dict['duration']
 
-        link = f"https://youtube.com{results[0]['url_suffix']}"
-        title = results[0]["title"][:40]
-        thumbnail = results[0]["thumbnails"][0]
         thumb_name = f"{title}.jpg"
         thumb_name = thumb_name.replace("/", "")
         thumb = requests.get(thumbnail, allow_redirects=True)
         open(thumb_name, "wb").write(thumb.content)
-        duration = results[0]["duration"]
 
     except Exception as ex:
         error_message = f"- فشل .\n\n**السبب :** `{ex}`"
@@ -84,18 +94,18 @@ async def song(_, message: Message):
 
     await m.edit_text("⦗ جارِ التحميل، يرجى الانتظار قليلاً ... ⦘")
 
-    audio_file = ''
+    audio_file = f"{title}.m4a"
     try:
+        await app.send_chat_action(message.chat.id, "record_audio")
+
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(link, download=False)
-            audio_file = ydl.prepare_filename(info_dict)
-            ydl.process_info(info_dict)
+            ydl.download([query])
 
         rep = f"**• by :** {message.from_user.first_name}"
 
-        secmul, dur, dur_arr = 1, 0, duration.split(":")
-        for i in range(len(dur_arr) - 1, -1, -1):
-            dur += int(dur_arr[i]) * secmul
+        secmul, dur = 1, duration
+        for i in range(len(dur.split(":")) - 1, -1, -1):
+            dur += int(dur[i]) * secmul
             secmul *= 60
 
         visit_butt = InlineKeyboardMarkup(
@@ -120,9 +130,10 @@ async def song(_, message: Message):
         await m.edit_text(error_message)
 
     try:
-        if audio_file:
+        if os.path.exists(audio_file):
             os.remove(audio_file)
-        os.remove(thumb_name)
+        if os.path.exists(thumb_name):
+            os.remove(thumb_name)
     except Exception as ex:
         error_message = f"- فشل في حذف الملفات المؤقتة. \n\n**السبب :** `{ex}`"
         await m.edit_text(error_message)
