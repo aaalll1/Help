@@ -120,7 +120,7 @@ async def song(_, message: Message):
         await m.delete()
 
     except Exception as ex:
-        error_message = f"- فشل في تحميل الفيديو من YouTube. \n\n**السبب :** `{ex}`"
+        error_message = f"- فشل في تحميل الفيدي من YouTube. \n\n**السبب :** `{ex}`"
         await m.edit_text(error_message)
 
     # Remove temporary files after audio upload
@@ -128,122 +128,6 @@ async def song(_, message: Message):
         if audio_file:
             os.remove(audio_file)
         os.remove(thumb_name)
-    except Exception as ex:
-        error_message = f"- فشل في حذف الملفات المؤقتة. \n\n**السبب :** `{ex}`"
-        await m.edit_text(error_message)
-
-
-
-async def video_to_audio(link):
-    try:
-        ydl_opts = {
-            "format": "bestaudio[ext=m4a]",
-            "default_search": "auto",
-        }
-
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(link, download=False)
-            if 'entries' in info_dict:
-                video_url = info_dict['entries'][0]['webpage_url']
-            else:
-                video_url = info_dict.get('webpage_url', None)
-            audio_file = ydl.prepare_filename(info_dict)
-            ydl.process_info(info_dict)
-
-        return audio_file, info_dict["title"], info_dict["duration"]
-
-    except Exception as e:
-        print(f"Error: {e}")
-        return None, None, None
-
-async def video_to_audio(link):
-    try:
-        ydl_opts = {
-            "format": "bestaudio[ext=m4a]",
-            "default_search": "auto",
-        }
-
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(link, download=False)
-            if 'entries' in info_dict:
-                video_url = info_dict['entries'][0]['webpage_url']
-            else:
-                video_url = info_dict.get('webpage_url', None)
-            audio_file = ydl.prepare_filename(info_dict)
-            ydl.process_info(info_dict)
-
-        return audio_file, info_dict["title"], info_dict["duration"]
-
-    except Exception as e:
-        print(f"Error: {e}")
-        return None, None, None
-
-# دالة للتحميل وإرسال الملف الصوتي أو الفيديو
-@app.on_message(command(["رابط", "يوتيوب"]) & filters.regex(r'https?://(?:www\.)?youtube\.com\S+'))
-async def youtube_audio(client, message: Message):
-    try:
-        await message.delete()
-    except:
-        pass
-
-    # تحقق من الاشتراك الإجباري
-    await must_join_channel(client, message)
-
-    m = await message.reply_text("⦗ جارِ التحميل، يرجى الانتظار قليلاً ... ⦘", quote=True)
-
-    try:
-        link = message.text.strip()
-
-        if "watch?v=" in link:
-            # إذا كان الرابط فيديو، قم بتحويله إلى صوت
-            audio_file, title, duration = await video_to_audio(link)
-            if not audio_file:
-                raise Exception("فشل في تحويل الفيديو إلى صوت")
-
-        else:
-            # إذا كان الرابط بالفعل صوتي، استخدمه مباشرة
-            audio_file = link
-            with yt_dlp.YoutubeDL({}) as ydl:
-                info_dict = ydl.extract_info(link, download=False)
-                title = info_dict.get("title", "ملف صوتي")
-                duration = info_dict.get("duration", 0)
-
-        rep = f"**• by :** {message.from_user.first_name}"
-
-        visit_butt = InlineKeyboardMarkup(
-            [
-                [InlineKeyboardButton(text="⦗ Источник ⦘", url=SUPPORT_CHANNEL)],
-            ]
-        )
-
-        # الرد على المستخدم الذي بدأ البحث
-        if audio_file.endswith(".m4a"):
-            await message.reply_audio(
-                audio=audio_file,
-                caption=rep,
-                title=title,
-                duration=duration,
-                reply_markup=visit_butt,
-            )
-        else:
-            await message.reply_video(
-                video=audio_file,
-                caption=rep,
-                title=title,
-                duration=duration,
-                reply_markup=visit_butt,
-            )
-
-        await m.delete()
-
-    except Exception as ex:
-        error_message = f"- فشل في تحميل الفيديو أو تحويله إلى صوت. \n\n**السبب :** `{ex}`"
-        await m.edit_text(error_message)
-
-    # حذف الملفات المؤقتة بعد تحميل الصوت
-    try:
-        if audio_file and os.path.exists(audio_file):
-            os.remove(audio_file)
     except Exception as ex:
         error_message = f"- فشل في حذف الملفات المؤقتة. \n\n**السبب :** `{ex}`"
         await m.edit_text(error_message)
