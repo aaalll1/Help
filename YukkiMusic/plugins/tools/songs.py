@@ -8,13 +8,24 @@ from youtube_search import YoutubeSearch
 from YukkiMusic import app
 from config import SUPPORT_CHANNEL, Muntazer
 
+# Function to check if the provided URL is a valid YouTube URL
+def is_valid_youtube_url(url):
+    return any(url.startswith(prefix) for prefix in ["https://www.youtube.com", "http://www.youtube.com", "youtube.com"])
+
 ydl_opts = {
-    "format": "best",
-    "keepvideo": True,
-    "prefer_ffmpeg": False,
+    "format": "bestaudio/best",
+    "keepvideo": False,
+    "prefer_ffmpeg": True,
     "geo_bypass": True,
     "outtmpl": "%(title)s.%(ext)s",
     "quite": True,
+    "postprocessors": [
+        {
+            "key": "FFmpegExtractAudio",
+            "preferredcodec": "mp3",
+            "preferredquality": "192",
+        }
+    ],
 }
 
 @app.on_message(filters.command(["يوت", "yt", "تنزيل", "بحث"]))
@@ -58,10 +69,12 @@ async def song(client, message):
         await msg.edit("⦗ تم التحميل بنجاح ⦘")
 
         # إرسال الفيديو إلى الدردشة
-        await message.reply_video(
+        await message.reply_audio(
             file_name,
             duration=int(ytdl_data["duration"]),
-            caption=ytdl_data["title"],
+            title=ytdl_data.get("title", "No Title"),
+            performer=ytdl_data.get("uploader", "Unknown Uploader"),
+            caption=ytdl_data.get("title", "No Title"),
         )
 
         try:
@@ -101,7 +114,7 @@ async def video_search(client, message):
         await message.reply_video(
             file_name,
             duration=int(ytdl_data["duration"]),
-            caption=ytdl_data["title"],
+            caption=ytdl_data.get("title", "No Title"),
         )
 
         try:
