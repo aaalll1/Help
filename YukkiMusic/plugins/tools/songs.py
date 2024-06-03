@@ -1,13 +1,12 @@
-
 import os
 import re
 import requests
 import yt_dlp
+from strings.filters import command
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from youtube_search import YoutubeSearch
 from YukkiMusic import app
-from strings.filters import command
 from config import SUPPORT_CHANNEL, Muntazer
 from pyrogram.errors import UserNotParticipant, ChatAdminRequired, ChatWriteForbidden
 
@@ -41,27 +40,12 @@ async def must_join_channel(app, msg):
     except ChatAdminRequired:
         print(f"I'm not admin in the MUST_JOIN chat {Muntazer}!")
 
-# دالة للتحقق من صحة رابط يوتيوب
+
 def is_valid_youtube_url(url):
-    return any(url.startswith(x) for x in ["https://www.youtube.com", "http://www.youtube.com", "youtube.com", "youtu.be"])
+    # Check if the provided URL is a valid YouTube URL
+    return url.startswith(("https://www.youtube.com", "http://www.youtube.com", "youtube.com"))
 
-# مقتطفات لتنزيل الفيديو والصوت
-ydl_opts_audio = {
-    "format": "bestaudio/best",
-    "outtmpl": "%(title)s.%(ext)s",
-    "postprocessors": [{
-        "key": "FFmpegExtractAudio",
-        "preferredcodec": "mp3",
-        "preferredquality": "192",
-    }],
-}
-ydl_opts_video = {
-    "format": "bestvideo+bestaudio/best",
-    "outtmpl": "%(title)s.%(ext)s",
-    "merge_output_format": "mp4",
-}
 
-# يمكن تنفيذ ذلك
 @app.on_message(command(["يوت", "yt", "تنزيل", "بحث"]))
 async def song(_, message: Message):
     try:
@@ -75,7 +59,7 @@ async def song(_, message: Message):
     m = await message.reply_text("⦗ جارِ البحث يرجى الانتضار ⦘", quote=True)
 
     query = " ".join(str(i) for i in message.command[1:])
-    ydl_opts = ydl_opts_audio if message.command[0] in ["يوت", "yt"] else ydl_opts_video
+    ydl_opts = {"format": "bestaudio[ext=m4a]"}
 
     try:
         if is_valid_youtube_url(query):
@@ -98,8 +82,8 @@ async def song(_, message: Message):
         open(thumb_name, "wb").write(thumb.content)
         duration = results[0]["duration"]
 
-        # Download audio or video file
-        file_ext = "mp3" if message.command[0] in ["يوت", "yt"] else "mp4"
+        # Download audio file
+        audio_file = ''
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info_dict = ydl.extract_info(link, download=False)
@@ -119,27 +103,18 @@ async def song(_, message: Message):
                 ]
             )
             # Reply to the user who initiated the search
-            if message.command[0] in ["يوت", "yt"]:
-                await message.reply_audio(
-                    audio=audio_file,
-                    caption=rep,
-                    thumb=thumb_name,
-                    title=title,
-                    duration=dur,
-                    reply_markup=visit_butt,
-                )
-            else:
-                await message.reply_video(
-                    video=audio_file,
-                    caption=rep,
-                    thumb=thumb_name,
-                    duration=dur,
-                    reply_markup=visit_butt,
-                )
+            await message.reply_audio(
+                audio=audio_file,
+                caption=rep,
+                thumb=thumb_name,
+                title=title,
+                duration=dur,
+                reply_markup=visit_butt,
+            )
 
             await m.delete()
 
-            # Remove temporary files after audio or video upload
+            # Remove temporary files after audio upload
             try:
                 if audio_file:
                     os.remove(audio_file)
@@ -151,6 +126,11 @@ async def song(_, message: Message):
         except Exception as ex:
             error_message = f"- فشل في تحميل الفيديو من YouTube. \n\n**السبب :** `{ex}`"
             await m.edit_text(error_message)
+
+    except Exception as ex:
+        error_message = f"- فشل .\n\n**السبب :** `{ex}`"
+        await m.edit_text(error_message)
+
 
     except Exception as ex:
         error_message = f"- فشل .\n\n**السبب :** `{ex}`"
@@ -170,7 +150,6 @@ async def video_search(client, message):
     try:
         # تحقق من الاشتراك الإجباري
         await must_join_channel(app, message)
-
   
         results = YoutubeSearch(query, max_results=1).to_dict()
         link = f"https://youtube.com{results[0]['url_suffix']}"
