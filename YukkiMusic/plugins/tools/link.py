@@ -3,18 +3,16 @@ import os
 import requests
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from youtube_dl import YoutubeDL
-from youtube_search import YoutubeSearch
+import yt_dlp
 from config import SUPPORT_CHANNEL
-from strings.filters import command
-import re
-import os.path
+from youtube_search import YoutubeSearch
 
+# Function to check if the provided URL is a valid YouTube URL
 def is_valid_youtube_url(url):
-    # Check if the provided URL is a valid YouTube URL
     return url.startswith(("https://www.youtube.com", "http://www.youtube.com", "youtube.com"))
 
-@app.on_message(command(["رابط"]))
+# Command handler for '/رابط'
+@app.on_message(filters.command(["رابط"]))
 async def song(_, message: Message):
     try:
         await message.delete()
@@ -32,10 +30,10 @@ async def song(_, message: Message):
             link = query
         else:
             # Otherwise, perform a search using the provided keyword
-            results = YoutubeSearch(query, max_results=5).to_dict()
+            results = YoutubeSearch(query, max_results=1).to_dict()
             if not results:
-                raise Exception("- لايوجد بحث .")
-            
+                raise Exception("- لايوجد نتائج بحث.")
+
             link = f"https://youtube.com{results[0]['url_suffix']}"
 
         title = results[0]["title"][:40]
@@ -48,7 +46,7 @@ async def song(_, message: Message):
         duration = results[0]["duration"]
 
     except Exception as ex:
-        error_message = f"- فشل .\n\n**السبب :** `{ex}`"
+        error_message = f"- فشل في البحث عن الفيديو. \n\n**السبب :** `{ex}`"
         return await m.edit_text(error_message)
 
     await m.edit_text("⦗ جارِ التحميل، يرجى الانتظار قليلاً ... ⦘")
