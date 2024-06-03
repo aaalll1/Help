@@ -194,7 +194,7 @@ async def youtube_audio(client, message: Message):
 
 @app.on_message(command(["تحميل", "video"]))
 async def video_search(client, message):
-        ydl_opts = {
+    ydl_opts = {
         "format": "best",
         "keepvideo": True,
         "prefer_ffmpeg": False,
@@ -204,8 +204,7 @@ async def video_search(client, message):
     }
     query = " ".join(message.command[1:])
     try:
-    
-       # تحقق من الاشتراك الإجباري
+        # تحقق من الاشتراك الإجباري
         await must_join_channel(app, message)
   
         results = YoutubeSearch(query, max_results=1).to_dict()
@@ -231,6 +230,7 @@ async def video_search(client, message):
             file_name = ytdl.prepare_filename(ytdl_data)
     except Exception as e:
         return await msg.edit(f"🚫 **error:** {e}")
+    
     thumb_path = f"thumb{title}.jpg"
     if not os.path.exists(thumb_path):
         return await msg.edit(f"🚫 **error:** Thumb file not found!")
