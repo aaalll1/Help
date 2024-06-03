@@ -98,27 +98,26 @@ async def commands_set(_, query: CallbackQuery):
     
     
 @app.on_callback_query(filters.regex("ghaith"))
-   async def commands_set(_, query: CallbackQuery):
-   if query.from_user.id == int(OWNER):
-    await query.answer("تم فتح لوحة المطور")
-    await query.edit_message_text(
-        f"""- تم فتح لوحة التحكم ↓
+async def commands_set(_, query: CallbackQuery):
+    if query.from_user.id == int(OWNER):
+        await query.answer("تم فتح لوحة المطور")
+        await query.edit_message_text(
+            f"""- تم فتح لوحة التحكم ↓
  – – – – – – 
 ⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
-        reply_markup=InlineKeyboardMarkup(
-            [
+            reply_markup=InlineKeyboardMarkup(
                 [
-                    InlineKeyboardButton("⦗ اوامر المطور ⦘", callback_data="owner_commands"),
-                ],
-                [
-                    InlineKeyboardButton("⦗ الرجوع ⦘", callback_data="home_start"),
-                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="command_list"),
-                ],
-            ]
+                    [
+                        InlineKeyboardButton("⦗ اوامر المطور ⦘", callback_data="owner_commands"),
+                    ],
+                    [
+                        InlineKeyboardButton("⦗ الرجوع ⦘", callback_data="home_start"),
+                        InlineKeyboardButton("⦗ التالي ⦘", callback_data="command_list"),
+                    ],
+                ]
+            )
         )
-    )
-   else:
-
+    else:
        await query.answer("✓ هذا الزر خاص بمطور البوت .", show_alert=True)
 
 @app.on_callback_query(filters.regex("user_command"))
