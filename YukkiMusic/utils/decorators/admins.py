@@ -46,7 +46,18 @@ def AdminRightsCheck(mystic):
             _ = get_string(language)
         except:
             _ = get_string("en")
-        
+        if message.sender_chat:
+            upl = InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="How to Fix this? ",
+                            callback_data="AnonymousAdmin",
+                        ),
+                    ]
+                ]
+            )
+            return await message.reply_text(_["general_4"], reply_markup=upl)
         if message.command[0][0] == "c":
             chat_id = await get_cmode(message.chat.id)
             if chat_id is None:
@@ -61,6 +72,7 @@ def AdminRightsCheck(mystic):
             return await message.reply_text(_["general_6"])
         is_non_admin = await is_nonadmin_chat(message.chat.id)
         if not is_non_admin:
+            if message.from_user.id not in SUDOERS:
                 admins = adminlist.get(message.chat.id)
                 if not admins:
                     return await message.reply_text(_["admin_18"])
@@ -89,7 +101,19 @@ def AdminActual(mystic):
             _ = get_string(language)
         except:
             _ = get_string("en")
-        
+        if message.sender_chat:
+            upl = InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="How to Fix this? ",
+                            callback_data="AnonymousAdmin",
+                        ),
+                    ]
+                ]
+            )
+            return await message.reply_text(_["general_4"], reply_markup=upl)
+        if message.from_user.id not in SUDOERS:
             try:
                 member = await app.get_chat_member(
                     message.chat.id, message.from_user.id
