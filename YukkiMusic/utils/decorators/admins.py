@@ -61,7 +61,6 @@ def AdminRightsCheck(mystic):
             return await message.reply_text(_["general_6"])
         is_non_admin = await is_nonadmin_chat(message.chat.id)
         if not is_non_admin:
-            if message.from_user.id not in SUDOERS:
                 admins = adminlist.get(message.chat.id)
                 if not admins:
                     return await message.reply_text(_["admin_18"])
@@ -91,7 +90,6 @@ def AdminActual(mystic):
         except:
             _ = get_string("en")
         
-        if message.from_user.id not in SUDOERS:
             try:
                 member = await app.get_chat_member(
                     message.chat.id, message.from_user.id
