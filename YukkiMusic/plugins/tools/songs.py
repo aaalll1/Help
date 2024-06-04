@@ -7,9 +7,10 @@ from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from youtube_search import YoutubeSearch
 from YukkiMusic import app
+from pySmartDL import SmartDL
 from config import SUPPORT_CHANNEL, Muntazer
 from pyrogram.errors import UserNotParticipant, ChatAdminRequired, ChatWriteForbidden
-
+last_clicked_button = {}
 # دالة للتحقق من اشتراك المستخدم في القناة
 async def must_join_channel(app, msg):
     if not Muntazer:
@@ -193,3 +194,67 @@ async def video_search(client, message):
 
     except Exception as e:
         return await msg.edit(f"🚫 **error:** {e}")
+
+
+@app.on_message(command("رابط"))
+async def tom_youtube(client, message):
+    global video_link, audio_link, title, duration, rating, views, description
+
+    url = message.text.split(None, 1)[1]
+    response = requests.get(f"https://youtube.dev-tomtom.repl.co/tom={url}")
+    data = response.json()
+    tom_info = data[0]["Tom"]
+    audio_link = tom_info["audio_link"]
+    video_link = tom_info["download_link_video"]
+    photo_link = tom_info["photo"]
+    title = tom_info["title"]
+    duration = tom_info["duration"]
+    rating = tom_info["rating"]
+    views = tom_info["views"]
+    description = tom_info["description"]
+    
+
+    keyboard = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton("تحميل الصوت", callback_data=f"audio_{url}"),
+                InlineKeyboardButton("تحميل الفيديو", callback_data=f"video_{url}"),
+            ]
+        ]
+    )
+    
+    
+    msg = await message.reply_photo(photo_link, caption=f"Name = {title} \n\nDuration = {duration} \n\nRating = {rating} \n\nViews = {views}", reply_markup=keyboard)
+
+
+@app.on_callback_query()
+async def handle_callback_query(client, callback_query: CallbackQuery):
+    global video_link
+    global audio_link
+    button_type = callback_query.data.split("_")[0]
+    name = callback_query.data.split("_")[1]
+    
+
+    msg = await callback_query.message.reply_text("يرجى الانتظار جار الرفع  ...")
+    last_clicked_button[callback_query.message.chat.id] = msg.id
+    
+    if button_type == "audio":
+        obj = SmartDL(audio_link, progress_bar=False, verify=False)
+        obj.start()
+        obj.wait()
+        audio = obj.get_dest()
+      
+        await callback_query.message.reply_audio(audio, title=f"{title}")
+    
+    elif button_type == "video":
+        obj = SmartDL(video_link, progress_bar=False, verify=False)
+        obj.start()
+        obj.wait()
+        video=obj.get_dest()
+       
+        await callback_query.message.reply_video(video, caption=f"{title}")
+    
+
+    await client.delete_messages(chat_id=callback_query.message.chat.id, message_ids=[last_clicked_button.get(callback_query.message.chat.id)])
+
+
