@@ -1,6 +1,7 @@
 aiofiles
 aiohttp
 asyncio
+pySmartDL
 bing-image-urls # this for in image module for searching images from bing
 dnspython==2.3.0
 ffmpeg-python
