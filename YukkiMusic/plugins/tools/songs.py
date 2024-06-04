@@ -4,7 +4,7 @@ import requests
 import yt_dlp
 from strings.filters import command
 from pyrogram import filters
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, CallbackQuery
 from youtube_search import YoutubeSearch
 from YukkiMusic import app
 from pySmartDL import SmartDL
