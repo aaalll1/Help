@@ -8,15 +8,15 @@ from YukkiMusic.utils.database import add_gban_user, remove_gban_user
 from YukkiMusic.utils.decorators.language import language
 
 
-@app.on_message(command("⦗ حظر عضو ⦘", "حظر") & SUDOERS)
+@app.on_message(command(["حظر", "⦗ حظر عضو ⦘"]) & SUDOERS)
 @language
 async def useradd(client, message: Message, _):
     if not message.reply_to_message:
         return await message.reply_text("يرجى إرسال الإيدي أو اسم المستخدم لأقوم بحظره.")
     
     if len(message.command) != 2:
-        return await message.reply_text(_["general_1"])
-    
+        return await message.reply_text("الرجاء تحديد مستخدم واحد للحظر.")
+
     user = message.text.split(None, 1)[1]
     if "@" in user:
         user = user.replace("@", "")
@@ -34,15 +34,15 @@ async def useradd(client, message: Message, _):
     await message.reply_text(f"تم حظر {user.mention if user.username is None else f'@{user.username}'}")
 
 
-@app.on_message(command("⦗ الغاء حظر عضو ⦘", "الغاء حظر") & SUDOERS)
+@app.on_message(command(["الغاء حظر", "⦗ الغاء حظر عضو ⦘"]) & SUDOERS)
 @language
 async def userdel(client, message: Message, _):
     if not message.reply_to_message:
         return await message.reply_text("يرجى إرسال الإيدي أو اسم المستخدم لأقوم بإلغاء حظره.")
     
     if len(message.command) != 2:
-        return await message.reply_text(_["general_1"])
-    
+        return await message.reply_text("الرجاء تحديد مستخدم واحد لإلغاء الحظر.")
+
     user = message.text.split(None, 1)[1]
     if "@" in user:
         user = user.replace("@", "")
@@ -60,7 +60,7 @@ async def userdel(client, message: Message, _):
     await message.reply_text(f"تم إلغاء حظر {user.mention if user.username is None else f'@{user.username}'}")
 
 
-@app.on_message(command("⦗ المحظورين ⦘", "المحظورين") & SUDOERS)
+@app.on_message(command(["المحظورين", "⦗ المحظورين ⦘"]) & SUDOERS)
 @language
 async def sudoers_list(client, message: Message, _):
     if not BANNED_USERS:
