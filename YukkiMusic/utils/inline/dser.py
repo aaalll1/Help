@@ -4,9 +4,19 @@ from YukkiMusic.utils.formatters import time_to_seconds
 from YukkiMusic import app
 from strings.filters import command
 
+# Function to get dynamic data
+def get_dynamic_data(chat_id):
+    # Replace with your logic to fetch data dynamically
+    played = "Your played text"
+    bar = "Your bar text"
+    dur = "Your duration text"
+    videoid = "Your video ID"
+    return played, bar, dur, videoid, chat_id
+
 @app.on_message(command("تحكم"))
 async def derws(client, message):
-    played, bar, dur, videoid, chat_id = get_dynamic_data()
+    chat_id = message.chat.id
+    played, bar, dur, videoid, chat_id = get_dynamic_data(chat_id)
 
     buttons = [
         [
