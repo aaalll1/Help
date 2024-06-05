@@ -11,8 +11,9 @@
 from pyrogram import filters
 from pyrogram.errors import ChatAdminRequired, ChatWriteForbidden, UserNotParticipant
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from YukkiMusic import Muntazer, app
+from YukkiMusic import app
 import config
+from config import Muntazer
 from strings.filters import command
 from config import BANNED_USERS
 from YukkiMusic import YouTube
