@@ -2,9 +2,12 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from YukkiMusic.utils.formatters import time_to_seconds
 from YukkiMusic import app
+from strings.filters import command
 
 @app.on_message(command("تحكم"))
 async def stream_markup_timer(client, message):
+    played, bar, dur, videoid, chat_id = get_dynamic_data()
+
     buttons = [
         [
             InlineKeyboardButton(
@@ -29,10 +32,9 @@ async def stream_markup_timer(client, message):
                 text="⦗ إلغاء كتم ⦘", callback_data=f"ADMIN Unmute|{chat_id}"
             ),
         ],
-        [InlineKeyboardButton(text=_["CLOSEMENU_BUTTON"], callback_data="close")],
+        [InlineKeyboardButton(text="إغلاق القائمة", callback_data="close")],
     ]
-    
-    # إنشاء InlineKeyboardMarkup
+
     reply_markup = InlineKeyboardMarkup(buttons)
 
     await message.reply_text("قائمة التحكم:", reply_markup=reply_markup)
