@@ -10,7 +10,7 @@ from YukkiMusic.utils.decorators import AdminRightsCheck
 from YukkiMusic.utils.inline.play import stream_markup
 from YukkiMusic.utils.stream.autoclear import auto_clean
 
-@app.on_message(filters.command(["تخطي", "cnext"]) & ~config.BANNED_USERS)
+@app.on_message(filters.command(["تخطي", "cnext"]))
 @AdminRightsCheck
 async def skip_command(cli, message: Message):
     chat_id = message.chat.id
