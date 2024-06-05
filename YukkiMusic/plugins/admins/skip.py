@@ -9,7 +9,6 @@ from YukkiMusic.utils.database import get_loop
 from YukkiMusic.utils.decorators import AdminRightsCheck
 from YukkiMusic.utils.inline.play import stream_markup
 from YukkiMusic.utils.stream.autoclear import auto_clean
-from YukkiMusic.utils.thumbnails import get_thumb
 
 @app.on_message(filters.command(["تخطي", "cnext"]) & ~config.BANNED_USERS)
 @AdminRightsCheck
