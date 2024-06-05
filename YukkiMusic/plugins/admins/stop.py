@@ -7,7 +7,8 @@
 #
 # All rights reserved.
 #
-
+from pyrogram.types import InlineKeyboardMarkup, Message, InlineKeyboardButton 
+from pyrogram.errors import UserNotParticipant, ChatWriteForbidden, ChatAdminRequired 
 from pyrogram import filters
 from pyrogram.types import Message
 from strings.filters import command
