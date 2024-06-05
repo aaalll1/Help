@@ -61,5 +61,5 @@ async def stop_music(cli, message: Message):
     await set_loop(message.chat.id, 0) 
     # الرد على الرسالة بنجاح الإيقاف
     await message.reply_text( 
-        _["admin_5"].format(message.from_user.first_name if message.from_user else 'Freedom'))
+        _["admin_5"].format(message.from_user.first_name if message.from_user else 'Freedom')
     )
