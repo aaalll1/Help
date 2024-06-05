@@ -18,8 +18,8 @@ from YukkiMusic.utils.database import set_loop
 from YukkiMusic.utils.decorators import AdminRightsCheck
 from strings.filters import command
 from config import BANNED_USERS
-
-# تحقق من اشتراك المستخدم في قناة البوت
+ 
+@app.on_message(filters.incoming & filters.private, group=-1) 
 async def must_join_channel(app, msg):
     if not Muntazer:
         return
@@ -46,14 +46,20 @@ async def must_join_channel(app, msg):
             except ChatWriteForbidden:
                 pass
     except ChatAdminRequired:
-        print(f"I'm not admin in the MUST_JOIN chat {Muntazer}!")
+        print(f"I m not admin in the MUST_JOIN chat {Muntazer}!")
 
-
-@app.on_message(command(["ايقاف", "انهاء", "اوكف"]) & ~BANNED_USERS)
-@AdminRightsCheck
-async def stop_music(cli, message: Message):
-    chat_id = message.chat.id
-    await must_join_channel(cli, message)
-    await Yukki.stop_stream(chat_id)
-    await set_loop(chat_id, 0)
-    await message.reply_text(_["admin_9"].format(message.from_user.mention))
+ 
+# الكود لإيقاف الموسيقى  
+@app.on_message(command(["ايقاف", "اوكف", "التالي", "انهاء"])) 
+async def stop_music(cli, message: Message): 
+    if not len(message.command) == 1: 
+        return 
+    # التحقق من الاشتراك في القناة 
+    await must_join_channel(cli, message) 
+    # إيقاف الموسيقى
+    await Yukki.stop_stream(message.chat.id) 
+    await set_loop(message.chat.id, 0) 
+    # الرد على الرسالة بنجاح الإيقاف
+    await message.reply_text( 
+        _["admin_5"].format(message.from_user.first_name if message.from_user else 'Freedom'))
+    )
