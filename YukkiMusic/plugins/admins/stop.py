@@ -52,7 +52,7 @@ async def must_join_channel(app, msg):
 @AdminRightsCheck
 async def stop_music(cli, message: Message, _, chat_id):
         if not len(message.command) == 1: 
-        return
+            return
         await must_join_channel(cli, message) 
         return await message.reply_text(_["general_2"])
     await Yukki.stop_stream(chat_id)
