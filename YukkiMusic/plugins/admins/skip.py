@@ -7,11 +7,11 @@ from YukkiMusic.core.call import Yukki
 from YukkiMusic.misc import db
 from YukkiMusic.utils.database import get_loop
 from YukkiMusic.utils.decorators import AdminRightsCheck
-from YukkiMusic.utils.inline.play import stream_markup, telegram_markup
+from YukkiMusic.utils.inline.play import stream_markup
 from YukkiMusic.utils.stream.autoclear import auto_clean
-from YukkiMusic.utils.thumbnails import gen_thumb
+from YukkiMusic.utils.thumbnails import get_thumb
 
-@app.on_message(filters.command(["تخطي", "cnext"]))
+@app.on_message(filters.command(["تخطي", "cnext"]) & ~config.BANNED_USERS)
 @AdminRightsCheck
 async def skip_command(cli, message: Message):
     chat_id = message.chat.id
