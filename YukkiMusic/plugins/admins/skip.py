@@ -43,12 +43,11 @@ async def skip(cli, message: Message):
                         [InlineKeyboardButton("⦗قناة الإشتراك⦘", url=link)]
                     ])
                 )
-                return
             except ChatWriteForbidden:
                 pass
             return
         except ChatAdminRequired:
-            print(f"I m not admin in the MUST_JOIN chat {Muntazer}!")
+            print(f"I'm not admin in the MUST_JOIN chat {Muntazer}!")
             return
         
         state = message.text.split(None, 1)[1].strip()
@@ -128,7 +127,8 @@ async def skip(cli, message: Message):
             return await message.reply_text(_["admin_11"].format(title))
         try:
             await Yukki.skip_stream(chat_id, link, video=status)
-        except Exception:
+        except Exception as e:
+            print(e)  # Print the exception for debugging purposes
             return await message.reply_text(_["call_9"])
         button = telegram_markup(_, chat_id)
         img = await gen_thumb(videoid)
@@ -152,11 +152,13 @@ async def skip(cli, message: Message):
                 videoid=True,
                 video=status,
             )
-        except:
+        except Exception as e:
+            print(e)  # Print the exception for debugging purposes
             return await mystic.edit_text(_["call_9"])
         try:
             await Yukki.skip_stream(chat_id, file_path, video=status)
-        except Exception:
+        except Exception as e:
+            print(e)  # Print the exception for debugging purposes
             return await mystic.edit_text(_["call_9"])
         button = stream_markup(_, videoid, chat_id)
         img = await gen_thumb(videoid)
@@ -177,7 +179,8 @@ async def skip(cli, message: Message):
     elif "index_" in queued:
         try:
             await Yukki.skip_stream(chat_id, videoid, video=status)
-        except Exception:
+        except Exception as e:
+            print(e)  # Print the exception for debugging purposes
             return await message.reply_text(_["call_9"])
         button = telegram_markup(_, chat_id)
         run = await message.reply_photo(
@@ -191,7 +194,8 @@ async def skip(cli, message: Message):
     else:
         try:
             await Yukki.skip_stream(chat_id, queued, video=status)
-        except Exception:
+        except Exception as e:
+            print(e)  # Print the exception for debugging purposes
             return await message.reply_text(_["call_9"])
         
         if videoid == "telegram":
@@ -207,6 +211,7 @@ async def skip(cli, message: Message):
             )
             db[chat_id][0]["mystic"] = run
             db[chat_id][0]["markup"] = "tg"
+        
         
         elif videoid == "soundcloud":
             button = telegram_markup(_, chat_id)
