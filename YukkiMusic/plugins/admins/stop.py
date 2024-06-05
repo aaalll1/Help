@@ -51,10 +51,9 @@ async def must_join_channel(app, msg):
 @app.on_message(command(["ايقاف","انهاء","اوكف"]) & ~BANNED_USERS)
 @AdminRightsCheck
 async def stop_music(cli, message: Message, _, chat_id):
-        if not len(message.command) == 1: 
-            return
-        await must_join_channel(cli, message) 
-        return await message.reply_text(_["general_2"])
+    if not len(message.command) == 1: 
+        return
+    await must_join_channel(cli, message) 
     await Yukki.stop_stream(chat_id)
     await set_loop(chat_id, 0)
     await message.reply_text(_["admin_9"].format(message.from_user.mention))
