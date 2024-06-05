@@ -11,7 +11,7 @@ from YukkiMusic.utils.inline.play import stream_markup, telegram_markup
 from YukkiMusic.utils.stream.autoclear import auto_clean
 from YukkiMusic.utils.thumbnails import gen_thumb
 
-@app.on_message(filters.command(["تخطي", "cnext"]) & ~config.BANNED_USERS)
+@app.on_message(filters.command(["تخطي", "cnext"]))
 @AdminRightsCheck
 async def skip_command(cli, message: Message):
     chat_id = message.chat.id
