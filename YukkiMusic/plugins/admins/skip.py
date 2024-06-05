@@ -15,43 +15,10 @@ from YukkiMusic.utils.inline.play import stream_markup, telegram_markup
 from YukkiMusic.utils.stream.autoclear import auto_clean
 from YukkiMusic.utils.thumbnails import gen_thumb
 
-# تحقق من اشتراك المستخدم في قناة البوت
-async def must_join_channel(user_id):
-    if Muntazer.isalpha():
-        link = f"https://t.me/{Muntazer}"
-    else:
-        chat_info = await app.get_chat(Muntazer)
-        link = chat_info.invite_link
-    try:
-        await app.get_chat_member(Muntazer, user_id)
-        return True
-    except UserNotParticipant:
-        return False
-    except ChatAdminRequired:
-        print(f"I'm not admin in the MUST_JOIN chat {Muntazer}!")
-        return False
 
 @app.on_message(filters.command(["سكب", "تخطي", "التالي"]) & ~BANNED_USERS)
 @AdminRightsCheck
-async def skip(cli, message: Message):
-    chat_id = message.chat.id
-    user_id = message.from_user.id
-    
-    # التحقق من اشتراك المستخدم في قناة البوت
-    if not await must_join_channel(user_id):
-        link = f"https://t.me/{Muntazer}"
-        try:
-            await message.reply(
-                f"يجب عليك الاشتراك في قناة البوت لاستخدام هذا الأمر.\nقناة البوت: @{Muntazer}.",
-                disable_web_page_preview=True,
-                reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton("⦗ قناة الإشتراك ⦘", url=link)]
-                ])
-            )
-            return
-        except ChatWriteForbidden:
-            pass
-    
+async def skip(cli, message: Message, _, chat_id):
     if not len(message.command) < 2:
         loop = await get_loop(chat_id)
         if loop != 0:
@@ -118,6 +85,32 @@ async def skip(cli, message: Message):
                 return await Yukki.stop_stream(chat_id)
             except:
                 return
+
+    # Check if the user is subscribed to the channel
+    try:
+        member = await app.get_chat_member(Muntazer, message.from_user.id)
+        if member.status == "kicked":
+            return await message.reply_text("You are banned to use this command")
+    except UserNotParticipant:
+        if Muntazer.isalpha():
+            link = "https://t.me/" + Muntazer
+        else:
+            chat_info = await app.get_chat(Muntazer)
+            link = chat_info.invite_link
+        try:
+            await message.reply(
+                f"~︙عليك الأشتراك في قناة البوت \n~︙قناة البوت : @{Muntazer}.",
+                disable_web_page_preview=True,
+                reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton("⦗ قناة البوت ⦘", url=link)]
+                ])
+            )
+            await message.stop_propagation()
+        except ChatWriteForbidden:
+            pass
+        return
+
+    # Proceed with the skip command
     queued = check[0]["file"]
     title = (check[0]["title"]).title()
     user = check[0]["by"]
