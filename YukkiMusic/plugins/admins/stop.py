@@ -7,20 +7,22 @@
 #
 # All rights reserved.
 #
-from pyrogram.types import InlineKeyboardMarkup, Message, InlineKeyboardButton 
-from pyrogram.errors import UserNotParticipant, ChatWriteForbidden, ChatAdminRequired 
+
 from pyrogram import filters
-from pyrogram.types import Message
-from strings.filters import command
-from config import BANNED_USERS
-from YukkiMusic import app
-from config import Muntazer
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
+from pyrogram.errors import UserNotParticipant, ChatWriteForbidden, ChatAdminRequired
+from YukkiMusic import app, Muntazer
 from YukkiMusic.core.call import Yukki
 from YukkiMusic.utils.database import set_loop
 from YukkiMusic.utils.decorators import AdminRightsCheck
+from strings import get_command
+import config
 
-@app.on_message(filters.incoming & filters.private, group=-1) 
-async def must_join_channel(app, msg):
+# Commands
+STOP_COMMANDS = get_command(["ايقاف", "انهاء", "اوقف"])
+
+@app.on_message(filters.incoming & filters.private, group=-1)
+async def must_join_channel(_, msg):
     if not Muntazer:
         return
     try:
@@ -46,15 +48,20 @@ async def must_join_channel(app, msg):
             except ChatWriteForbidden:
                 pass
     except ChatAdminRequired:
-        print(f"I m not admin in the MUST_JOIN chat {Muntazer}!")
+        print(f"I'm not admin in the MUST_JOIN chat {Muntazer}!")
 
-
-@app.on_message(command(["ايقاف","انهاء","اوكف"]))
+@app.on_message(filters.command(STOP_COMMANDS))
 @AdminRightsCheck
 async def stop_music(cli, message: Message, _, chat_id):
-    if not len(message.command) == 1: 
+    if not len(message.command) == 1:
         return
-    await must_join_channel(cli, message) 
-    await Yukki.stop_stream(chat_id)
-    await set_loop(chat_id, 0)
-    await message.reply_text(_["admin_9"].format(message.from_user.mention))
+
+    # التحقق من الاشتراك في القناة المطلوبة
+    await must_join_channel(cli, message)
+
+    try:
+        await Yukki.stop_stream(chat_id)
+        await set_loop(chat_id, 0)
+        await message.reply_text(_["admin_9"].format(message.from_user.mention))
+    except Exception as e:
+        print(f"Failed to stop stream: {e}")
