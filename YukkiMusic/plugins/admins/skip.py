@@ -13,7 +13,6 @@ from YukkiMusic.utils.stream.autoclear import auto_clean
 
 @app.on_message(
     command(["تخطي","التالي","سكب"])
-    & filters.group
 )
 
 @AdminRightsCheck
