@@ -1,7 +1,5 @@
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-import math
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from YukkiMusic.utils.formatters import time_to_seconds
 from YukkiMusic import app
 
@@ -33,8 +31,7 @@ async def stream_markup_timer(client, message):
         ],
         [InlineKeyboardButton(text=_["CLOSEMENU_BUTTON"], callback_data="close")],
     ]
-    return buttons
-
+    
     # إنشاء InlineKeyboardMarkup
     reply_markup = InlineKeyboardMarkup(buttons)
 
