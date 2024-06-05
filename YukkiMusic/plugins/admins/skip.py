@@ -14,24 +14,51 @@ from pyrogram.types import InlineKeyboardMarkup, Message
 
 import config
 from config import BANNED_USERS
-from strings import get_command
 from YukkiMusic import YouTube, app
 from YukkiMusic.core.call import Yukki
 from YukkiMusic.misc import db
+from config import Muntazer
 from YukkiMusic.utils.database import get_loop
 from YukkiMusic.utils.decorators import AdminRightsCheck
 from YukkiMusic.utils.inline.play import stream_markup, telegram_markup
 from YukkiMusic.utils.stream.autoclear import auto_clean
 from YukkiMusic.utils.thumbnails import gen_thumb
 
-# Commands
-SKIP_COMMAND = get_command("SKIP_COMMAND")
+@app.on_message(filters.incoming & filters.private, group=-1) 
+async def must_join_channel(app, msg):
+    if not Muntazer:
+        return
+    try:
+        if msg.from_user is None:
+            return
+        try:
+            await app.get_chat_member(Muntazer, msg.from_user.id)
+        except UserNotParticipant:
+            if Muntazer.isalpha():
+                link = "https://t.me/" + Muntazer
+            else:
+                chat_info = await app.get_chat(Muntazer)
+                link = chat_info.invite_link
+            try:
+                await msg.reply(
+                    f"~︙عليك الأشتراك في قناة البوت \n~︙قناة البوت : @{Muntazer}.",
+                    disable_web_page_preview=True,
+                    reply_markup=InlineKeyboardMarkup([
+                        [InlineKeyboardButton("⦗ قناة الإشتراك ⦘", url=link)]
+                    ])
+                )
+                await msg.stop_propagation()
+            except ChatWriteForbidden:
+                pass
+    except ChatAdminRequired:
+        print(f"I m not admin in the MUST_JOIN chat {Muntazer}!")
 
-
-@app.on_message(filters.command(SKIP_COMMAND) & filters.group & ~BANNED_USERS)
+@app.on_message(command(["سكب","تخطي","التالي","الي بعدة"]) & ~BANNED_USERS)
 @AdminRightsCheck
 async def skip(cli, message: Message, _, chat_id):
-    if not len(message.command) < 2:
+        if not len(message.command) == 1: 
+        return
+        await must_join_channel(cli, message) 
         loop = await get_loop(chat_id)
         if loop != 0:
             return await message.reply_text(_["admin_12"])
