@@ -1,13 +1,3 @@
-#
-# Copyright (C) 2024-present by TeamYukki@Github, < https://github.com/TeamYukki >.
-#
-# This file is part of < https://github.com/TeamYukki/YukkiMusicBot > project,
-# and is released under the "GNU v3.0 License Agreement".
-# Please see < https://github.com/TeamYukki/YukkiMusicBot/blob/master/LICENSE >
-#
-# All rights reserved.
-# s
-
 from pyrogram import filters
 from pyrogram.errors import ChatAdminRequired, ChatWriteForbidden, UserNotParticipant
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
@@ -25,39 +15,43 @@ from YukkiMusic.utils.inline.play import stream_markup, telegram_markup
 from YukkiMusic.utils.stream.autoclear import auto_clean
 from YukkiMusic.utils.thumbnails import gen_thumb
 
-@app.on_message(filters.incoming & filters.private, group=-1) 
-async def must_join_channel(app, msg):
-    if not Muntazer:
-        return
+# تحقق من اشتراك المستخدم في قناة البوت
+async def must_join_channel(user_id):
+    if Muntazer.isalpha():
+        link = f"https://t.me/{Muntazer}"
+    else:
+        chat_info = await app.get_chat(Muntazer)
+        link = chat_info.invite_link
     try:
-        if msg.from_user is None:
-            return
-        try:
-            await app.get_chat_member(Muntazer, msg.from_user.id)
-        except UserNotParticipant:
-            if Muntazer.isalpha():
-                link = "https://t.me/" + Muntazer
-            else:
-                chat_info = await app.get_chat(Muntazer)
-                link = chat_info.invite_link
-            try:
-                await msg.reply(
-                    f"~︙عليك الأشتراك في قناة البوت \n~︙قناة البوت : @{Muntazer}.",
-                    disable_web_page_preview=True,
-                    reply_markup=InlineKeyboardMarkup([
-                        [InlineKeyboardButton("⦗ قناة الإشتراك ⦘", url=link)]
-                    ])
-                )
-                await msg.stop_propagation()
-            except ChatWriteForbidden:
-                pass
+        await app.get_chat_member(Muntazer, user_id)
+        return True
+    except UserNotParticipant:
+        return False
     except ChatAdminRequired:
         print(f"I'm not admin in the MUST_JOIN chat {Muntazer}!")
+        return False
 
-
-@app.on_message(command(["سكب","تخطي","التالي"]) & ~BANNED_USERS)
+@app.on_message(filters.command(["سكب", "تخطي", "التالي"]) & ~BANNED_USERS)
 @AdminRightsCheck
-async def skip(cli, message: Message, _, chat_id):
+async def skip(cli, message: Message):
+    chat_id = message.chat.id
+    user_id = message.from_user.id
+    
+    # التحقق من اشتراك المستخدم في قناة البوت
+    if not await must_join_channel(user_id):
+        link = f"https://t.me/{Muntazer}"
+        try:
+            await message.reply(
+                f"يجب عليك الاشتراك في قناة البوت لاستخدام هذا الأمر.\nقناة البوت: @{Muntazer}.",
+                disable_web_page_preview=True,
+                reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton("⦗ قناة الإشتراك ⦘", url=link)]
+                ])
+            )
+            return
+        except ChatWriteForbidden:
+            pass
+    
     if not len(message.command) < 2:
         loop = await get_loop(chat_id)
         if loop != 0:
