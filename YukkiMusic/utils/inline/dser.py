@@ -3,11 +3,10 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 import math
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from YukkiMusic.utils.formatters import time_to_seconds
+from YukkiMusic import app
 
-# دالة تفعيل الأزرار عند كتابة تحكم
 @app.on_message(command("تحكم"))
 async def stream_markup_timer(client, message):
-    # قائمة الأزرار للتحكم في المجموعة أو القناة
     buttons = [
         [
             InlineKeyboardButton(
@@ -39,5 +38,4 @@ async def stream_markup_timer(client, message):
     # إنشاء InlineKeyboardMarkup
     reply_markup = InlineKeyboardMarkup(buttons)
 
-    # إرسال الرد مع الأزرار التفاعلية
     await message.reply_text("قائمة التحكم:", reply_markup=reply_markup)
