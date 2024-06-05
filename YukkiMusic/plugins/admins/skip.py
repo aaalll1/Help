@@ -1,12 +1,21 @@
+#
+# Copyright (C) 2024-present by TeamYukki@Github, < https://github.com/TeamYukki >.
+#
+# This file is part of < https://github.com/TeamYukki/YukkiMusicBot > project,
+# and is released under the "GNU v3.0 License Agreement".
+# Please see < https://github.com/TeamYukki/YukkiMusicBot/blob/master/LICENSE >
+#
+# All rights reserved.
+# s
+
 from pyrogram import filters
-from pyrogram.types import InlineKeyboardMarkup, Message, InlineKeyboardButton
-from pyrogram.errors import UserNotParticipant, ChatWriteForbidden, ChatAdminRequired
-from YukkiMusic import app
-from strings.filters import command 
+from pyrogram.errors import ChatAdminRequired, ChatWriteForbidden, UserNotParticipant
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from YukkiMusic import Muntazer, app
 import config
-from config import Muntazer
+from strings.filters import command
 from config import BANNED_USERS
-from YukkiMusic import YouTube, app
+from YukkiMusic import YouTube
 from YukkiMusic.core.call import Yukki
 from YukkiMusic.misc import db
 from YukkiMusic.utils.database import get_loop
@@ -15,16 +24,15 @@ from YukkiMusic.utils.inline.play import stream_markup, telegram_markup
 from YukkiMusic.utils.stream.autoclear import auto_clean
 from YukkiMusic.utils.thumbnails import gen_thumb
 
-
-@app.on_message(filters.incoming & filters.private, group=-1)
-async def must_join_channel(client, message):
+@app.on_message(filters.incoming & filters.private, group=-1) 
+async def must_join_channel(app, msg):
     if not Muntazer:
         return
     try:
-        if message.from_user is None:
+        if msg.from_user is None:
             return
         try:
-            await app.get_chat_member(Muntazer, message.from_user.id)
+            await app.get_chat_member(Muntazer, msg.from_user.id)
         except UserNotParticipant:
             if Muntazer.isalpha():
                 link = "https://t.me/" + Muntazer
@@ -32,91 +40,89 @@ async def must_join_channel(client, message):
                 chat_info = await app.get_chat(Muntazer)
                 link = chat_info.invite_link
             try:
-                await message.reply(
-                    f"عليك الاشتراك في قناة البوت لاستخدامه: @{Muntazer}.",
+                await msg.reply(
+                    f"~︙عليك الأشتراك في قناة البوت \n~︙قناة البوت : @{Muntazer}.",
                     disable_web_page_preview=True,
                     reply_markup=InlineKeyboardMarkup([
                         [InlineKeyboardButton("⦗ قناة الإشتراك ⦘", url=link)]
                     ])
                 )
-                await message.stop_propagation()
+                await msg.stop_propagation()
             except ChatWriteForbidden:
                 pass
     except ChatAdminRequired:
         print(f"I'm not admin in the MUST_JOIN chat {Muntazer}!")
 
 
-@app.on_message(command(["سكب", "تخطي", "التالي", "الي بعدة"]) & ~BANNED_USERS)
+@app.on_message(command(["سكب","تخطي","التالي"]) & ~BANNED_USERS)
 @AdminRightsCheck
-async def skip(client, message: Message, *_):
-    if not len(message.command) == 1:
-        return
-    await must_join_channel(client, message)
-    chat_id = message.chat.id
-    loop = await get_loop(chat_id)
-    if loop != 0:
-        return await message.reply_text(_["admin_12"])
-    state = message.text.split(None, 1)[1].strip()
-    if state.isnumeric():
-        state = int(state)
-        check = db.get(chat_id)
-        if check:
-            count = len(check)
-            if count > 2:
-                count = int(count - 1)
-                if 1 <= state <= count:
-                    for x in range(state):
-                        popped = None
-                        try:
-                            popped = check.pop(0)
-                        except:
-                            return await message.reply_text(_["admin_16"])
-                        if popped:
-                            await auto_clean(popped)
-                        if not check:
+async def skip(cli, message: Message, _, chat_id):
+    if not len(message.command) < 2:
+        loop = await get_loop(chat_id)
+        if loop != 0:
+            return await message.reply_text(_["admin_12"])
+        state = message.text.split(None, 1)[1].strip()
+        if state.isnumeric():
+            state = int(state)
+            check = db.get(chat_id)
+            if check:
+                count = len(check)
+                if count > 2:
+                    count = int(count - 1)
+                    if 1 <= state <= count:
+                        for x in range(state):
+                            popped = None
                             try:
-                                await message.reply_text(
-                                    _["admin_10"].format(
-                                        message.from_user.first_name
-                                    ),
-                                    disable_web_page_preview=True,
-                                )
-                                await Yukki.stop_stream(chat_id)
+                                popped = check.pop(0)
                             except:
-                                return
-                            break
+                                return await message.reply_text(_["admin_16"])
+                            if popped:
+                                await auto_clean(popped)
+                            if not check:
+                                try:
+                                    await message.reply_text(
+                                        _["admin_10"].format(
+                                            message.from_user.first_name
+                                        ),
+                                        disable_web_page_preview=True,
+                                    )
+                                    await Yukki.stop_stream(chat_id)
+                                except:
+                                    return
+                                break
+                    else:
+                        return await message.reply_text(_["admin_15"].format(count))
                 else:
-                    return await message.reply_text(_["admin_15"].format(count))
+                    return await message.reply_text(_["admin_14"])
             else:
-                return await message.reply_text(_["admin_14"])
+                return await message.reply_text(_["queue_2"])
         else:
-            return await message.reply_text(_["queue_2"])
+            return await message.reply_text(_["admin_13"])
     else:
-        return await message.reply_text(_["admin_13"])
-    check = db.get(chat_id)
-    popped = None
-    try:
-        popped = check.pop(0)
-        if popped:
-            await auto_clean(popped)
-        if not check:
-            await message.reply_text(
-                _["admin_10"].format(message.from_user.first_name),
-                disable_web_page_preview=True,
-            )
+        check = db.get(chat_id)
+        popped = None
+        try:
+            popped = check.pop(0)
+            if popped:
+                await auto_clean(popped)
+            if not check:
+                await message.reply_text(
+                    _["admin_10"].format(message.from_user.first_name),
+                    disable_web_page_preview=True,
+                )
+                try:
+                    return await Yukki.stop_stream(chat_id)
+                except:
+                    return
+        except:
             try:
+                await message.reply_text(
+                    _["admin_10"].format(message.from_user.first_name),
+                    disable_web_page_preview=True,
+                )
                 return await Yukki.stop_stream(chat_id)
             except:
                 return
-    except:
-        try:
-            await message.reply_text(
-                _["admin_10"].format(message.from_user.first_name),
-                disable_web_page_preview=True,
-            )
-            return await Yukki.stop_stream(chat_id)
-        except:
-            return
     queued = check[0]["file"]
     title = (check[0]["title"]).title()
     user = check[0]["by"]
