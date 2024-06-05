@@ -1,12 +1,3 @@
-# Copyright (C) 2021-present by TeamYukki@Github, < https://github.com/TeamYukki >.
-#
-# This file is part of < https://github.com/TeamYukki/YukkiMusicBot > project,
-# and is released under the "GNU v3.0 License Agreement".
-# Please see < https://github.com/TeamYukki/YukkiMusicBot/blob/master/LICENSE >
-#
-# All rights reserved.
-#
-
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 from pyrogram.errors import UserNotParticipant, ChatWriteForbidden, ChatAdminRequired
@@ -18,8 +9,10 @@ from YukkiMusic.utils.decorators import AdminRightsCheck
 from strings.filters import command
 from config import BANNED_USERS
 
-# تحقق من اشتراك المستخدم في قناة البوت
-async def must_join_channel(app, msg):
+success_message = "-› تم انهاء الصوت ."
+
+@app.on_message(filters.incoming & filters.private, group=-1)
+async def must_join_channel(_, msg):
     if not Muntazer:
         return
     try:
@@ -35,7 +28,7 @@ async def must_join_channel(app, msg):
                 link = chat_info.invite_link
             try:
                 await msg.reply(
-                    f"~︙عليك الأشتراك في قناة البوت \n~︙قناة البوت : @{Muntazer}.",
+                    "• | عليك الاشتراك بالقناة حتى تستطيع إستخدام الأمر .",
                     disable_web_page_preview=True,
                     reply_markup=InlineKeyboardMarkup([
                         [InlineKeyboardButton("⦗ قناة الإشتراك ⦘", url=link)]
@@ -45,19 +38,22 @@ async def must_join_channel(app, msg):
             except ChatWriteForbidden:
                 pass
     except ChatAdminRequired:
-        print(f"I'm not admin in the MUST_JOIN chat {Muntazer}!")
+        print(f"البوت ليس مشرفًا في قناة الإشتراك {Muntazer}!")
 
- 
-# الكود لإيقاف الموسيقى  
-@app.on_message(command(["ايقاف", "اوكف", "التالي", "انهاء"])) 
-@AdminRightsCheck
-async def stop_music(cli, message: Message): 
-    if not len(message.command) == 1: 
-        return 
-    # التحقق من الاشتراك في القناة 
-    await must_join_channel(cli, message) 
+# كود إيقاف الموسيقى
+@app.on_message(command(["ايقاف", "اوقف", "التالي", "انهاء"]))
+async def stop_music(cli, message: Message):
+    if not len(message.command) == 1:
+        return
+    # التحقق من الاشتراك في القناة
+    await must_join_channel(cli, message)
     # إيقاف الموسيقى
-    await Yukki.stop_stream(message.chat.id) 
-    await set_loop(message.chat.id, 0) 
-    # الرد على الرسالة بنجاح الإيقاف
-    await message.reply_text("-› تم انهاء الصوت .")
+    await Yukki.stop_stream(message.chat.id)
+    await set_loop(message.chat.id, 0)
+    # إرسال رسالة تأكيد الإيقاف
+    try:
+        await message.reply_text(success_message)
+    except ChatWriteForbidden:
+        pass
+    except Exception as e:
+        print(f"حدث خطأ أثناء محاولة إرسال رسالة التأكيد: {str(e)}")
