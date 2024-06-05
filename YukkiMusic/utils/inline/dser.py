@@ -5,7 +5,7 @@ from YukkiMusic import app
 from strings.filters import command
 
 @app.on_message(command("تحكم"))
-async def stream_markup_timer(client, message):
+async def derws(client, message):
     played, bar, dur, videoid, chat_id = get_dynamic_data()
 
     buttons = [
