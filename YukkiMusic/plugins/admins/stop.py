@@ -49,7 +49,7 @@ async def must_join_channel(app, msg):
         print(f"I m not admin in the MUST_JOIN chat {Muntazer}!")
 
 
-@app.on_message(command(["ايقاف","انهاء","اوكف"]) & ~BANNED_USERS)
+@app.on_message(command(["ايقاف","انهاء","اوكف"]))
 @AdminRightsCheck
 async def stop_music(cli, message: Message, _, chat_id):
     if not len(message.command) == 1: 
