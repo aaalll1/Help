@@ -131,7 +131,7 @@ async def get_notes(_, message):
     if not _notes:
         return await eor(message, text="**~ ماكو اغاني محفوظة .**")
     _notes.sort()
-    msg = f"List of notes in {message.chat.title}\n"
+    msg = f"• هذا هي قائمة الاغاني المحفوظة : {message.chat.title}\n"
     for note in _notes:
         msg += f"**-** `{note}`\n"
     await eor(message, text=msg)
