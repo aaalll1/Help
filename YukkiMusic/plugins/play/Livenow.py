@@ -85,5 +85,3 @@ async def stream(client, message: Message, url: str):
         err = e if ex_type == "AssistantErr" else _["general_3"].format(ex_type)
         await message.edit_text(err)
     await play_logs(message, streamtype="• ارسل الرابط صحيح .")
-
-app.run()
