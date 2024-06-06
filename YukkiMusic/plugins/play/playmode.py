@@ -10,7 +10,7 @@
 
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardMarkup, Message
-
+from strings.filters import command
 from config import BANNED_USERS
 from YukkiMusic import app
 from YukkiMusic.utils.database import get_playmode, get_playtype, is_nonadmin_chat
