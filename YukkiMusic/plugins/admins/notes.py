@@ -56,7 +56,7 @@ async def save_notee(_, message):
         if len(message.command) < 2:
             await eor(
                 message,
-                text="• اكتب حفظ واسم الاغنية التي تريد حفظها \n• اكتب الاغاني ويطلعلك .",
+                text="• اكتب حفظ واسم الاغنية التي تريد حفظها \n• اكتب المحفوظات ويطلعلك .",
             )
         else:
             replied_message = message.reply_to_message
@@ -65,7 +65,7 @@ async def save_notee(_, message):
             data, name = await get_data_and_name(replied_message, message)
             if data == "error":
                 return await message.reply_text(
-                    "• اكتب حفظ واسم الاغنية التي تريد حفظها \n• اكتب الاغاني ويطلعلك ."
+                    "• اكتب حفظ واسم الاغنية التي تريد حفظها \n• اكتب المحفوظات ويطلعلك ."
                 )
             if replied_message.text:
                 _type = "text"
