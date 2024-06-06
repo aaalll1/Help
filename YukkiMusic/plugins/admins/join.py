@@ -42,3 +42,32 @@ async def invite_assistant(client, message):
 
     except Exception as e:
         await message.reply_text(f"-› حدث خطأ .: {e}")
+
+@app.on_message(
+    command(["غادر", "اطلع"]))
+async def leave_chat(client, message):
+    try:
+        chat_id = message.chat.id
+
+        # Check if the bot has admin rights in the group
+        try:
+            await client.get_chat_member(chat_id, "me")
+        except ChatAdminRequired:
+            return await message.reply_text(
+                "• انطيني صلاحية اضافة مستخدمين ."
+            )
+
+        # Perform the leave action
+        if chat_id in QUEUE:
+            await remove_active_chat(chat_id)
+            await userbot.leave_chat(chat_id)
+            return await message.reply_text("هوه مو صوجك صوج القواد الي اجا يغنيلكم باي")
+        else:
+            await userbot.leave_chat(chat_id)
+            return await message.reply_text("+ وانيهم طالع وياه باي")
+
+    except UserNotParticipant:
+        return await message.reply_text(" غادر منزمان لتلح")
+
+    except Exception as e:
+        await message.reply_text(f"-› حدث خطأ: {e}")
