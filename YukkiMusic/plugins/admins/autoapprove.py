@@ -1,7 +1,7 @@
 from pyrogram import filters
 from pyrogram.enums import ChatMembersFilter
 from pyrogram.types import ChatJoinRequest
-
+from strings.filters import command
 from YukkiMusic import app
 from YukkiMusic.core.mongo import mongodb
 from YukkiMusic.misc import SUDOERS
@@ -11,7 +11,7 @@ from YukkiMusic.utils.permissions import adminsOnly, member_permissions
 approvaldb = mongodb.autoapprove
 
 
-@app.on_message(filters.command("autoapprove") & filters.group)
+@app.on_message(command("تفعيل الموافقة"))
 @adminsOnly("can_change_info")
 async def approval_command(client, message):
     chat_id = message.chat.id
@@ -35,13 +35,13 @@ async def approval_command(client, message):
         }
         keyboard = ikb(buttons, 1)
         await message.reply(
-            "**Autoapproval for this chat: Enabled.**", reply_markup=keyboard
+            "-› الموافقة تم تفعيلها .**", reply_markup=keyboard
         )
     else:
         buttons = {"Turn ON": "approval_on"}
         keyboard = ikb(buttons, 1)
         await message.reply(
-            "**Autoapproval for this chat: Disabled.**", reply_markup=keyboard
+            "**-› الموافقة تم تعطيلها .**", reply_markup=keyboard
         )
 
 
@@ -54,7 +54,7 @@ async def approval_cb(client, cb):
     if permission not in permissions:
         if from_user.id not in SUDOERS:
             return await cb.answer(
-                f"You don't have the required permission.\n Permission: {permission}",
+                f"• حدث خطاء : {permission}",
                 show_alert=True,
             )
     command_parts = cb.data.split("_", 1)
@@ -65,7 +65,7 @@ async def approval_cb(client, cb):
             buttons = {"Turn ON": "approval_on"}
             keyboard = ikb(buttons, 1)
             return await cb.edit_message_text(
-                "**Autoapproval for this chat: Disabled.**",
+                "**-› الموافقة التلقائية معطلة .**",
                 reply_markup=keyboard,
             )
     if option == "on":
@@ -87,11 +87,11 @@ async def approval_cb(client, cb):
     buttons = {"Turn OFF": "approval_off", f"{mode}": f"approval_{switch}"}
     keyboard = ikb(buttons, 1)
     await cb.edit_message_text(
-        "**Autoapproval for this chat: Enabled.**", reply_markup=keyboard
+        "**-› الموافقة تم تفعيلها .**", reply_markup=keyboard
     )
 
 
-@app.on_message(filters.command("clear_pending") & filters.group)
+@app.on_message(command("مسح الطلبات"))
 @adminsOnly("can_restrict_members")
 async def clear_pending_command(client, message):
     chat_id = message.chat.id
@@ -100,9 +100,9 @@ async def clear_pending_command(client, message):
         {"$set": {"pending_users": []}},
     )
     if result.modified_count > 0:
-        await message.reply_text("Cleared pending users.")
+        await message.reply_text("-› تم مسح طلبات الإنضمام .")
     else:
-        await message.reply_text("No pending users to clear.")
+        await message.reply_text("-› لاتوجد طلبات انضمام .")
 
 
 @app.on_chat_join_request(filters.group)
@@ -130,7 +130,7 @@ async def accept(client, message: ChatJoinRequest):
                     "Decline": f"manual_decline_{user.id}",
                 }
                 keyboard = ikb(buttons, int(2))
-                text = f"**User: {user.mention} has send a request to join our  group. Any admins can accept or decline it.**"
+                text = f""
                 admin_data = [
                     i
                     async for i in app.get_chat_members(
@@ -154,7 +154,7 @@ async def manual(app, cb):
     if permission not in permissions:
         if from_user.id not in SUDOERS:
             return await cb.answer(
-                f"You don't have the required permission.\n Permission: {permission}",
+                f"حدث خطأ : {permission}",
                 show_alert=True,
             )
     datas = cb.data.split("_", 2)
@@ -170,21 +170,3 @@ async def manual(app, cb):
         {"$pull": {"pending_users": int(id)}},
     )
     return await cb.message.delete()
-
-
-__MODULE__ = "Aᴘᴘʀᴏᴠᴇ"
-__HELP__ = """
-command: /autoapprove
-
-Tʜɪs ᴍᴏᴅᴜʟᴇ ʜᴇʟᴘs ᴛᴏ ᴀᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ ᴀᴄᴄᴇᴘᴛ ᴄʜᴀᴛ ɪᴏɪɴ ʀᴇǫᴜᴇsᴛ sᴇɴᴅ ʙʏ ᴀ ᴜsᴇʀ ᴛʜʀᴏᴜɢʜ ɪɴᴠɪᴛᴀᴛɪᴏɴ ʟɪɴᴋ ᴏғ ʏᴏᴜʀ ɢʀᴏᴜᴘ
-
-**Mᴏᴅᴇs:**
-ᴡʜᴇɴ ʏᴏᴜ sᴇɴᴅ /autoapprove ɪɴ ʏᴏᴜʀ ɢʀᴏᴜᴘ ʏᴏᴜ sᴇᴇ ᴛᴜʀɴ ᴏɴ ʙᴜᴛᴛᴏɴ ɪғ ᴀᴜᴛᴛᴏᴘʀᴏᴠᴇ ɴᴏᴛ ᴇɴᴀʙʟᴇᴅ ғᴏʀ ʏᴏᴜʀ ᴄʜᴀᴛ ɪғ ᴀʟʀᴇᴅʏ ᴛᴜʀɴᴇᴅ ᴏɴ ʏᴏᴜ ᴡɪʟʟ sᴇ ᴛᴡᴏ ᴍᴏᴅᴇs ᴛʜᴀᴛ's ᴀʀᴇ ʙᴇʟᴏᴡ ᴀɴᴅ ʜɪs ᴜsᴀsɢᴇ
-
-
-¤ Automatic - ᴀᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ ᴀᴄᴄᴇᴘᴛs ᴄʜᴀᴛ ᴊᴏɪɴ ʀᴇǫᴜᴇsᴛ.
-
-¤ Manual - ᴀ ᴍᴇssᴀɢᴇ ᴡɪʟʟ ʙᴇ sᴇɴᴅ ᴛᴏ ᴛʜᴇ ᴄʜᴀᴛ ʙʏ ᴛᴀɢɢɪɴɢ ᴛʜᴇ ᴀᴅᴍɪɴs. ᴛʜᴇ ᴀᴅᴍɪɴs ᴄᴀɴ ᴀᴄᴄᴇᴘᴛ ᴏʀ ᴅᴇᴄʟɪɴᴇ ᴛʜᴇ ʀᴇǫᴜᴇsᴛs.
-
-Usᴇ: /clearpending ᴄᴏᴍᴍᴀɴᴅ ᴛᴏ ʀᴇᴍᴏᴠᴇ ᴀʟʟ ᴘᴇɴᴅɪɴɢ ᴜsᴇʀ ɪᴅ ғʀᴏᴍ ᴅʙ. ᴛʜɪs ᴡɪʟʟ ᴀʟʟᴏᴡ ᴛʜᴇ ᴜsᴇʀ ᴛᴏ sᴇɴᴅ ʀᴇǫᴜᴇsᴛ ᴀɢᴀɪɴ.
-"""
