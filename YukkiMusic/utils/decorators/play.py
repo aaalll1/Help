@@ -8,7 +8,7 @@ from pyrogram.errors import (
     UserNotParticipant,
 )
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
+from config import SUPPORT_CHANNEL
 from config import PLAYLIST_IMG_URL, PRIVATE_BOT_MODE
 from config import SUPPORT_GROUP as SUPPORT_CHAT
 from config import adminlist
@@ -37,13 +37,13 @@ def PlayWrapper(command):
         if await is_maintenance() is False:
             if message.from_user.id not in SUDOERS:
                 return await message.reply_text(
-                    text=f"{app.mention} ɪs ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ, ᴠɪsɪᴛ <a href={SUPPORT_CHAT}>sᴜᴘᴘᴏʀᴛ ᴄʜᴀᴛ</a> ғᴏʀ ᴋɴᴏᴡɪɴɢ ᴛʜᴇ ʀᴇᴀsᴏɴ.",
+                    text=f"{app.mention} is under maintenance, visit <a href={SUPPORT_CHAT}>support chat</a> for knowing the reason.",
                     disable_web_page_preview=True,
                 )
         if PRIVATE_BOT_MODE == str(True):
             if not await is_served_private_chat(message.chat.id):
                 await message.reply_text(
-                    "**ᴘʀɪᴠᴀᴛᴇ ᴍᴜsɪᴄ ʙᴏᴛ**\n\nᴏɴʟʏ ғᴏʀ ᴀᴜᴛʜᴏʀɪᴢᴇᴅ ᴄʜᴀᴛs ғʀᴏᴍ ᴛʜᴇ ᴏᴡɴᴇʀ. ᴀsᴋ ᴍʏ ᴏᴡɴᴇʀ ᴛᴏ ᴀʟʟᴏᴡ ʏᴏᴜʀ ᴄʜᴀᴛ ғɪʀsᴛ."
+                    "**Private music bot**\n\nOnly for authorized chats from the owner. Ask my owner to allow your chat first."
                 )
                 return await app.leave_chat(message.chat.id)
         if await is_commanddelete_on(message.chat.id):
@@ -69,12 +69,69 @@ def PlayWrapper(command):
                     return await message.reply_text(_["str_1"])
                 # Single button for bot channel
                 button = InlineKeyboardButton(
-                    text="قناة البوت", url="https://t.me/Xl444"
+                    text="⦗ قناة البوت ⦘", url=SUPPORT_CHANNEL
                 )
                 keyboard = InlineKeyboardMarkup([[button]])
-                return await message.reply_photo(
-                    photo=PLAYLIST_IMG_URL,
-                    caption=_["playlist_1"],
+                return await message.reply_text(
+                    _["playlist_1"],
+                    reply_markup=keyboard,
+                )
+        if message.command[0][0] == "c":
+            chat_id = await get_cmode(message.chat.id)
+            if chat_id is None:
+                return await message.reply_text(_["setting_12"])
+            try:
+                chat = await app.get_chat(chat_id)
+            except:
+                return await message.reply_text(_["cplay_4"])
+            channel = chat.title
+        else:
+            chat_id = message.chat.id
+            channel = None
+        playmode = await get_playmode(message.chat.id)
+        playty = await get_playtype(message.chat.id)
+        if playty != "Everyone":
+            if message.from_user.id not in SUDOERS:
+                admins = adminlist.get(message.chat.id)
+                if not admins:
+                    return await message.reply_text(_["admin_18"])
+                else:
+                    if message.from_user.id not in admins:
+                        return await message.reply_text(_["play_4"])
+        if message.command[0][0] == "v":
+            video = True
+        else:
+            if "-v" in message.text:
+                video = True
+            else:
+                video = True if message.command[0][1] == "v" else None
+        if message.command[0][-1] == "e":
+            if not await is_active_chat(chat_id):
+                return await message.reply_text(_["play_18"])
+
+        # Continuing with the command
+        audio_telegram = (
+            (message.reply_to_message.audio or message.reply_to_message.voice)
+            if message.reply_to_message
+            else None
+        )
+        video_telegram = (
+            (message.reply_to_message.video or message.reply_to_message.document)
+            if message.reply_to_message
+            else None
+        )
+        url = await YouTube.url(message)
+        if audio_telegram is None and video_telegram is None and url is None:
+            if len(message.command) < 2:
+                if "stream" in message.command:
+                    return await message.reply_text(_["str_1"])
+                # Single button for bot channel
+                button = InlineKeyboardButton(
+                    text="⦗ قناة البوت ⦘", url=SUPPORT_CHANNEL
+                )
+                keyboard = InlineKeyboardMarkup([[button]])
+                return await message.reply_text(
+                    _["playlist_1"],
                     reply_markup=keyboard,
                 )
         if message.command[0][0] == "c":
