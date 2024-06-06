@@ -1,12 +1,3 @@
-#
-# Copyright (C) 2024-present by TeamYukki@Github, < https://github.com/TeamYukki >.
-#
-# This file is part of < https://github.com/TeamYukki/YukkiMusicBot > project,
-# and is released under the "GNU v3.0 License Agreement".
-# Please see < https://github.com/TeamYukki/YukkiMusicBot/blob/master/LICENSE >
-#
-# All rights reserved.
-#
 import asyncio
 
 from pyrogram.enums import ChatMemberStatus
@@ -37,7 +28,6 @@ from YukkiMusic.utils.database import (
 )
 
 links = {}
-
 
 def PlayWrapper(command):
     async def wrapper(client, message):
@@ -77,6 +67,7 @@ def PlayWrapper(command):
             if len(message.command) < 2:
                 if "stream" in message.command:
                     return await message.reply_text(_["str_1"])
+                # Single button for bot channel
                 button = InlineKeyboardButton(
                     text="قناة البوت", url="https://t.me/Xl444"
                 )
@@ -84,7 +75,7 @@ def PlayWrapper(command):
                 return await message.reply_photo(
                     photo=PLAYLIST_IMG_URL,
                     caption=_["playlist_1"],
-                    reply_markup=InlineKeyboardMarkup(buttons),
+                    reply_markup=keyboard,
                 )
         if message.command[0][0] == "c":
             chat_id = await get_cmode(message.chat.id)
