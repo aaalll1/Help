@@ -124,16 +124,13 @@ async def delall_pfp(client, message):
             await eor(message, text=str(e))
 
 
-# This part adds the new command
-# Assuming USER is your Pyrogram user client
-
-@USER.on_message(filters.command(["اضفني","ضيفني","سجلني"]) & filters.me)
+@app.on_message(filters.command(["اضفني","ضيفني","سجلني"]) & filters.me)
 async def add_to_contacts(client, message):
     try:
         if message.from_user.username:
-            await USER.add_contact(message.from_user.username, message.from_user.first_name)
+            await userbot.add_contact(message.from_user.username, message.from_user.first_name)
         else:
-            await USER.add_contact(message.from_user.id, message.from_user.first_name)
+            await userbot.add_contact(message.from_user.id, message.from_user.first_name)
         await message.reply_text("تم اضافتك الى جهات الاتصال في الحساب المساعد")
     except Exception as e:
         await message.reply_text(f"خطأ : {e}")
@@ -147,5 +144,3 @@ async def eor(msg: Message, **kwargs):
     )
     spec = getfullargspec(func.__wrapped__).args
     return await func(**{k: v for k, v in kwargs.items() if k in spec})
-
-
