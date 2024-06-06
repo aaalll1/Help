@@ -35,7 +35,6 @@ from YukkiMusic.utils.database import (
     is_maintenance,
     is_served_private_chat,
 )
-from YukkiMusic.utils.inline import botplaylist_markup
 
 links = {}
 
