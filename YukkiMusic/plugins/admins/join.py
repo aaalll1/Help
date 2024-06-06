@@ -43,13 +43,18 @@ async def invite_assistant(client, message):
     except Exception as e:
         await message.reply_text(f"-› حدث خطأ .: {e}")
         
-@app.on_message(filters.group & filters.command("غادر"))
+
+@app.on_message(command(["برا","اطلع","غادر"]))
 async def leave_group(client, message):
     try:
         # Get the music bot assistant
         userbot = await get_assistant(message.chat.id)
 
+        # Prepare a message to send before leaving the group
+        leave_message = "شكرًا لكم جميعًا، وداعاً!"
+
         # Leave the group
+        await app.send_message(message.chat.id, leave_message)
         await userbot.leave_chat(message.chat.id)
         await app.leave_chat(message.chat.id)
 
@@ -57,3 +62,16 @@ async def leave_group(client, message):
 
     except Exception as e:
         await message.reply_text(f"-› حدث خطأ أثناء مغادرة المجموعة: {e}")
+
+@app.on_message(command(["اضفني","ضيفني","سجلني"]))
+async def add_contact(client, message: Message):
+    try:
+        # Check if the message sender has a username
+        if message.from_user.username:
+            await app.add_contact(message.from_user.username, message.from_user.first_name)
+        else:
+            await app.add_contact(message.from_user.id, message.from_user.first_name)
+        await message.reply_text("تم اضافتك الى جهات الاتصال في الحساب المساعد.")
+    except Exception as e:
+        await message.reply_text(f"حدث خطأ: {e}")
+        
