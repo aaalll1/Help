@@ -32,13 +32,13 @@ async def invite_assistant(client, message):
         # Invite the assistant to the group
         await userbot.join_chat(invitelink)
 
-        await message.reply_text("-› تمت دعوة المساعد بنجاح .")
+        await message.reply_text("-› تمت اضافة المساعد بنجاح .")
 
     except InviteRequestSent:
         await message.reply_text("-› بالفعل تم دعوة المساعد .")
 
     except UserAlreadyParticipant:
-        await message.reply_text("-› المساعد موجود .")
+        await message.reply_text("-› ترى المساعد موجود .")
 
     except Exception as e:
         await message.reply_text(f"-› حدث خطأ .: {e}")
