@@ -35,7 +35,6 @@ from YukkiMusic.utils.database import (
 )
 from YukkiMusic.utils.decorators.language import language, languageCB
 from YukkiMusic.utils.inline.playlist import (
-    botplaylist_markup,
     get_cplaylist_markup,
     get_playlist_markup,
     warning_markup,
