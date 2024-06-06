@@ -3,7 +3,7 @@ from pyrogram.errors import ChatAdminRequired, InviteRequestSent, UserAlreadyPar
 from strings.filters import command
 from YukkiMusic import app
 from YukkiMusic.utils.database import get_assistant
-
+from pyrogram.types import Message 
 
 @app.on_message(
     command(["انضم","ادخل","طب"]))
