@@ -1,11 +1,12 @@
 from pyrogram import filters
 from pyrogram.errors import ChatAdminRequired, InviteRequestSent, UserAlreadyParticipant
-
+from strings.filters import command
 from YukkiMusic import app
 from YukkiMusic.utils.database import get_assistant
 
 
-@app.on_message(filters.command("join") & filters.group)
+@app.on_message(
+    command(["انضم","ادخل","طب"]))
 async def invite_assistant(client, message):
     try:
         # Get the music bot assistant
@@ -16,7 +17,7 @@ async def invite_assistant(client, message):
             await client.get_chat_member(message.chat.id, "me")
         except ChatAdminRequired:
             return await message.reply_text(
-                "I don't have permission to invite please give me rights"
+                "• انطيني صلاحية اضافة مستخدمين ."
             )
 
         # Unban the assistant if it's banned in the group
@@ -31,13 +32,13 @@ async def invite_assistant(client, message):
         # Invite the assistant to the group
         await userbot.join_chat(invitelink)
 
-        await message.reply_text("Assistant successfully invited to the group !")
+        await message.reply_text("-› تمت دعوة المساعد بنجاح .")
 
     except InviteRequestSent:
-        await message.reply_text("Invite request already sent.")
+        await message.reply_text("-› بالفعل تم دعوة المساعد .")
 
     except UserAlreadyParticipant:
-        await message.reply_text("Assistant is already a participant in the group.")
+        await message.reply_text("-› المساعد موجود .")
 
     except Exception as e:
-        await message.reply_text(f"An error occurred: {e}")
+        await message.reply_text(f"-› حدث خطأ .: {e}")
