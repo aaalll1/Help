@@ -31,7 +31,6 @@ from YukkiMusic.utils.inline.play import (
     slider_markup,
     track_markup,
 )
-from YukkiMusic.utils.inline.playlist import botplaylist_markup
 from YukkiMusic.utils.logger import play_logs
 from YukkiMusic.utils.stream.stream import stream
 from config import SUPPORT_CHANNEL 
