@@ -5,8 +5,6 @@ from YukkiMusic import app
 from strings.filters import command
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
-from pytgcalls.exceptions import GroupCallNotFound
-from pytgcalls import GroupCall
 import config
 
 # Channels and their corresponding stream URLs
