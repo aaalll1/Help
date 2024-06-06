@@ -18,10 +18,10 @@ from YukkiMusic.utils.database.memorydatabase import get_loop, set_loop
 from YukkiMusic.utils.decorators import AdminRightsCheck
 
 # Commands
-LOOP_COMMAND = get_command("LOOP_COMMAND")
+@app.on_message(
+    command(["تكرار","كرر","انسخ"])
+)
 
-
-@app.on_message(filters.command(LOOP_COMMAND) & filters.group & ~BANNED_USERS)
 @AdminRightsCheck
 async def admins(cli, message: Message, _, chat_id):
     usage = _["admin_24"]
@@ -42,12 +42,12 @@ async def admins(cli, message: Message, _, chat_id):
             )
         else:
             return await message.reply_text(_["admin_26"])
-    elif state.lower() == "enable":
+    elif state.lower() == "تشغيل":
         await set_loop(chat_id, 10)
         return await message.reply_text(
             _["admin_25"].format(message.from_user.first_name, 10)
         )
-    elif state.lower() == "disable":
+    elif state.lower() == "ايقاف":
         await set_loop(chat_id, 0)
         return await message.reply_text(_["admin_27"])
     else:
