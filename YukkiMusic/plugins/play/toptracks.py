@@ -30,7 +30,6 @@ from YukkiMusic.utils.database import (
 )
 from YukkiMusic.utils.decorators.language import languageCB
 from YukkiMusic.utils.inline.playlist import (
-    botplaylist_markup,
     failed_top_markup,
     top_play_markup,
 )
