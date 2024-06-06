@@ -3,7 +3,7 @@ from re import findall
 
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-
+from strings.filters import command
 from config import BANNED_USERS
 from YukkiMusic import app
 from YukkiMusic.utils.database import (
@@ -49,14 +49,14 @@ async def eor(msg: Message, **kwargs):
     return await func(**{k: v for k, v in kwargs.items() if k in spec})
 
 
-@app.on_message(filters.command("save") & filters.group & ~BANNED_USERS)
+@app.on_message(command("احفظ") & ~BANNED_USERS)
 @adminsOnly("can_change_info")
 async def save_notee(_, message):
     try:
         if len(message.command) < 2:
             await eor(
                 message,
-                text="**Usage:**\nReply to a message with /save [NOTE_NAME] to save a new note.",
+                text="• اكتب حفظ واسم الاغنية التي تريد حفظها \n• اكتب الاغاني ويطلعلك .",
             )
         else:
             replied_message = message.reply_to_message
@@ -65,7 +65,7 @@ async def save_notee(_, message):
             data, name = await get_data_and_name(replied_message, message)
             if data == "error":
                 return await message.reply_text(
-                    "**Usage:**\n__/save [NOTE_NAME] [CONTENT]__\n`-----------OR-----------`\nReply to a message with.\n/save [NOTE_NAME]"
+                    "• اكتب حفظ واسم الاغنية التي تريد حفظها \n• اكتب الاغاني ويطلعلك ."
                 )
             if replied_message.text:
                 _type = "text"
@@ -105,7 +105,7 @@ async def save_notee(_, message):
                 data = await check_format(ikb, data)
                 if not data:
                     return await message.reply_text(
-                        "**Wrong formatting, check the help section.**"
+                        "~ إستخدامك للأمر خطا ."
                     )
             note = {
                 "type": _type,
@@ -114,14 +114,14 @@ async def save_notee(_, message):
             }
             chat_id = message.chat.id
             await save_note(chat_id, name, note)
-            await eor(message, text=f"__**Saved note {name}.**__")
+            await eor(message, text=f"__**• | تم حفظ اسم الأغنية {name}.**__")
     except UnboundLocalError:
         return await message.reply_text(
-            "**Replied message is inaccessible.\n`Forward the message and try again`**"
+            "**~ استخدامك للأمر خطا .`**"
         )
 
 
-@app.on_message(filters.command("notes") & filters.group & ~BANNED_USERS)
+@app.on_message(command("المحفوظات") & ~BANNED_USERS)
 @capture_err
 async def get_notes(_, message):
     chat_id = message.chat.id
@@ -129,7 +129,7 @@ async def get_notes(_, message):
     _notes = await get_note_names(chat_id)
 
     if not _notes:
-        return await eor(message, text="**No notes in this chat.**")
+        return await eor(message, text="**~ ماكو اغاني محفوظة .**")
     _notes.sort()
     msg = f"List of notes in {message.chat.title}\n"
     for note in _notes:
@@ -268,41 +268,41 @@ async def get_reply(message, type, file_id, data, keyb):
         )
 
 
-@app.on_message(filters.command("delete") & filters.group & ~BANNED_USERS)
+@app.on_message(command("مسح اغنية") & ~BANNED_USERS)
 @adminsOnly("can_change_info")
 async def del_note(_, message):
     if len(message.command) < 2:
-        return await eor(message, text="**Usage**\n__/delete [NOTE_NAME]__")
+        return await eor(message, text="• اكتب مسح اغنية واسم الاغنية الي تريد تمسحها .")
     name = message.text.split(None, 1)[1].strip()
     if not name:
-        return await eor(message, text="**Usage**\n__/delete [NOTE_NAME]__")
+        return await eor(message, text="• اكتب مسح اغنية واسم الاغنية الي تريد تمسحها .")
 
     chat_id = message.chat.id
 
     deleted = await delete_note(chat_id, name)
     if deleted:
-        await eor(message, text=f"**Deleted note {name} successfully.**")
+        await eor(message, text=f"**تم حذف الأغنية {name} بنجاح .**")
     else:
-        await eor(message, text="**No such note.**")
+        await eor(message, text="**• ماكو هيج اغنية .**")
 
 
-@app.on_message(filters.command("deleteall") & filters.group & ~BANNED_USERS)
+@app.on_message(command("حذف الأغاني") & ~BANNED_USERS)
 @adminsOnly("can_change_info")
 async def delete_all(_, message):
     _notes = await get_note_names(message.chat.id)
     if not _notes:
-        return await message.reply_text("**No notes in this chat.**")
+        return await message.reply_text("**• ماكو اغاني حتى تمسحهم .**")
     else:
         keyboard = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("YES, DO IT", callback_data="delete_yes"),
-                    InlineKeyboardButton("Cancel", callback_data="delete_no"),
+                    InlineKeyboardButton("• نعم متاكد", callback_data="delete_yes"),
+                    InlineKeyboardButton("الغاء ", callback_data="delete_no"),
                 ]
             ]
         )
         await message.reply_text(
-            "**Are you sure you want to delete all the notes in this chat forever ?.**",
+            "**• هل انت متاكد بأنك تريد حذف كل الاغاني المحفوظة ؟ .**",
             reply_markup=keyboard,
         )
 
@@ -315,7 +315,7 @@ async def delete_all_cb(_, cb):
     permission = "can_change_info"
     if permission not in permissions:
         return await cb.answer(
-            f"You don't have the required permission.\n Permission: {permission}",
+            f"• حدث خطا : {permission}",
             show_alert=True,
         )
     input = cb.data.split("_", 1)[1]
@@ -323,26 +323,9 @@ async def delete_all_cb(_, cb):
         stoped_all = await deleteall_notes(chat_id)
         if stoped_all:
             return await cb.message.edit(
-                "**Successfully deleted all notes on this chat.**"
+                "• تم حذف جميع الاغاني المحفوظة .**"
             )
     if input == "no":
         await cb.message.reply_to_message.delete()
         await cb.message.delete()
 
-
-__MODULE__ = "Nᴏᴛᴇs"
-__HELP__ = """/notes To Get All The Notes In The Chat.
-
-/save [NOTE_NAME] To Save A Note.
-
-Supported note types are Text, Animation, Photo, Document, Video, video notes, Audio, Voice.
-
-To change caption of any files use.\n/save [NOTE_NAME] [NEW_CAPTION].
-
-#NOTE_NAME To Get A Note.
-
-/delete [NOTE_NAME] To Delete A Note.
-/deleteall To delete all the notes in a chat (permanently).
-
-Checkout /markdownhelp to know more about formattings and other syntax.
-"""
