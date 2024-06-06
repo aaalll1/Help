@@ -62,16 +62,3 @@ async def leave_group(client, message):
 
     except Exception as e:
         await message.reply_text(f"-› حدث خطأ أثناء مغادرة المجموعة: {e}")
-
-@app.on_message(command(["اضفني","ضيفني","سجلني"]))
-async def add_contact(client, message: Message):
-    try:
-        # Check if the message sender has a username
-        if message.from_user.username:
-            await app.add_contact(message.from_user.username, message.from_user.first_name)
-        else:
-            await app.add_contact(message.from_user.id, message.from_user.first_name)
-        await message.reply_text("تم اضافتك الى جهات الاتصال في الحساب المساعد.")
-    except Exception as e:
-        await message.reply_text(f"حدث خطأ: {e}")
-        
