@@ -3,11 +3,14 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQ
 from pyrogram.errors import ChatAdminRequired
 from YukkiMusic import app
 from strings.filters import command
+
 # Dictionary to store TV channels and their corresponding m3u8 URLs
 TV_CHANNELS = {
     "قناة 1": "http://ns8.indexforce.com:1935/home/mystream1/chunklist_w921666703.m3u8",
-    "قناة 2": "http://ns8.indexforce.com:1935/home/mystream2/chunklist_w921666703.m3u8",
-    "قناة 3": "http://ns8.indexforce.com:1935/home/mystream3/chunklist_w921666703.m3u8",
+    "قناة 2": "http://ns8.indexforce.com:1935/home/mystream1/chunklist_w921666703.m3u8",
+    "قناة 3": "http://ns8.indexforce.com:1935/home/mystream1/chunklist_w921666703.m3u8",
+    "قناة 4": "http://ns8.indexforce.com:1935/home/mystream1/chunklist_w921666703.m3u8",
+    "قناة 5": "http://ns8.indexforce.com:1935/home/mystream1/chunklist_w921666703.m3u8",
 }
 
 # Command handler
@@ -22,11 +25,16 @@ async def tv_channels_command(client, message: Message):
     
     # Create inline keyboard with buttons for each TV channel
     keyboard = []
+    row = []
     for channel_name, channel_url in TV_CHANNELS.items():
-        keyboard.append([InlineKeyboardButton(channel_name, callback_data=f"play_tv_{channel_name}")])
+        row.append(InlineKeyboardButton(channel_name, callback_data=f"play_tv_{channel_name}"))
+        if len(row) == 2:  # 2 buttons per row (you can change this number)
+            keyboard.append(row)
+            row = []
     
-    # Add a cancel button at the end of the list
-    keyboard.append([InlineKeyboardButton("إلغاء", callback_data="cancel")])
+    # Add the last row if it's not empty
+    if row:
+        keyboard.append(row)
     
     # Create InlineKeyboardMarkup from the keyboard
     reply_markup = InlineKeyboardMarkup(keyboard)
