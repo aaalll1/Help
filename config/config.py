@@ -150,15 +150,7 @@ if TELEGRAM_VIDEO_URL:
             )
             sys.exit()
 
-if PROTECT_CONTENT:
-    PK = "True"
-else:
-    PK = "False"
 
-if PHOTO is None:
-    PHOTO = [
-        "https://images.unsplash.com/photo-1707760509752-71ac85ba8b68?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=720&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTcxNjM2Njc5MA&ixlib=rb-4.0.3&q=80&w=1280"]
-      
 BANNED_USERS = filters.user()
 YTDOWNLOADER = 1
 LOG = 2
