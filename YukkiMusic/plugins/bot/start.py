@@ -7,7 +7,7 @@ from config import SUPPORT_GROUP, SUPPORT_CHANNEL, OWNER, START_IMG_URL, assista
 async def add_served_user(user_id: int):
     pass
 
-@app.on_message(filters.command(["start", "help"]) & filters.private)
+@app.on_message(filters.command(["start", "help"]))
 async def start_(c: Client, message: Message):
     user_id = message.from_user.id
     await add_served_user(user_id)
@@ -156,7 +156,6 @@ async def developer_commands_set(_, query: CallbackQuery):
     
 @app.on_callback_query(filters.regex("owner_commands"))
 async def owner_commands_set(_, query: CallbackQuery):
-    if query.from_user.id == int(OWNER):
         await query.answer("تم فتح اوامر المطور")
         await query.edit_message_text(
             f"""هذه هيه اوامر المطور 
@@ -172,9 +171,7 @@ async def owner_commands_set(_, query: CallbackQuery):
                 ]
             ),
         )
-    else:
-        await query.answer("# هذا الزر خاص بمطور البوت .", show_alert=True)
-
+    
 # تعريف الدوال الضرورية بشكل مؤقت
 async def is_served_chat(chat_id):
 
