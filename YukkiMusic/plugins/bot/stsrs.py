@@ -37,9 +37,9 @@ def humanbytes(B):
 def get_hosting_type():
     if "DYNO" in os.environ:
         return "Heroku"
-    elif "PYTHONHOME" in os.environ:
+    elif "PYTHONHOME" في os.environ:
         return "PythonAnywhere"
-    elif "LD_LIBRARY_PATH" in os.environ:
+    elif "LD_LIBRARY_PATH" في os.environ:
         return "Linux VPS"
     else:
         return "غير معروف"
@@ -116,7 +116,7 @@ def get_system_info():
     return total_memory, available_memory, used_memory, percent_memory, cpu_percent
 
 # أمر sysinfo لعرض معلومات النظام
-@app.on_message(command(["⦗ معلومات النظام ⦘", "النظام"]))
+@app.on_message(command(["⦗ معلومات النظام ⦘", "النظام"]) & (filters.private | filters.group))
 async def fetch_system_information(client, message):
     if message.from_user.id != OWNER:
         await message.reply_text("هذا الامر يخص المطور الأساسي فقط.")
@@ -156,11 +156,12 @@ async def fetch_system_information(client, message):
 **عنوان IP :** `{ip_address}`
 **عنوان MAC :** `{mac_address}`
 **المعالج :** `{processor}`
+
 **الذاكرة العشوائية (RAM) :**
-- الإجمالي : `{total_memory}`
-- المتاح : `{available_memory}`
-- المستخدم : `{used_memory}` ({percent_memory}%)
-- الذاكرة الفعلية المستخدمة : `{actual_used_memory}`
+- **الإجمالي :** `{total_memory}`
+- **المتاح :** `{available_memory}`
+- **المستخدم :** `{used_memory}` ({percent_memory}%) 
+- **الذاكرة الفعلية المستخدمة :** `{actual_used_memory}`
 
 **تحميل الـ CPU :** `{cpu_load}`
 
