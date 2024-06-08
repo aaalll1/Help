@@ -1,27 +1,18 @@
-#
-# Copyright (C) 2024-present by TeamYukki@Github, < https://github.com/TeamYukki >.
-#
-# This file is part of < https://github.com/TeamYukki/YukkiMusicBot > project,
-# and is released under the "GNU v3.0 License Agreement".
-# Please see < https://github.com/TeamYukki/YukkiMusicBot/blob/master/LICENSE >
-#
-# All rights reserved.
-#
+
 import os
 from inspect import getfullargspec
-
-from pyrogram import filters
+from time import time
+from pyrogram import Client, filters
 from pyrogram.types import Message
-
-from config import ASSISTANT_PREFIX
+from datetime import datetime
 from YukkiMusic import app
 from YukkiMusic.misc import SUDOERS
 from YukkiMusic.utils.database import get_client
-
+from strings.filters import command
 # Your USER client import goes here
 # from YukkiMusic.core.userbot import USER
 
-@app.on_message(filters.command("setpfp", prefixes=ASSISTANT_PREFIX) & SUDOERS)
+@app.on_message(command("setpfp") & SUDOERS)
 async def set_pfp(client, message):
     from YukkiMusic.core.userbot import assistants
 
@@ -52,7 +43,7 @@ async def set_pfp(client, message):
                 os.remove(photo)
 
 
-@app.on_message(filters.command("setbio", prefixes=ASSISTANT_PREFIX) & SUDOERS)
+@app.on_message(command("setbio") & SUDOERS)
 async def set_bio(client, message):
     from YukkiMusic.core.userbot import assistants
 
@@ -71,7 +62,7 @@ async def set_bio(client, message):
         return await eor(message, text="Give some text to set as bio.")
 
 
-@app.on_message(filters.command("setname", prefixes=ASSISTANT_PREFIX) & SUDOERS)
+@app.on_message(command("setname") & SUDOERS)
 async def set_name(client, message):
     from YukkiMusic.core.userbot import assistants
 
@@ -90,7 +81,7 @@ async def set_name(client, message):
         return await eor(message, text="Give some text to set as name.")
 
 
-@app.on_message(filters.command("delpfp", prefixes=ASSISTANT_PREFIX) & SUDOERS)
+@app.on_message(command("delpfp") & SUDOERS)
 async def del_pfp(client, message):
     from YukkiMusic.core.userbot import assistants
 
@@ -107,7 +98,7 @@ async def del_pfp(client, message):
             await eor(message, text=str(e))
 
 
-@app.on_message(filters.command("delallpfp", prefixes=ASSISTANT_PREFIX) & SUDOERS)
+@app.on_message(command("delallpfp") & SUDOERS)
 async def delall_pfp(client, message):
     from YukkiMusic.core.userbot import assistants
 
@@ -124,23 +115,68 @@ async def delall_pfp(client, message):
             await eor(message, text=str(e))
 
 
-@app.on_message(filters.command(["اضفني","ضيفني","سجلني"]) & filters.me)
-async def add_to_contacts(client, message):
-    try:
-        if message.from_user.username:
-            await userbot.add_contact(message.from_user.username, message.from_user.first_name)
-        else:
-            await userbot.add_contact(message.from_user.id, message.from_user.first_name)
-        await message.reply_text("تم اضافتك الى جهات الاتصال في الحساب المساعد")
-    except Exception as e:
-        await message.reply_text(f"خطأ : {e}")
+@app.on_message(command(["ضبط", "اضبط", "vol"]))
+async def change_volume(c: Client, m: Message):
+    if len(m.command) < 2:
+        return await m.reply_text("الاستخدام: `.اضبط` (`0-200`)")
+    
+    a = await c.get_chat_member(m.chat.id, me_user.id)
+    if not a.can_manage_voice_chats:
+        return await m.reply_text(
+            "👍🏻 لاستخدام هذا الأمر، عليك رفع حساب المساعد بصلاحية إدارة الدردشات الصوتية"
+        )
+    
+    volume_range = m.command[1]
+    chat_id = m.chat.id
+    if chat_id in QUEUE:
+        try:
+            await calls.change_volume_call(chat_id, volume=int(volume_range))
+            a؟wait m.reply_text(f"-› **تم ضبط الصوت إلى** `{volume_range}`%")
+        except Exception as e:
+            await m.reply_text(f"🚫 **خطأ:**\n\n`{e}`")
+    else:
+        await m.reply_text("معليش، ما في شي مشتغل يا عيني 🌵")
 
+@app.on_message(command(["بنك"]))
+async def ping_pong(c: Client, message: Message):
+    start = time()
+    m_reply = await message.reply_text("جاري حساب البنك...")
+    delta_ping = time() - start
+    await m_reply.edit_text("🏓 البنك !\n" f"⏱ `{delta_ping * 1000:.3f} مللي ثانية`")
 
-async def eor(msg: Message, **kwargs):
-    func = (
-        (msg.edit_text if msg.from_user.is_self else msg.reply)
-        if msg.from_user
-        else msg.reply
+# زمن البدء
+START_TIME = datetime.utcnow()
+START_TIME_ISO = START_TIME.strftime("%Y-%m-%d %H:%M:%S")
+
+# دالة لتحويل الوقت إلى صيغة قراءة الإنسان
+async def _human_time_duration(seconds: int) -> str:
+    periods = [
+        ("سنة", 60 * 60 * 24 * 365),
+        ("شهر", 60 * 60 * 24 * 30),
+        ("أسبوع", 60 * 60 * 24 * 7),
+        ("يوم", 60 * 60 * 24),
+        ("ساعة", 60 * 60),
+        ("دقيقة", 60),
+        ("ثانية", 1)
+    ]
+
+    result = []
+    for period_name, period_seconds in periods:
+        if seconds >= period_seconds:
+            period_value, seconds = divmod(seconds, period_seconds)
+            if period_value > 1:
+                period_name += "s"
+            result.append(f"{period_value} {period_name}")
+
+    return ", ".join(result[:3])  # يظهر زمن عرض البرمجيات حتى ثلاث مناسبات 
+
+@app.on_message(command(["مدة التشغيل", "مده التشغيل", "وقت التشغيل"]))
+async def get_uptime(client: Client, message: Message):
+    current_time = datetime.utcnow()
+    uptime_sec = (current_time - START_TIME).total_seconds()
+    uptime = await _human_time_duration(int(uptime_sec))
+    await message.reply_text(
+        "🤖 حالة البوت:\n"
+        f"• **وقت التشغيل:** `{uptime}`\n"
+        f"• **وقت البدء:** `{START_TIME_ISO}`"
     )
-    spec = getfullargspec(func.__wrapped__).args
-    return await func(**{k: v for k, v in kwargs.items() if k in spec})
