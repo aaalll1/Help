@@ -99,7 +99,6 @@ async def commands_set(_, query: CallbackQuery):
     
 @app.on_callback_query(filters.regex("ghaith"))
 async def commands_set(_, query: CallbackQuery):
-    if query.from_user.id == int(OWNER):
         await query.answer("تم فتح لوحة المطور")
         await query.edit_message_text(
             f"""- تم فتح لوحة التحكم ↓
@@ -117,9 +116,7 @@ async def commands_set(_, query: CallbackQuery):
                 ]
             )
         )
-    else:
-       await query.answer("✓ هذا الزر خاص بمطور البوت .", show_alert=True)
-
+    
 @app.on_callback_query(filters.regex("user_command"))
 async def user_commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح اوامر التشغيل")
@@ -159,6 +156,7 @@ async def developer_commands_set(_, query: CallbackQuery):
     
 @app.on_callback_query(filters.regex("owner_commands"))
 async def owner_commands_set(_, query: CallbackQuery):
+    if query.from_user.id == int(OWNER):
     await query.answer("تم فتح اوامر المطور")
     await query.edit_message_text(
         f"""هذه هيه اوامر المطور 
@@ -174,18 +172,21 @@ async def owner_commands_set(_, query: CallbackQuery):
             ]
         ),
     )
+    else:
+       await query.answer("# هذا الزر خاص بمطور البوت .", show_alert=True)
+
 
 # تعريف الدوال الضرورية بشكل مؤقت
 async def is_served_chat(chat_id):
-    # تحقق مما إذا كانت المجموعة في قائمة المجموعات المخدومة
+
     return False
 
 async def add_served_chat(chat_id):
-    # أضف المجموعة إلى قائمة المجموعات المخدومة
+
     pass
 
 async def blacklisted_chats():
-    # أعد قائمة بالمجموعات المحظورة
+
     return []
 
 @app.on_message(filters.new_chat_members)
@@ -225,3 +226,4 @@ async def new_chat(c: Client, m: Message):
             print(f"Error: {e}")
 
 chat_watcher_group = 5
+
