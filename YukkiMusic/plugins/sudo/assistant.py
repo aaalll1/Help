@@ -174,7 +174,7 @@ async def _human_time_duration(seconds: int) -> str:
                 period_name += ""
             result.append(f"{period_value} {period_name}")
 
-    return ", ".join(result[:3])
+    return "و".join(result[:3])
 
 # بنك البوت
 @app.on_message(command("بنك"))
