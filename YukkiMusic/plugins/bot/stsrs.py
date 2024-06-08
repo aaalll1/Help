@@ -4,7 +4,6 @@ import platform
 import socket
 import psutil
 import re
-from YukkiMusic import app
 import requests
 import speedtest
 import datetime
@@ -12,6 +11,7 @@ import os
 import uuid
 from strings.filters import command
 from config import OWNER, SUPPORT_CHANNEL
+from YukkiMusic import app
 
 # دالة لتحويل البايتات إلى صيغة قراءة بشرية
 def humanbytes(B):
@@ -87,7 +87,7 @@ def get_network_information():
 # دالة للحصول على إصدار Python و Pyrogram
 def get_version_info():
     python_version = platform.python_version()
-    pyrogram_version = Client.version
+    pyrogram_version = Client.__version__
     return python_version, pyrogram_version
 
 # دالة للحصول على وقت تشغيل البوت
