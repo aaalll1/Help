@@ -10,8 +10,6 @@
 
 from pyrogram import filters
 from pyrogram.types import Message
-
-from config import PK
 from strings import get_command
 from YukkiMusic import app
 from YukkiMusic.misc import SUDOERS
@@ -32,7 +30,7 @@ async def activevc(_, message: Message):
             "sᴏʀʀʏ sɪʀ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴏɴʟʏ ғᴏʀ ʙᴏᴛ ᴍᴀɪɴᴛᴇɴᴀɴᴀʀ's"
         )
     mystic = await message.reply_text(
-        "ɢᴇᴛᴛɪɴɢ ᴀᴄᴛɪᴠᴇ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ....ᴘʟᴇᴀsᴇ ʜᴏʟᴅ ᴏɴ", protect_content=PK
+        "ɢᴇᴛᴛɪɴɢ ᴀᴄᴛɪᴠᴇ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ....ᴘʟᴇᴀsᴇ ʜᴏʟᴅ ᴏɴ"
     )
     served_chats = await get_active_chats()
     text = ""
@@ -64,7 +62,7 @@ async def activevi_(_, message: Message):
             "sᴏʀʀʏ sɪʀ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴏɴʟʏ ғᴏʀ ʙᴏᴛ ᴍᴀɪɴᴛᴇɴᴀɴᴀʀ's"
         )
     mystic = await message.reply_text(
-        "ɢᴇᴛᴛɪɴɢ ᴀᴄᴛɪᴠᴇ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ....ᴘʟᴇᴀsᴇ ʜᴏʟᴅ ᴏɴ", protect_content=PK
+        "ɢᴇᴛᴛɪɴɢ ᴀᴄᴛɪᴠᴇ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ....ᴘʟᴇᴀsᴇ ʜᴏʟᴅ ᴏɴ"
     )
     served_chats = await get_active_video_chats()
     text = ""
