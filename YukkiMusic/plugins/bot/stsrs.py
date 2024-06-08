@@ -136,7 +136,8 @@ async def fetch_system_information(client, message):
 
     network_status = get_network_status()
 
-    somsg = f"""- نظام التشغيل : {splatform}
+    somsg = f"""
+- نظام التشغيل : {splatform}
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - إصدار نظام التشغيل : {platform_release}
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
@@ -164,9 +165,10 @@ async def fetch_system_information(client, message):
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - العنوان IP العام : {public_ip}
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- وقت التشغيل : {uptime}
+- وقت التشغيل : {uptime} س
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- مطور السورس : [Freedom Source](https://t.me/RR8R9)"""
+- مطور السورس : [Freedom Source]({t.me/RR8R9})
+"""
 
     # إنشاء زر شفاف
     keyboard = InlineKeyboardMarkup(
