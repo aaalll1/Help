@@ -37,9 +37,9 @@ def humanbytes(B):
 def get_hosting_type():
     if "DYNO" in os.environ:
         return "Heroku"
-    elif "PYTHONHOME" في os.environ:
+    elif "PYTHONHOME" in os.environ:
         return "PythonAnywhere"
-    elif "LD_LIBRARY_PATH" في os.environ:
+    elif "LD_LIBRARY_PATH" in os.environ:
         return "Linux VPS"
     else:
         return "غير معروف"
