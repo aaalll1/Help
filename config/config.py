@@ -1,13 +1,3 @@
-#
-# Copyright (C) 2024-present by TeamYukki@Github, < https://github.com/TeamYukki >.
-#
-# This file is part of < https://github.com/TeamYukki/YukkiMusicBot > project,
-# and is released under the "GNU v3.0 License Agreement".
-# Please see < https://github.com/TeamYukki/YukkiMusicBot/blob/master/LICENSE >
-#
-# All rights reserved.
-#
-
 
 import sys
 from os import getenv
@@ -18,87 +8,26 @@ from pyrogram import filters
 load_dotenv()
 import re
 
-# ________________________________________________________________________________#
-# Get it from my.telegram.org
 API_ID = int(getenv("API_ID", ""))
 API_HASH = getenv("API_HASH")
 OWNER = int(os.getenv("OWNER", "1854384004"))
-# ________________________________________________________________________________#
-## Get it from @Botfather in Telegram.
 BOT_TOKEN = getenv("BOT_TOKEN")
 Muntazer = getenv("Muntazer", "vvyvv6")
-# ________________________________________________________________________________#
-
+username = getenv("username", "xl444")
 ASSISTANT_PREFIX = getenv("ASSISTANT_PREFIX", ".")
-#
-
-# ________________________________________________________________________________#
-
-
-# ________________________________________________________________________________#
-# Database to save your chats and stats... Get MongoDB:-  https://telegra.ph/How-To-get-Mongodb-URI-04-06
 MONGO_DB_URI = getenv("MONGO_DB_URI", None)
-
-
-# ________________________________________________________________________________#
-# Custom max audio(music) duration for voice chat. set DURATION_LIMIT in variables with your own time(mins), Default to 60 mins.
-DURATION_LIMIT_MIN = int(
-    getenv("DURATION_LIMIT", "50000")
-)  # Remember to give value in Minutes
-
-
-# ________________________________________________________________________________#
-# Duration Limit for downloading Songs in MP3 or MP4 format from bot
-SONG_DOWNLOAD_DURATION = int(
-    getenv("SONG_DOWNLOAD_DURATION_LIMIT", "500")
-)  # Remember to give value in Minutes
-
-
-# ________________________________________________________________________________#
-# You'll need a Private Group ID for this.
+DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", "50000"))  
+SONG_DOWNLOAD_DURATION = int(getenv("SONG_DOWNLOAD_DURATION_LIMIT", "500")
 LOG_GROUP_ID = int(getenv("LOG_GROUP_ID", ""))
-
-
-# ________________________________________________________________________________#
-# A name for your Music bot.
 MUSIC_BOT_NAME = getenv("MUSIC_BOT_NAME", "Mrr...prince")
-# ________________________________________________________________________________#
-
 PROTECT_CONTENT = getenv("PROTECT_CONTENT", "True")
-
-# Set it true for abody can't copy and forward bot messages
-# ________________________________________________________________________________#
-# Your User ID.
-OWNER_ID = list(
-    map(int, getenv("OWNER_ID", "6815918609").split())
-)  # Input type must be interger
-
-
-# ________________________________________________________________________________#
-# Get it from http://dashboard.heroku.com/account
+OWNER_ID = list(map(int, getenv("OWNER_ID", "6815918609").split()))
 HEROKU_API_KEY = getenv("HEROKU_API_KEY")
-
-# You have to Enter the app name which you gave to identify your  Music Bot in Heroku.
 HEROKU_APP_NAME = getenv("HEROKU_APP_NAME")
-
-
-# ________________________________________________________________________________#
-# For customized or modified Repository
-UPSTREAM_REPO = getenv(
-    "UPSTREAM_REPO",
-    "https://github.com/Vivekkumar-IN/YukkiMusic",
-)
+UPSTREAM_REPO = getenv("UPSTREAM_REPO","https://github.com/Vivekkumar-IN/YukkiMusic",)
 UPSTREAM_BRANCH = getenv("UPSTREAM_BRANCH", "master")
+GIT_TOKEN = getenv("GIT_TOKEN","",)
 
-# GIT TOKEN ( if your edited repo is private)
-GIT_TOKEN = getenv(
-    "GIT_TOKEN",
-    "",
-)
-
-
-# ________________________________________________________________________________#
-# Only  Links formats are  accepted for this Var value.
 SUPPORT_CHANNEL = getenv(
     "SUPPORT_CHANNEL", "https://t.me/Quizess_prince"
 )  # Example:- https://t.me/Quizess_prince
