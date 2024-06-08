@@ -136,9 +136,7 @@ async def fetch_system_information(client, message):
             text="اختر ما تريد معرفته عن النظام:",
             reply_markup=keyboard
         )
-    else:
-        await message.reply_text("لا يمكنك الوصول إلى هذا الأمر.")
-
+    
 @app.on_callback_query()
 async def callback_query_handler(client, query):
     if query.from_user.id != int(OWNER_ID):
