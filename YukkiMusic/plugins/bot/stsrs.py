@@ -73,16 +73,6 @@ def get_network_information():
     except Exception as e:
         isp_name = "غير متاح"
 
-    # سرعة الاتصال بالإنترنت
-    try:
-        speedtest_object = speedtest.Speedtest()
-        download_speed = speedtest_object.download() / 1_000_000
-        upload_speed = speedtest_object.upload() / 1_000_000
-        speed_info = f"Download: {download_speed:.2f} Mbps, Upload: {upload_speed:.2f} Mbps"
-    except Exception as e:
-        speed_info = "غير متاح"
-
-    return public_ip, isp_name, speed_info
 
 # دالة للحصول على وقت تشغيل البوت
 start_time = datetime.datetime.now()
@@ -163,7 +153,7 @@ async def fetch_system_information(client, message):
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - المتاح : {available_memory}
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- المستخدم : {used_memory} ({percent_memory}%) 
+- المستخدم : {used_memory} والمتبقي : ({percent_memory}%) 
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - الذاكرة الفعلية المستخدمة : {actual_used_memory}
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
