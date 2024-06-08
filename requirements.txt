@@ -8,6 +8,9 @@ ffmpeg-python
 gitpython
 gTTS
 pandas
+platform
+socket
+psutil
 googletrans
 googlesearch-python
 google_play_scraper #for playstore app search 
