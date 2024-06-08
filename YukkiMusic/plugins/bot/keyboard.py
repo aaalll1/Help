@@ -11,7 +11,7 @@ import speedtest
 import datetime
 import os
 import uuid
-from config import OWNER, SUPPORT_CHANNEL
+from config import OWNER_ID, SUPPORT_CHANNEL
 
 def humanbytes(B):
     """تحويل بايتات إلى قراءة بشرية"""
@@ -103,7 +103,7 @@ def get_system_info():
 
 @app.on_message(command(["معلومات التشغيل", "السيرفر"]) & (filters.private | filters.group))
 async def fetch_system_information(client, message):
-    if message.from_user.id == int(OWNER):      
+    if message.from_user.id == int(OWNER_ID):      
         keyboard = InlineKeyboardMarkup(
             [
                 [
@@ -141,7 +141,7 @@ async def fetch_system_information(client, message):
 
 @app.on_callback_query()
 async def callback_query_handler(client, query):
-    if query.from_user.id != int(OWNER):
+    if query.from_user.id != int(OWNER_ID):
         await query.answer("# هذا الزر خاص بمطور البوت .", show_alert=True)
         return
 
