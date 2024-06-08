@@ -4,6 +4,7 @@ import platform
 import socket
 import psutil
 import re
+from strings.filters import command
 import uuid
 from YukkiMusic import app
 import pandas as pd
