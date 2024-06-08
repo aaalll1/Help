@@ -115,29 +115,39 @@ async def delall_pfp(client, message):
             await eor(message, text=str(e))
 
 
+QUEUE = {}
+
+# دالة لضبط الصوت
+async def change_volume_call(chat_id, volume):
+
+    pass
+
+# أمر تغيير الصوت
 @app.on_message(command(["ضبط", "اضبط", "vol"]))
 async def change_volume(c: Client, m: Message):
     if len(m.command) < 2:
         return await m.reply_text("الاستخدام: `.اضبط` (`0-200`)")
     
-    me_user = await c.get_me()
-    a = await c.get_chat_member(m.chat.id, me_user.id)
-    if not a.can_manage_voice_chats:
+    me = await c.get_me()
+    chat_member = await c.get_chat_member(m.chat.id, me.id)
+    
+    if not chat_member.can_restrict_members:
         return await m.reply_text(
-            "👍🏻 لاستخدام هذا الأمر، عليك رفع حساب المساعد بصلاح نية إدارة الدردشات الصوتية"
+            "👍🏻 لاستخدام هذا الأمر، عليك رفع حساب المساعد بصلاحية لإدارة الأعضاء"
         )
     
     volume_range = m.command[1]
     chat_id = m.chat.id
+    
     if chat_id in QUEUE:
         try:
-            await calls.change_volume_call(chat_id, volume=int(volume_range))
+            await change_volume_call(chat_id, volume=int(volume_range))
             await m.reply_text(f"-› **تم ضبط الصوت إلى** `{volume_range}`%")
         except Exception as e:
             await m.reply_text(f"🚫 **خطأ:**\n\n`{e}`")
     else:
         await m.reply_text("معليش، ما في شي مشتغل يا عيني 🌵")
-
+        
 START_TIME = datetime.utcnow()
 START_TIME_ISO = START_TIME.strftime("%Y-%m-%d")
 
