@@ -120,6 +120,7 @@ async def change_volume(c: Client, m: Message):
     if len(m.command) < 2:
         return await m.reply_text("الاستخدام: `.اضبط` (`0-200`)")
     
+    me_user = await c.get_me()
     a = await c.get_chat_member(m.chat.id, me_user.id)
     if not a.can_manage_voice_chats:
         return await m.reply_text(
@@ -146,7 +147,7 @@ async def ping_pong(c: Client, message: Message):
 
 # زمن البدء
 START_TIME = datetime.utcnow()
-START_TIME_ISO = START_TIME.strftime("%Y-%m-%d %H:%M:%S")
+START_TIME_ISO = START_TIME.strftime("%Y-%m-%d")
 
 # دالة لتحويل الوقت إلى صيغة قراءة الإنسان
 async def _human_time_duration(seconds: int) -> str:
@@ -170,13 +171,11 @@ async def _human_time_duration(seconds: int) -> str:
 
     return ", ".join(result[:3])  # يظهر زمن عرض البرمجيات حتى ثلاث مناسبات 
 
-@app.on_message(command(["مدة التشغيل", "مده التشغيل", "وقت التشغيل"]))
+@app.on_message(command(["مدة التشغيل", "مده التشغيل", "ساعات التشغيل"]))
 async def get_uptime(client: Client, message: Message):
     current_time = datetime.utcnow()
     uptime_sec = (current_time - START_TIME).total_seconds()
     uptime = await _human_time_duration(int(uptime_sec))
     await message.reply_text(
-        "🤖 حالة البوت:\n"
-        f"• **وقت التشغيل:** `{uptime}`\n"
-        f"• **وقت البدء:** `{START_TIME_ISO}`"
+        "-› هذا هي عدد ساعات تشغيل البوت \n⎯ ⎯ ⎯ ⎯\nf"-› تم تشغيل البوت منذً : {uptime}\n"f"-› تاريخ بدء التشغيل : {START_TIME_ISO}"
     )
