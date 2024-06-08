@@ -4,11 +4,12 @@ import platform
 import socket
 import psutil
 import re
+from YukkiMusic import app
 import requests
+import speedtest
 import datetime
 import os
 import uuid
-from YukkiMusic import app
 from strings.filters import command
 from config import OWNER, SUPPORT_CHANNEL
 
@@ -72,7 +73,6 @@ def get_network_information():
     except Exception as e:
         isp_name = "غير متاح"
 
-    return public_ip, isp_name
 
 # دالة للحصول على وقت تشغيل البوت
 start_time = datetime.datetime.now()
@@ -124,7 +124,7 @@ async def fetch_system_information(client, message):
 
     hosting_type = get_hosting_type()
 
-    public_ip, isp_name = get_network_information()
+    public_ip, isp_name, speed_info = get_network_information()
 
     uptime = get_uptime()
 
@@ -136,39 +136,37 @@ async def fetch_system_information(client, message):
 
     network_status = get_network_status()
 
-somsg = (
-    f"- نظام التشغيل : {splatform}\n"
-    "⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯\n"
-    f"- إصدار نظام التشغيل : {platform_release}\n"
-    "⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯\n"
-    f"- نسخة نظام التشغيل : {platform_version}\n"
-    "⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯\n"
-    f"- اسم الجهاز : {hostname}\n"
-    "⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯\n"
-    f"- عنوان IP : {ip_address}\n"
-    "⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯\n"
-    f"- المعالج : {processor}\n"
-    "⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯\n"
-    f"- اجمالي الذاكرة : {total_memory}\n"
-    "⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯\n"
-    f"- المتاح : {available_memory}\n"
-    "⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯\n"
-    f"- المستخدم : {used_memory} والمتبقي : ({percent_memory}%)\n"
-    "⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯\n"
-    f"- الذاكرة الفعلية المستخدمة : {actual_used_memory}\n"
-    "⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯\n"
-    f"- وحدة المعالجة المركزية : {cpu_load}\n"
-    "⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯\n"
-    f"- الاستضافة : {hosting_type}\n"
-    "⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯\n"
-    f"- حالة الشبكة : {network_status}\n"
-    "⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯\n"
-    f"- العنوان IP العام : {public_ip}\n"
-    "⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯\n"
-    f"- وقت التشغيل : {uptime} س\n"
-    "⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯\n"
-    "- مطور السورس : [Freedom Source](https://t.me/RR8R9)"
-)
+    somsg = f"""- نظام التشغيل : {splatform}
+⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
+- إصدار نظام التشغيل : {platform_release}
+⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
+- نسخة نظام التشغيل : {platform_version}
+⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
+- اسم الجهاز : {hostname}
+⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
+- عنوان IP : {ip_address}
+⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
+- المعالج : {processor}
+⎯ ⎯ ⎯ ⎯ ⎯ ⎯ ⎯ 
+- اجمالي الذاكرة : {total_memory}
+⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
+- المتاح : {available_memory}
+⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
+- المستخدم : {used_memory} والمتبقي : ({percent_memory}%) 
+⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
+- الذاكرة الفعلية المستخدمة : {actual_used_memory}
+⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
+- وحدة المعالجة المركزية : {cpu_load}
+⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
+- الاستضافة : {hosting_type}
+⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
+- حالة الشبكة : {network_status}
+⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
+- العنوان IP العام : {public_ip}
+⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
+- وقت التشغيل : {uptime}
+⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
+- مطور السورس : [Freedom Source](https://t.me/RR8R9)"""
 
     # إنشاء زر شفاف
     keyboard = InlineKeyboardMarkup(
