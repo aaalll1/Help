@@ -1,5 +1,5 @@
 from pyrogram import Client, filters
-from pyrogram.types import Message
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 import platform
 import socket
 import psutil
@@ -7,8 +7,8 @@ import re
 from strings.filters import command
 import uuid
 from YukkiMusic import app
-import pandas as pd
-from config import OWNER
+import os
+from config import OWNER, SUPPORT_CHANNEL
 
 # دالة لتحويل البايتات إلى صيغة قراءة بشرية
 def humanbytes(B):
@@ -31,10 +31,10 @@ def humanbytes(B):
         return "{0:.2f} TB".format(B / TB)
 
 # أمر sysinfo لعرض معلومات النظام
-@app.on_message(command(["sysinfo"]))
+@app.on_message(command(["⦗ معلومات النظام ⦘", "النظام"]))
 async def fetch_system_information(client, message):
     if message.from_user.id != OWNER:
-        await message.reply_text("لا تمتلك صلاحية لاستخدام هذا الأمر.")
+        await message.reply_text("هذا الامر يخص المطور الأساسي فقط .")
         return
 
     splatform = platform.system()
@@ -55,6 +55,16 @@ async def fetch_system_information(client, message):
     disk = f"{humanbytes(du.used)} / {humanbytes(du.total)} ({du.percent}%)"
     cpu_len = len(psutil.Process().cpu_affinity())
 
+    # تحديد نوع الاستضافة
+    if "DYNO" in os.environ:
+        hosting_type = "Heroku"
+    elif "PYTHONHOME" in os.environ:
+        hosting_type = "PythonAnywhere"
+    elif platform.system() == "Linux":
+        hosting_type = "Linux VPS"
+    else:
+        hosting_type = "غير معروف"
+
     somsg = f"""🖥 **معلومات النظام**
 
 **نظام التشغيل :** `{splatform}`
@@ -69,6 +79,19 @@ async def fetch_system_information(client, message):
 **عدد معالجات الـ CPU :** `{cpu_len}`
 **تردد الـ CPU :** `{cpu_freq}`
 **مساحة القرص :** `{disk}`
+
+📡 **قناة السورس :** [أنقر هنا]({SUPPORT_CHANNEL})
+
+🌐 **الاستضافة :** `{hosting_type}`
 """
 
-    await message.reply_text(somsg)
+    # إنشاء زر شفاف
+    keyboard = InlineKeyboardMarkup(
+        [[InlineKeyboardButton("قناة البوت", url=SUPPORT_CHANNEL)]]
+    )
+
+    await message.reply_text(
+        text=somsg,
+        reply_markup=keyboard,
+        disable_web_page_preview=True
+    )
