@@ -5,11 +5,11 @@ import platform
 import socket
 import psutil
 import re
+from YukkiMusic import app
 import requests
 import speedtest
 import datetime
 import os
-from YukkiMusic import app
 import uuid
 from strings.filters import command
 from config import OWNER, SUPPORT_CHANNEL
@@ -64,7 +64,7 @@ def get_network_status():
 def get_network_information():
     try:
         # العنوان IP العام
-        public_ip = requests.get("https://api64.ipify.org").text.strip()
+        public_ip = re.search(r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b", requests.get("https://api64.ipify.org").text).group(0)
     except Exception as e:
         public_ip = "غير متاح"
 
@@ -99,8 +99,9 @@ def get_actual_used_memory():
 
 # دالة للحصول على معلومات الحمولة الحالية للمعالج
 def get_cpu_load():
-    cpu_load = psutil.cpu_percent(interval=1)
-    return f"{cpu_load}%"
+    cpu_info = psutil.cpu_percent(interval=1, percpu=True)
+    cpu_load = [f"Core {i}: {core}%" for i, core in enumerate(cpu_info)]
+    return "\n".join(cpu_load)
 
 # دالة للحصول على معلومات الذاكرة والحمولة للمعالج
 def get_system_info():
@@ -112,11 +113,11 @@ def get_system_info():
     percent_memory = virtual_memory.percent
 
     # معلومات الحمولة للمعالج
-    cpu_percent = psutil.cpu_percent(interval=1)
+    cpu_percent = get_cpu_load()
 
     return total_memory, available_memory, used_memory, percent_memory, cpu_percent
 
-
+# أمر sysinfo لعرض معلومات النظام
 @app.on_message(command(["⦗ معلومات النظام ⦘", "النظام"]) & (filters.private | filters.group))
 async def fetch_system_information(client, message):
     if message.from_user.id != OWNER:
@@ -147,7 +148,7 @@ async def fetch_system_information(client, message):
 
     network_status = get_network_status()
 
-    somsg = f"""
+    somsg  = f"""
 - نظام التشغيل : {splatform}
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - إصدار نظام التشغيل : {platform_release}
