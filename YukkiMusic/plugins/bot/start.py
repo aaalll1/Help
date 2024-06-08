@@ -1,7 +1,7 @@
 from YukkiMusic import app
 from pyrogram import Client, filters
 from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
-from config import SUPPORT_GROUP, SUPPORT_CHANNEL, OWNER, START_IMG_URL, Username
+from config import SUPPORT_GROUP, SUPPORT_CHANNEL, OWNER, START_IMG_URL, assistant
 
 # وهمي
 async def add_served_user(user_id: int):
@@ -175,10 +175,6 @@ async def owner_commands_set(_, query: CallbackQuery):
         ),
     )
 
-
-from pyrogram import Client, filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-
 # تعريف الدوال الضرورية بشكل مؤقت
 async def is_served_chat(chat_id):
 
@@ -195,9 +191,7 @@ async def blacklisted_chats():
 @app.on_message(filters.new_chat_members)
 async def new_chat(c: Client, m: Message):
     chat_id = m.chat.id
-    if await is_served_chat(chat_id):
-        pass
-    else:
+    if not await is_served_chat(chat_id):
         await add_served_chat(chat_id)
     for member in m.new_chat_members:
         try:
@@ -216,11 +210,14 @@ async def new_chat(c: Client, m: Message):
                                 InlineKeyboardButton("-› قناة السورس", url=f"https://t.me/{SUPPORT_CHANNEL}"),
                                 InlineKeyboardButton("-› الاوامر", callback_data="command_list")
                             ],[
-                                InlineKeyboardButton("-› حساب المساعد", url=f"https://t.me/{Username}")
+                                InlineKeyboardButton("-› حساب المساعد", url=f"https://t.me/{assistant}") if assistant else None
                             ]
                         ]
                     )
                 )
+            return
+        except AttributeError as e:
+            print(f"AttributeError: {e}")
             return
         except Exception as e:
             print(f"Error: {e}")
