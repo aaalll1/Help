@@ -1,14 +1,15 @@
+
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 import platform
 import socket
 import psutil
 import re
-from YukkiMusic import app
 import requests
 import speedtest
 import datetime
 import os
+from YukkiMusic import app
 import uuid
 from strings.filters import command
 from config import OWNER, SUPPORT_CHANNEL
@@ -63,7 +64,7 @@ def get_network_status():
 def get_network_information():
     try:
         # العنوان IP العام
-        public_ip = re.search(r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b", requests.get("https://api64.ipify.org").text).group(0)
+        public_ip = requests.get("https://api64.ipify.org").text.strip()
     except Exception as e:
         public_ip = "غير متاح"
 
@@ -115,7 +116,7 @@ def get_system_info():
 
     return total_memory, available_memory, used_memory, percent_memory, cpu_percent
 
-# أمر sysinfo لعرض معلومات النظام
+
 @app.on_message(command(["⦗ معلومات النظام ⦘", "النظام"]) & (filters.private | filters.group))
 async def fetch_system_information(client, message):
     if message.from_user.id != OWNER:
@@ -157,17 +158,21 @@ async def fetch_system_information(client, message):
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - عنوان IP : {ip_address}
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
+- عنوان MAC : {mac_address}
+⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - المعالج : {processor}
-⎯ ⎯ ⎯ ⎯ ⎯ ⎯ ⎯ 
+⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
+- الأنويه : {cpu_len}
+⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - اجمالي الذاكرة : {total_memory}
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - المتاح : {available_memory}
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- المتبقي : {used_memory} والمستخدم : ({percent_memory}%) 
+- المستخدم : {used_memory} والمتبقي : ({percent_memory}%)
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - الذاكرة الفعلية المستخدمة : {actual_used_memory}
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- وحدة المعالجة المركزية : {cpu_load}
+- استخدام وحدة المعالجة المركزية : {cpu_load}
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - الاستضافة : {hosting_type}
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
@@ -177,7 +182,7 @@ async def fetch_system_information(client, message):
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - اسم مزود خدمة الإنترنت : {isp_name}
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- وقت التشغيل : {uptime} 
+- وقت التشغيل : {uptime} مدة
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - مطور السورس : [Freedom Source](https://t.me/RR8R9)
 """
