@@ -1,7 +1,5 @@
 from pyrogram import filters
 from pyrogram.types import Message
-
-from config import PK
 from YukkiMusic import app
 from YukkiMusic.core.userbot import assistants
 from YukkiMusic.utils.assistant import assistant, get_assistant_details
