@@ -135,7 +135,7 @@ async def fetch_system_information(client, message):
         )
 
         await message.reply_text(
-            text="اختر ما تريد معرفته عن النظام:",
+            text="مرحباً عزيزي المطور الأساسي اختر ماتريد :",
             reply_markup=keyboard
         )
     
@@ -171,43 +171,43 @@ async def callback_query_handler(client, query):
     network_status = get_network_status()
 
     if query.data == "system_os":
-        await query.message.edit_text(text=f"نظام التشغيل: {splatform}")
+        await query.answer(text=f"نظام التشغيل: {splatform}", show_alert=True)
     
     elif query.data == "system_release":
-        await query.message.edit_text(text=f"إصدار نظام التشغيل: {platform_release}")
+        await query.answer(text=f"إصدار نظام التشغيل: {platform_release}", show_alert=True)
     
     elif query.data == "system_ip":
-        await query.message.edit_text(text=f"عنوان IP: {ip_address}")
+        await query.answer(text=f"عنوان IP: {ip_address}", show_alert=True)
     
     elif query.data == "system_mac":
-        await query.message.edit_text(text=f"عنوان MAC: {mac_address}")
+        await query.answer(text=f"عنوان MAC: {mac_address}", show_alert=True)
     
     elif query.data == "system_processor":
-        await query.message.edit_text(text=f"المعالج: {processor}")
+        await query.answer(text=f"المعالج: {processor}", show_alert=True)
     
     elif query.data == "system_cpu":
-        await query.message.edit_text(text=f"استخدام وحدة المعالجة المركزية: {cpu_load}")
+        await query.answer(text=f"استخدام وحدة المعالجة المركزية: {cpu_load}", show_alert=True)
     
     elif query.data == "system_memory":
-        await query.message.edit_text(text=f"""
+        await query.answer(text=f"""
 - اجمالي الذاكرة : {total_memory}
 - المتاح : {available_memory}
 - المستخدم : {used_memory} ({percent_memory}%)
 - الذاكرة الفعلية المستخدمة : {actual_used_memory}
-""")
+""", show_alert=True)
     
     elif query.data == "system_network":
-        await query.message.edit_text(text=f"""
+        await query.answer(text=f"""
 - حالة الشبكة: {network_status}
 - العنوان IP العام: {public_ip}
 - اسم مزود خدمة الإنترنت: {isp_name}
-""")
+""", show_alert=True)
     
     elif query.data == "system_public_ip":
-        await query.message.edit_text(text=f"العنوان IP العام: {public_ip}")
+        await query.answer(text=f"العنوان IP العام: {public_ip}", show_alert=True)
     
     elif query.data == "system_isp":
-        await query.message.edit_text(text=f"اسم مزود خدمة الإنترنت: {isp_name}")
+        await query.answer(text=f"اسم مزود خدمة الإنترنت: {isp_name}", show_alert=True)
     
     elif query.data == "system_uptime":
-        await query.message.edit_text(text=f"وقت التشغيل: {uptime}")
+        await query.answer(text=f"وقت التشغيل: {uptime}", show_alert=True)
