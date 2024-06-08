@@ -123,7 +123,7 @@ async def change_volume(c: Client, m: Message):
     a = await c.get_chat_member(m.chat.id, me_user.id)
     if not a.can_manage_voice_chats:
         return await m.reply_text(
-            "👍🏻 لاستخدام هذا الأمر، عليك رفع حساب المساعد بصلاحية إدارة الدردشات الصوتية"
+            "👍🏻 لاستخدام هذا الأمر، عليك رفع حساب المساعد بصلاح نية إدارة الدردشات الصوتية"
         )
     
     volume_range = m.command[1]
@@ -131,7 +131,7 @@ async def change_volume(c: Client, m: Message):
     if chat_id in QUEUE:
         try:
             await calls.change_volume_call(chat_id, volume=int(volume_range))
-            a؟wait m.reply_text(f"-› **تم ضبط الصوت إلى** `{volume_range}`%")
+            await m.reply_text(f"-› **تم ضبط الصوت إلى** `{volume_range}`%")
         except Exception as e:
             await m.reply_text(f"🚫 **خطأ:**\n\n`{e}`")
     else:
