@@ -141,10 +141,9 @@ async def change_volume(c: Client, m: Message):
 @app.on_message(command(["بنك"]))
 async def ping_pong(c: Client, message: Message):
     start = time()
-    m_reply = await message.reply_text("جاري حساب البنك...")
+    m_reply = await message.reply_text("-› انتضر قليلاً .")
     delta_ping = time() - start
-    await m_reply.edit_text("🏓 البنك !\n" f"⏱ `{delta_ping * 1000:.3f} مللي ثانية`")
-
+    await m_reply.edit_text("-› بنك البوت : 🫱🏻 {delta_ping * 1000:.3f} ثانيةة")
 # زمن البدء
 START_TIME = datetime.utcnow()
 START_TIME_ISO = START_TIME.strftime("%Y-%m-%d")
