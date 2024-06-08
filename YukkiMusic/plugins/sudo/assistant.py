@@ -138,13 +138,6 @@ async def change_volume(c: Client, m: Message):
     else:
         await m.reply_text("معليش، ما في شي مشتغل يا عيني 🌵")
 
-@app.on_message(command(["بنك"]))
-async def ping_pong(c: Client, message: Message):
-    start = time()
-    m_reply = await message.reply_text("-› انتضر قليلاً .")
-    delta_ping = time() - start
-    await m_reply.edit_text("-› بنك البوت : 🫱🏻 {delta_ping * 1000:.3f} ثانيةة")
-# زمن البدء
 START_TIME = datetime.utcnow()
 START_TIME_ISO = START_TIME.strftime("%Y-%m-%d")
 
@@ -168,13 +161,22 @@ async def _human_time_duration(seconds: int) -> str:
                 period_name += "s"
             result.append(f"{period_value} {period_name}")
 
-    return ", ".join(result[:3])  # يظهر زمن عرض البرمجيات حتى ثلاث مناسبات 
+    return ", ".join(result[:3])
 
+# بنك البوت
+@app.on_message(command("بنك"))
+async def ping_pong(c: Client, message: Message):
+    start = time()
+    m_reply = await message.reply_text("-› انتضر قليلاً .")
+    delta_ping = time() - start
+    await m_reply.edit_text(f"-› بنك البوت : {delta_ping * 1000:.3f} ثانية")
+
+# مدة التشغيل
 @app.on_message(command(["مدة التشغيل", "مده التشغيل", "ساعات التشغيل"]))
 async def get_uptime(client: Client, message: Message):
     current_time = datetime.utcnow()
     uptime_sec = (current_time - START_TIME).total_seconds()
     uptime = await _human_time_duration(int(uptime_sec))
     await message.reply_text(
-        "-› هذا هي عدد ساعات تشغيل البوت \n⎯ ⎯ ⎯ ⎯\n-› تم تشغيل البوت منذً : {uptime}\n -› تاريخ بدء التشغيل : {START_TIME_ISO}"
+        f"-› هذا هو عدد ساعات تشغيل البوت\n⎯ ⎯ ⎯ ⎯\n-› تم تشغيل البوت منذًا: {uptime}\n-› تاريخ بدء التشغيل: {START_TIME_ISO}"
     )
