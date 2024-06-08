@@ -174,3 +174,39 @@ async def owner_commands_set(_, query: CallbackQuery):
             ]
         ),
     )
+
+
+@app.on_message(filters.new_chat_members)
+async def new_chat(c: Client, m: Message):
+    chat_id = m.chat.id
+    if await is_served_chat(chat_id):
+        pass
+    else:
+        await add_served_chat(chat_id)
+    for member in m.new_chat_members:
+        try:
+            if member.id == me_bot.id:
+                if chat_id in await blacklisted_chats():
+                    await m.reply_text(
+                        "❗️ This chat has been blacklisted by a sudo user and you're not allowed to use me in this chat."
+                    )
+                    return await bot.leave_chat(chat_id)
+                return await m.reply(
+                    "🎗️ وأخيرا ضفتوني ، طبعاً شكراً للي ضافني !\n\n"                 
+                    "👍🏻 اضغط على زر الاوامر حتى تشوف شلون تشغلني ",
+                    reply_markup=InlineKeyboardMarkup(
+                        [
+                            [
+                                InlineKeyboardButton("-› قناة السورس", url=f"https://t.me/{SUPPORT_CHANNEL}"),
+                                InlineKeyboardButton("-› الاوامر", callback_data="command_list")
+                            ],[
+                                InlineKeyboardButton("-› حساب المساعد", url=f"https://t.me/{username}")
+                            ]
+                        ]
+                    )
+                )
+            return
+        except Exception:
+            return
+
+chat_watcher_group = 5
