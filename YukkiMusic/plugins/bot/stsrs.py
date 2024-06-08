@@ -167,7 +167,7 @@ async def fetch_system_information(client, message):
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - وقت التشغيل : {uptime} س
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- مطور السورس :** [Freedom Source]({t.me/RR8R9})
+- مطور السورس : [Freedom Source](https://t.me/RR8R9)
 """
 
     # إنشاء زر شفاف
