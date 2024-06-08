@@ -73,6 +73,16 @@ def get_network_information():
     except Exception as e:
         isp_name = "غير متاح"
 
+    # معلومات السرعة
+    try:
+        st = speedtest.Speedtest()
+        st.download()
+        st.upload()
+        speed_info = st.results.dict()
+    except Exception as e:
+        speed_info = "غير متاح"
+
+    return public_ip, isp_name, speed_info
 
 # دالة للحصول على وقت تشغيل البوت
 start_time = datetime.datetime.now()
@@ -153,7 +163,7 @@ async def fetch_system_information(client, message):
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - المتاح : {available_memory}
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- المستخدم : {used_memory} والمتبقي : ({percent_memory}%) 
+- المتبقي : {used_memory} والمستخدم : ({percent_memory}%) 
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - الذاكرة الفعلية المستخدمة : {actual_used_memory}
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
@@ -164,6 +174,8 @@ async def fetch_system_information(client, message):
 - حالة الشبكة : {network_status}
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - العنوان IP العام : {public_ip}
+⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
+- اسم مزود خدمة الإنترنت : {isp_name}
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - وقت التشغيل : {uptime} س
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
