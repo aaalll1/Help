@@ -1,16 +1,16 @@
 from pyrogram import Client, filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import platform
 import socket
 import psutil
+from YukkiMusic import app
 import re
+from strings.filters import command
 import requests
 import speedtest
-from YukkiMusic import app
 import datetime
 import os
 import uuid
-from strings.filters import command
 from config import OWNER, SUPPORT_CHANNEL
 
 def humanbytes(B):
@@ -101,10 +101,10 @@ def get_system_info():
 
     return total_memory, available_memory, used_memory, percent_memory, cpu_percent
 
-@app.on_message(command(["معلومات النظام", "السيرفر"]) & (filters.private | filters.group))
+@app.on_message(command(["systeminfo", "النظام"]) & filters.private)
 async def fetch_system_information(client, message):
     if message.from_user.id != OWNER:
-        await message.reply_text("هذا الامر يخص المطور الأساسي فقط.")
+        await message.reply_text("لا يمكنك الوصول إلى هذا الأمر.")
         return
 
     keyboard = InlineKeyboardMarkup(
@@ -142,6 +142,10 @@ async def fetch_system_information(client, message):
 
 @app.on_callback_query()
 async def callback_query_handler(client, query):
+    if query.from_user.id != OWNER:
+        await query.answer(text="لا يمكنك الوصول إلى هذا الزر.")
+        return
+
     splatform = platform.system()
     platform_release = platform.release()
     platform_version = platform.version()
@@ -167,32 +171,25 @@ async def callback_query_handler(client, query):
     network_status = get_network_status()
 
     if query.data == "system_os":
-        await query.answer()
-        await query.message.edit_text(f"نظام التشغيل: {splatform}")
-
+        await query.message.edit_text(text=f"نظام التشغيل: {splatform}")
+    
     elif query.data == "system_release":
-        await query.answer()
-        await query.message.edit_text(f"إصدار نظام التشغيل: {platform_release}")
-
+        await query.message.edit_text(text=f"إصدار نظام التشغيل: {platform_release}")
+    
     elif query.data == "system_ip":
-        await query.answer()
-        await query.message.edit_text(f"عنوان IP: {ip_address}")
-
+        await query.message.edit_text(text=f"عنوان IP: {ip_address}")
+    
     elif query.data == "system_mac":
-        await query.answer()
-        await query.message.edit_text(f"عنوان MAC: {mac_address}")
-
+        await query.message.edit_text(text=f"عنوان MAC: {mac_address}")
+    
     elif query.data == "system_processor":
-        await query.answer()
-        await query.message.edit_text(f"المعالج: {processor}")
-
+        await query.message.edit_text(text=f"المعالج: {processor}")
+    
     elif query.data == "system_cpu":
-        await query.answer()
-        await query.message.edit_text(f"استخدام وحدة المعالجة المركزية: {cpu_load}")
-
+        await query.message.edit_text(text=f"استخدام وحدة المعالجة المركزية: {cpu_load}")
+    
     elif query.data == "system_memory":
-        await query.answer()
-        await query.message.edit_text(f"""
+        await query.message.edit_text(text=f"""
 - اجمالي الذاكرة : {total_memory}
 - المتاح : {available_memory}
 - المستخدم : {used_memory} ({percent_memory}%)
@@ -200,30 +197,26 @@ async def callback_query_handler(client, query):
 """)
 
     elif query.data == "system_network":
-        await query.answer()
-        await query.message.edit_text(f"""
+        await query.message.edit_text(text=f"""
 - حالة الشبكة: {network_status}
 - العنوان IP العام: {public_ip}
 - اسم مزود خدمة الإنترنت: {isp_name}
 """)
 
     elif query.data == "system_public_ip":
-        await query.answer()
-        await query.message.edit_text(f"العنوان IP العام: {public_ip}")
+        await query.message.edit_text(text=f"العنوان IP العام: {public_ip}")
 
     elif query.data == "system_isp":
-        await query.answer()
-        await query.message.edit_text(f"اسم مزود خدمة الإنترنت: {isp_name}")
+        await query.message.edit_text(text=f"اسم مزود خدمة الإنترنت: {isp_name}")
 
     elif query.data == "system_uptime":
-        await query.answer()
-        await query.message.edit_text(f"وقت التشغيل: {uptime}")
+        await query.message.edit_text(text=f"وقت التشغيل: {uptime}")
 
     keyboard = InlineKeyboardMarkup(
         [[InlineKeyboardButton("⦗ قناة التحديثات ⦘", url=SUPPORT_CHANNEL)]]
     )
 
-    await query.message.reply_text(
+    await query.message.edit_text(
         text="لا تتردد في السؤال إذا كان لديك أي استفسار آخر!",
         reply_markup=keyboard,
         disable_web_page_preview=True
