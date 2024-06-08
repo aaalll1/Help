@@ -1,17 +1,16 @@
-
 from pyrogram import Client, filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import platform
 import socket
 import psutil
+from YukkiMusic import app
 import re
+from strings.filters import command
 import requests
 import speedtest
 import datetime
 import os
-from YukkiMusic import app
 import uuid
-from strings.filters import command
 from config import OWNER, SUPPORT_CHANNEL
 
 def humanbytes(B):
@@ -58,7 +57,6 @@ def get_network_status():
 
 def get_network_information():
     try:
-        
         public_ip = requests.get("https://api64.ipify.org").text.strip()
     except Exception as e:
         public_ip = "غير متاح"
@@ -93,7 +91,6 @@ def get_cpu_load():
     return f"{cpu_load}%"
 
 def get_system_info():
-    # معلومات الذاكرة
     virtual_memory = psutil.virtual_memory()
     total_memory = humanbytes(virtual_memory.total)
     available_memory = humanbytes(virtual_memory.available)
@@ -104,13 +101,47 @@ def get_system_info():
 
     return total_memory, available_memory, used_memory, percent_memory, cpu_percent
 
-
-@app.on_message(command(["⦗ معلومات النظام ⦘", "النظام"]) & (filters.private | filters.group))
+@app.on_message(command(["معلومات التشغيل", "السيرفر"]) & (filters.private | filters.group))
 async def fetch_system_information(client, message):
     if message.from_user.id != OWNER:
-        await message.reply_text("هذا الامر يخص المطور الأساسي فقط.")
+        await message.reply_text("لا يمكنك الوصول إلى هذا الأمر.")
         return
 
+    keyboard = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton("نظام التشغيل", callback_data="system_os"),
+                InlineKeyboardButton("إصدار نظام التشغيل", callback_data="system_release"),
+            ],
+            [
+                InlineKeyboardButton("عنوان IP", callback_data="system_ip"),
+                InlineKeyboardButton("عنوان MAC", callback_data="system_mac"),
+            ],
+            [
+                InlineKeyboardButton("المعالج", callback_data="system_processor"),
+                InlineKeyboardButton("استخدام وحدة المعالجة المركزية", callback_data="system_cpu"),
+            ],
+            [
+                InlineKeyboardButton("معلومات الذاكرة", callback_data="system_memory"),
+                InlineKeyboardButton("الشبكة", callback_data="system_network"),
+            ],
+            [
+                InlineKeyboardButton("IP العام", callback_data="system_public_ip"),
+                InlineKeyboardButton("مقدم الخدمة", callback_data="system_isp"),
+            ],
+            [
+                InlineKeyboardButton("وقت التشغيل", callback_data="system_uptime"),
+            ],
+        ]
+    )
+
+    await message.reply_text(
+        text="اختر ما تريد معرفته عن النظام:",
+        reply_markup=keyboard
+    )
+
+@app.on_callback_query()
+async def callback_query_handler(client, query):
     splatform = platform.system()
     platform_release = platform.release()
     platform_version = platform.version()
@@ -135,52 +166,44 @@ async def fetch_system_information(client, message):
 
     network_status = get_network_status()
 
-    somsg = f"""
-- نظام التشغيل : {splatform}
-⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- إصدار نظام التشغيل : {platform_release}
-⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- نسخة نظام التشغيل : {platform_version}
-⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- اسم الجهاز : {hostname}
-⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- عنوان IP : {ip_address}
-⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- عنوان MAC : {mac_address}
-⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- المعالج : {processor}
-⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- الأنويه : {cpu_len}
-⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
+    if query.data == "system_os":
+        await query.message.edit_text(text=f"نظام التشغيل: {splatform}")
+    
+    elif query.data == "system_release":
+        await query.message.edit_text(text=f"إصدار نظام التشغيل: {platform_release}")
+    
+    elif query.data == "system_ip":
+        await query.message.edit_text(text=f"عنوان IP: {ip_address}")
+    
+    elif query.data == "system_mac":
+        await query.message.edit_text(text=f"عنوان MAC: {mac_address}")
+    
+    elif query.data == "system_processor":
+        await query.message.edit_text(text=f"المعالج: {processor}")
+    
+    elif query.data == "system_cpu":
+        await query.message.edit_text(text=f"استخدام وحدة المعالجة المركزية: {cpu_load}")
+    
+    elif query.data == "system_memory":
+        await query.message.edit_text(text=f"""
 - اجمالي الذاكرة : {total_memory}
-⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - المتاح : {available_memory}
-⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- المستخدم : {used_memory} والمتبقي : ({percent_memory}%)
-⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
+- المستخدم : {used_memory} ({percent_memory}%)
 - الذاكرة الفعلية المستخدمة : {actual_used_memory}
-⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- استخدام وحدة المعالجة المركزية : {cpu_load}
-⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- الاستضافة : {hosting_type}
-⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- حالة الشبكة : {network_status}
-⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- العنوان IP العام : {public_ip}
-⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- اسم مزود خدمة الإنترنت : {isp_name}
-⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- وقت التشغيل : {uptime} مدة
-⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
-- مطور السورس : [Freedom Source](https://t.me/RR8R9)
-"""
-
-    keyboard = InlineKeyboardMarkup(
-        [[InlineKeyboardButton("⦗ قناة التحديثات ⦘", url=SUPPORT_CHANNEL)]]
-    )
-
-    await message.reply_text(
-        text=somsg,
-        reply_markup=keyboard,
-        disable_web_page_preview=True
-    )
+""")
+    
+    elif query.data == "system_network":
+        await query.message.edit_text(text=f"""
+- حالة الشبكة: {network_status}
+- العنوان IP العام: {public_ip}
+- اسم مزود خدمة الإنترنت: {isp_name}
+""")
+    
+    elif query.data == "system_public_ip":
+        await query.message.edit_text(text=f"العنوان IP العام: {public_ip}")
+    
+    elif query.data == "system_isp":
+        await query.message.edit_text(text=f"اسم مزود خدمة الإنترنت: {isp_name}")
+    
+    elif query.data == "system_uptime":
+        await query.message.edit_text(text=f"وقت التشغيل: {uptime}")
