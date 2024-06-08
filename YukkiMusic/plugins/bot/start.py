@@ -177,17 +177,63 @@ async def owner_commands_set(_, query: CallbackQuery):
 
 # تعريف الدوال الضرورية بشكل مؤقت
 async def is_served_chat(chat_id):
-
+    # تحقق مما إذا كانت المجموعة في قائمة المجموعات المخدومة
     return False
 
 async def add_served_chat(chat_id):
-
+    # أضف المجموعة إلى قائمة المجموعات المخدومة
     pass
 
 async def blacklisted_chats():
-
+    # أعد قائمة بالمجموعات المحظورة
     return []
 
+@app.on_message(filters.new_chat_members)
+async def new_chat(c: Client, m: Message):
+    chat_id = m.chat.id
+    if not await is_served_chat(chat_id):
+        await add_served_chat(chat_id)
+    for member in m.new_chat_members:
+        try:
+            if member.id == me_bot.id:
+                if chat_id in await blacklisted_chats():
+                    await m.reply_text(
+                        "❗️ This chat has been blacklisted by a sudo user and you're not allowed to use me in this chat."
+                    )
+                    return await bot.leave_chat(chat_id)
+                return await m.reply(
+                    "🎗️ وأخيرا ضفتوني ، طبعاً شكراً للي ضافني !\n\n"                 
+                    "👍🏻 اضغط على زر الاوامر حتى تشوف شلون تشغلني ",
+                    reply_markup=InlineKeyboardMarkup(
+                        [
+                            [
+                                InlineKeyboardButton("-› قناة السورس", url=f"https://t.me/{SUPPORT_CHANNEL}"),
+                                InlineKeyboardButton("-› الاوامر", callback_data="command_list")
+                            ],[
+                                InlineKeyboardButton("-› حساب المساعد", url=f"https://t.me/{assistant}") if assistant else None
+                            ]
+                        ]
+                    )
+                )
+            return
+        except AttributeError as e:
+            print(f"AttributeError: {e}")
+            return
+        except Exception as e:
+            print(f"Error: {e}")
+            return
+
+chat_watcher_group = 5
+
+
+# إذا كان هناك أي كائن من نوع ChannelForbidden يمكن أن يكون في الدالة، يجب معالجته هنا.
+def safe_get_username(peer):
+    try:
+        return peer.username.lower() if peer.username else None
+    except AttributeError:
+        return None
+
+# تعديل الدالة التي تستخدمها للحصول على اسم المستخدم لتكون آمنة
 @app.on_message(filters.new_chat_members)
 async def new_chat(c: Client, m: Message):
     chat_id = m.chat.id
