@@ -122,6 +122,13 @@ async def change_volume_call(chat_id, volume):
 
     pass
 
+QUEUE = {}
+
+# دالة لضبط الصوت
+async def change_volume_call(chat_id, volume):
+    # في هذا المثال، سيتم طباعة رسالة لتحديد أن الصوت تم تغييره
+    print(f"تم ضبط الصوت في الدردشة {chat_id} إلى {volume}%")
+
 # أمر تغيير الصوت
 @app.on_message(command(["ضبط", "اضبط", "vol"]))
 async def change_volume(c: Client, m: Message):
@@ -131,7 +138,8 @@ async def change_volume(c: Client, m: Message):
     me = await c.get_me()
     chat_member = await c.get_chat_member(m.chat.id, me.id)
     
-    if not chat_member.can_restrict_members:
+    permissions = chat_member.permissions
+    if not permissions.can_restrict_members:
         return await m.reply_text(
             "👍🏻 لاستخدام هذا الأمر، عليك رفع حساب المساعد بصلاحية لإدارة الأعضاء"
         )
@@ -146,7 +154,7 @@ async def change_volume(c: Client, m: Message):
         except Exception as e:
             await m.reply_text(f"🚫 **خطأ:**\n\n`{e}`")
     else:
-        await m.reply_text("معليش، ما في شي مشتغل يا عيني 🌵")
+        await m.reply_text("معليش، ما في شي مشتغل يا عيني ")
         
 START_TIME = datetime.utcnow()
 START_TIME_ISO = START_TIME.strftime("%Y-%m-%d")
