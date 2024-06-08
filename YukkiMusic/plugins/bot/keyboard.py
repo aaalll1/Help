@@ -103,7 +103,9 @@ def get_system_info():
 
 @app.on_message(command(["معلومات التشغيل", "السيرفر"]) & (filters.private | filters.group))
 async def fetch_system_information(client, message):
-    if message.from_user.id == int(OWNER_ID):      
+    # تحقق من كون OWNER_ID قائمة أو قيمة مفردة
+    owner_ids = OWNER_ID if isinstance(OWNER_ID, list) else [OWNER_ID]
+    if message.from_user.id in owner_ids:      
         keyboard = InlineKeyboardMarkup(
             [
                 [
@@ -139,7 +141,8 @@ async def fetch_system_information(client, message):
     
 @app.on_callback_query()
 async def callback_query_handler(client, query):
-    if query.from_user.id != int(OWNER_ID):
+    owner_ids = OWNER_ID if isinstance(OWNER_ID, list) else [OWNER_ID]
+    if query.from_user.id not in owner_ids:
         await query.answer("# هذا الزر خاص بمطور البوت .", show_alert=True)
         return
 
