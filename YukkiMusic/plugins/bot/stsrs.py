@@ -4,12 +4,12 @@ import platform
 import socket
 import psutil
 import re
+from YukkiMusic import app
 import requests
 import speedtest
 import datetime
 import os
 import uuid
-from YukkiMusic import app
 from strings.filters import command
 from config import OWNER, SUPPORT_CHANNEL
 
@@ -87,7 +87,7 @@ def get_network_information():
 # دالة للحصول على إصدار Python و Pyrogram
 def get_version_info():
     python_version = platform.python_version()
-    pyrogram_version = Client.__version__
+    pyrogram_version = Client.version
     return python_version, pyrogram_version
 
 # دالة للحصول على وقت تشغيل البوت
