@@ -8,7 +8,7 @@ from strings.filters import command
 import uuid
 from YukkiMusic import app
 import pandas as pd
-from config import owner
+from config import OWNER
 
 # دالة لتحويل البايتات إلى صيغة قراءة بشرية
 def humanbytes(B):
@@ -33,7 +33,7 @@ def humanbytes(B):
 # أمر sysinfo لعرض معلومات النظام
 @app.on_message(command(["sysinfo"]))
 async def fetch_system_information(client, message):
-    if message.from_user.id != owner:
+    if message.from_user.id != OWNER:
         await message.reply_text("لا تمتلك صلاحية لاستخدام هذا الأمر.")
         return
 
