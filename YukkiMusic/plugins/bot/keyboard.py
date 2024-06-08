@@ -101,7 +101,7 @@ def get_system_info():
 
     return total_memory, available_memory, used_memory, percent_memory, cpu_percent
 
-@app.on_message(command(["systeminfo", "النظام"]) & filters.private)
+@app.on_message(command(["معلومات التشغيل", "السيرفر"]) & (filters.private | filters.group))
 async def fetch_system_information(client, message):
     if message.from_user.id != OWNER:
         await message.reply_text("لا يمكنك الوصول إلى هذا الأمر.")
@@ -212,12 +212,4 @@ async def callback_query_handler(client, query):
     elif query.data == "system_uptime":
         await query.message.edit_text(text=f"وقت التشغيل: {uptime}")
 
-    keyboard = InlineKeyboardMarkup(
-        [[InlineKeyboardButton("⦗ قناة التحديثات ⦘", url=SUPPORT_CHANNEL)]]
-    )
-
-    await query.message.edit_text(
-        text="لا تتردد في السؤال إذا كان لديك أي استفسار آخر!",
-        reply_markup=keyboard,
-        disable_web_page_preview=True
-    )
+   
