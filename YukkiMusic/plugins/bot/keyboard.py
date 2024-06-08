@@ -131,11 +131,19 @@ async def fetch_system_information(client, message):
                 [
                     InlineKeyboardButton("وقت التشغيل", callback_data="system_uptime"),
                 ],
+                [
+                    InlineKeyboardButton("اجمالي الذاكرة", callback_data="total_memory"),
+                    InlineKeyboardButton("المستخدم", callback_data="used_memory"),
+                ],
+                [
+                    InlineKeyboardButton("المتاح", callback_data="available_memory"),
+                    InlineKeyboardButton("حالة الشبكة", callback_data="network_status"),
+                ],
             ]
         )
 
         await message.reply_text(
-            text="مرحباً عزيزي المطور الأساسي اختر ماتريد :",
+            text="اختر ما تريد معرفته عن النظام عزيزي المطور :",
             reply_markup=keyboard
         )
     
@@ -143,7 +151,7 @@ async def fetch_system_information(client, message):
 async def callback_query_handler(client, query):
     owner_ids = OWNER_ID if isinstance(OWNER_ID, list) else [OWNER_ID]
     if query.from_user.id not in owner_ids:
-        await query.answer("# هذا الزر خاص بمطور البوت .", show_alert=True)
+        await query.answer("لاتدوس ترى هذا الزر خاص بمطور البوت .", show_alert=True)
         return
 
     splatform = platform.system()
@@ -191,14 +199,11 @@ async def callback_query_handler(client, query):
     elif query.data == "system_memory":
         await query.answer(text=f"""
 - اجمالي الذاكرة : {total_memory}
-- المتاح : {available_memory}
-- المستخدم : {used_memory} ({percent_memory}%)
 - الذاكرة الفعلية المستخدمة : {actual_used_memory}
 """, show_alert=True)
     
     elif query.data == "system_network":
         await query.answer(text=f"""
-- حالة الشبكة: {network_status}
 - العنوان IP العام: {public_ip}
 - اسم مزود خدمة الإنترنت: {isp_name}
 """, show_alert=True)
@@ -211,3 +216,15 @@ async def callback_query_handler(client, query):
     
     elif query.data == "system_uptime":
         await query.answer(text=f"وقت التشغيل: {uptime}", show_alert=True)
+
+    elif query.data == "total_memory":
+        await query.answer(text=f"اجمالي الذاكرة: {total_memory}", show_alert=True)
+    
+    elif query.data == "used_memory":
+        await query.answer(text=f"المستخدم: {used_memory}", show_alert=True)
+    
+    elif query.data == "available_memory":
+        await query.answer(text=f"المتاح: {available_memory}", show_alert=True)
+
+    elif query.data == "network_status":
+        await query.answer(text=f"حالة الشبكة: {network_status}", show_alert=True)
