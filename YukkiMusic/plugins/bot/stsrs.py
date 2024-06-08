@@ -4,12 +4,11 @@ import platform
 import socket
 import psutil
 import re
-from YukkiMusic import app
 import requests
-import speedtest
 import datetime
 import os
 import uuid
+from YukkiMusic import app
 from strings.filters import command
 from config import OWNER, SUPPORT_CHANNEL
 
@@ -73,6 +72,7 @@ def get_network_information():
     except Exception as e:
         isp_name = "غير متاح"
 
+    return public_ip, isp_name
 
 # دالة للحصول على وقت تشغيل البوت
 start_time = datetime.datetime.now()
@@ -124,7 +124,7 @@ async def fetch_system_information(client, message):
 
     hosting_type = get_hosting_type()
 
-    public_ip, isp_name, speed_info = get_network_information()
+    public_ip, isp_name = get_network_information()
 
     uptime = get_uptime()
 
@@ -148,7 +148,7 @@ async def fetch_system_information(client, message):
 - عنوان IP : {ip_address}
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - المعالج : {processor}
-⎯ ⎯ ⎯ ⎯ ⎯ ⎯ ⎯ 
+⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - اجمالي الذاكرة : {total_memory}
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - المتاح : {available_memory}
