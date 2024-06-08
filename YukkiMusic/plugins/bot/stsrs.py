@@ -4,6 +4,7 @@ import platform
 import socket
 import psutil
 import re
+from YukkiMusic import app
 import requests
 import speedtest
 import datetime
@@ -11,7 +12,6 @@ import os
 import uuid
 from strings.filters import command
 from config import OWNER, SUPPORT_CHANNEL
-from YukkiMusic import app
 
 # دالة لتحويل البايتات إلى صيغة قراءة بشرية
 def humanbytes(B):
@@ -84,12 +84,6 @@ def get_network_information():
 
     return public_ip, isp_name, speed_info
 
-# دالة للحصول على إصدار Python و Pyrogram
-def get_version_info():
-    python_version = platform.python_version()
-    pyrogram_version = Client.__version__
-    return python_version, pyrogram_version
-
 # دالة للحصول على وقت تشغيل البوت
 start_time = datetime.datetime.now()
 
@@ -142,8 +136,6 @@ async def fetch_system_information(client, message):
 
     public_ip, isp_name, speed_info = get_network_information()
 
-    python_version, pyrogram_version = get_version_info()
-
     uptime = get_uptime()
 
     total_memory, available_memory, used_memory, percent_memory, cpu_percent = get_system_info()
@@ -179,9 +171,6 @@ async def fetch_system_information(client, message):
 🌐 **العنوان IP العام :** `{public_ip}`
 🌐 **اسم مزود الخدمة :** `{isp_name}`
 🌐 **سرعة الإنترنت :** `{speed_info}`
-
-🐍 **إصدار Python :** `{python_version}`
-🤖 **إصدار Pyrogram :** `{pyrogram_version}`
 
 ⌛️ **وقت التشغيل :** `{uptime}`
 """
