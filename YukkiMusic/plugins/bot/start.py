@@ -176,6 +176,22 @@ async def owner_commands_set(_, query: CallbackQuery):
     )
 
 
+from pyrogram import Client, filters
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+
+# تعريف الدوال الضرورية بشكل مؤقت
+async def is_served_chat(chat_id):
+
+    return False
+
+async def add_served_chat(chat_id):
+
+    pass
+
+async def blacklisted_chats():
+
+    return []
+
 @app.on_message(filters.new_chat_members)
 async def new_chat(c: Client, m: Message):
     chat_id = m.chat.id
@@ -200,13 +216,14 @@ async def new_chat(c: Client, m: Message):
                                 InlineKeyboardButton("-› قناة السورس", url=f"https://t.me/{SUPPORT_CHANNEL}"),
                                 InlineKeyboardButton("-› الاوامر", callback_data="command_list")
                             ],[
-                                InlineKeyboardButton("-› حساب المساعد", url=f"https://t.me/{username}")
+                                InlineKeyboardButton("-› حساب المساعد", url=f"https://t.me/{Username}")
                             ]
                         ]
                     )
                 )
             return
-        except Exception:
+        except Exception as e:
+            print(f"Error: {e}")
             return
 
 chat_watcher_group = 5
