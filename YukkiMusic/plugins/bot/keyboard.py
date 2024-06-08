@@ -103,47 +103,46 @@ def get_system_info():
 
 @app.on_message(command(["معلومات التشغيل", "السيرفر"]) & (filters.private | filters.group))
 async def fetch_system_information(client, message):
-    if message.from_user.id != OWNER:
+    if message.from_user.id == int(OWNER):      
+        keyboard = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton("نظام التشغيل", callback_data="system_os"),
+                    InlineKeyboardButton("إصدار نظام التشغيل", callback_data="system_release"),
+                ],
+                [
+                    InlineKeyboardButton("عنوان IP", callback_data="system_ip"),
+                    InlineKeyboardButton("عنوان MAC", callback_data="system_mac"),
+                ],
+                [
+                    InlineKeyboardButton("المعالج", callback_data="system_processor"),
+                    InlineKeyboardButton("استخدام وحدة المعالجة المركزية", callback_data="system_cpu"),
+                ],
+                [
+                    InlineKeyboardButton("معلومات الذاكرة", callback_data="system_memory"),
+                    InlineKeyboardButton("الشبكة", callback_data="system_network"),
+                ],
+                [
+                    InlineKeyboardButton("IP العام", callback_data="system_public_ip"),
+                    InlineKeyboardButton("مقدم الخدمة", callback_data="system_isp"),
+                ],
+                [
+                    InlineKeyboardButton("وقت التشغيل", callback_data="system_uptime"),
+                ],
+            ]
+        )
+
+        await message.reply_text(
+            text="اختر ما تريد معرفته عن النظام:",
+            reply_markup=keyboard
+        )
+    else:
         await message.reply_text("لا يمكنك الوصول إلى هذا الأمر.")
-        return
-
-    keyboard = InlineKeyboardMarkup(
-        [
-            [
-                InlineKeyboardButton("نظام التشغيل", callback_data="system_os"),
-                InlineKeyboardButton("إصدار نظام التشغيل", callback_data="system_release"),
-            ],
-            [
-                InlineKeyboardButton("عنوان IP", callback_data="system_ip"),
-                InlineKeyboardButton("عنوان MAC", callback_data="system_mac"),
-            ],
-            [
-                InlineKeyboardButton("المعالج", callback_data="system_processor"),
-                InlineKeyboardButton("استخدام وحدة المعالجة المركزية", callback_data="system_cpu"),
-            ],
-            [
-                InlineKeyboardButton("معلومات الذاكرة", callback_data="system_memory"),
-                InlineKeyboardButton("الشبكة", callback_data="system_network"),
-            ],
-            [
-                InlineKeyboardButton("IP العام", callback_data="system_public_ip"),
-                InlineKeyboardButton("مقدم الخدمة", callback_data="system_isp"),
-            ],
-            [
-                InlineKeyboardButton("وقت التشغيل", callback_data="system_uptime"),
-            ],
-        ]
-    )
-
-    await message.reply_text(
-        text="اختر ما تريد معرفته عن النظام:",
-        reply_markup=keyboard
-    )
 
 @app.on_callback_query()
 async def callback_query_handler(client, query):
-    if query.from_user.id != OWNER:
-        await query.answer(text="لا يمكنك الوصول إلى هذا الزر.")
+    if query.from_user.id != int(OWNER):
+        await query.answer("# هذا الزر خاص بمطور البوت .", show_alert=True)
         return
 
     splatform = platform.system()
@@ -171,31 +170,24 @@ async def callback_query_handler(client, query):
     network_status = get_network_status()
 
     if query.data == "system_os":
-        await query.answer(f"نظام التشغيل: {splatform}")
         await query.message.edit_text(text=f"نظام التشغيل: {splatform}")
     
     elif query.data == "system_release":
-        await query.answer(f"إصدار نظام التشغيل: {platform_release}")
         await query.message.edit_text(text=f"إصدار نظام التشغيل: {platform_release}")
     
     elif query.data == "system_ip":
-        await query.answer(f"عنوان IP: {ip_address}")
         await query.message.edit_text(text=f"عنوان IP: {ip_address}")
     
     elif query.data == "system_mac":
-        await query.answer(f"عنوان MAC: {mac_address}")
         await query.message.edit_text(text=f"عنوان MAC: {mac_address}")
     
     elif query.data == "system_processor":
-        await query.answer(f"المعالج: {processor}")
         await query.message.edit_text(text=f"المعالج: {processor}")
     
     elif query.data == "system_cpu":
-        await query.answer(f"استخدام وحدة المعالجة المركزية: {cpu_load}")
         await query.message.edit_text(text=f"استخدام وحدة المعالجة المركزية: {cpu_load}")
     
     elif query.data == "system_memory":
-        await query.answer(text="", show_alert=True)
         await query.message.edit_text(text=f"""
 - اجمالي الذاكرة : {total_memory}
 - المتاح : {available_memory}
@@ -204,7 +196,6 @@ async def callback_query_handler(client, query):
 """)
     
     elif query.data == "system_network":
-        await query.answer(text="", show_alert=True)
         await query.message.edit_text(text=f"""
 - حالة الشبكة: {network_status}
 - العنوان IP العام: {public_ip}
@@ -212,13 +203,10 @@ async def callback_query_handler(client, query):
 """)
     
     elif query.data == "system_public_ip":
-        await query.answer(f"العنوان IP العام: {public_ip}")
         await query.message.edit_text(text=f"العنوان IP العام: {public_ip}")
     
     elif query.data == "system_isp":
-        await query.answer(f"اسم مزود خدمة الإنترنت: {isp_name}")
         await query.message.edit_text(text=f"اسم مزود خدمة الإنترنت: {isp_name}")
     
     elif query.data == "system_uptime":
-        await query.answer(f"وقت التشغيل: {uptime}")
         await query.message.edit_text(text=f"وقت التشغيل: {uptime}")
