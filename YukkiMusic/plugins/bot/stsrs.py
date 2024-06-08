@@ -5,16 +5,15 @@ import platform
 import socket
 import psutil
 import re
-from YukkiMusic import app
 import requests
 import speedtest
 import datetime
 import os
+from YukkiMusic import app
 import uuid
 from strings.filters import command
 from config import OWNER, SUPPORT_CHANNEL
 
-# دالة لتحويل البايتات إلى صيغة قراءة بشرية
 def humanbytes(B):
     """تحويل بايتات إلى قراءة بشرية"""
     B = float(B)
@@ -34,7 +33,6 @@ def humanbytes(B):
     elif TB <= B:
         return "{0:.2f} TB".format(B / TB)
 
-# دالة للحصول على نوع الاستضافة
 def get_hosting_type():
     if "DYNO" in os.environ:
         return "Heroku"
@@ -45,7 +43,6 @@ def get_hosting_type():
     else:
         return "غير معروف"
 
-# دالة للتحقق من حالة الشبكة
 def check_internet_connection():
     try:
         requests.get("https://www.google.com/", timeout=5)
@@ -53,28 +50,24 @@ def check_internet_connection():
     except requests.ConnectionError:
         return False
 
-# دالة للحصول على حالة الشبكة
 def get_network_status():
     if check_internet_connection():
         return "متصل بالإنترنت"
     else:
         return "غير متصل بالإنترنت"
 
-# دالة للحصول على معلومات الشبكة
 def get_network_information():
     try:
-        # العنوان IP العام
-        public_ip = re.search(r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b", requests.get("https://api64.ipify.org").text).group(0)
+        
+        public_ip = requests.get("https://api64.ipify.org").text.strip()
     except Exception as e:
         public_ip = "غير متاح"
 
-    # اسم مزود خدمة الإنترنت
     try:
         isp_name = requests.get("https://ipinfo.io/org").text.strip()
     except Exception as e:
         isp_name = "غير متاح"
 
-    # معلومات السرعة
     try:
         st = speedtest.Speedtest()
         st.download()
@@ -85,25 +78,20 @@ def get_network_information():
 
     return public_ip, isp_name, speed_info
 
-# دالة للحصول على وقت تشغيل البوت
 start_time = datetime.datetime.now()
 
 def get_uptime():
     uptime = datetime.datetime.now() - start_time
     return str(uptime).split(".")[0]
 
-# دالة للحصول على معلومات الذاكرة الفعلية المستخدمة
 def get_actual_used_memory():
     used_memory = psutil.virtual_memory().used
     return humanbytes(used_memory)
 
-# دالة للحصول على معلومات الحمولة الحالية للمعالج
 def get_cpu_load():
-    cpu_info = psutil.cpu_percent(interval=1, percpu=True)
-    cpu_load = [f"Core {i}: {core}%" for i, core in enumerate(cpu_info)]
-    return "\n".join(cpu_load)
+    cpu_load = psutil.cpu_percent(interval=1)
+    return f"{cpu_load}%"
 
-# دالة للحصول على معلومات الذاكرة والحمولة للمعالج
 def get_system_info():
     # معلومات الذاكرة
     virtual_memory = psutil.virtual_memory()
@@ -112,12 +100,11 @@ def get_system_info():
     used_memory = humanbytes(virtual_memory.used)
     percent_memory = virtual_memory.percent
 
-    # معلومات الحمولة للمعالج
-    cpu_percent = get_cpu_load()
+    cpu_percent = psutil.cpu_percent(interval=1)
 
     return total_memory, available_memory, used_memory, percent_memory, cpu_percent
 
-# أمر sysinfo لعرض معلومات النظام
+
 @app.on_message(command(["⦗ معلومات النظام ⦘", "النظام"]) & (filters.private | filters.group))
 async def fetch_system_information(client, message):
     if message.from_user.id != OWNER:
@@ -148,7 +135,7 @@ async def fetch_system_information(client, message):
 
     network_status = get_network_status()
 
-    somsg  = f"""
+    somsg = f"""
 - نظام التشغيل : {splatform}
 ⎯ ⎯ ⎯ ⎯⎯ ⎯ ⎯ 
 - إصدار نظام التشغيل : {platform_release}
@@ -188,7 +175,6 @@ async def fetch_system_information(client, message):
 - مطور السورس : [Freedom Source](https://t.me/RR8R9)
 """
 
-    # إنشاء زر شفاف
     keyboard = InlineKeyboardMarkup(
         [[InlineKeyboardButton("⦗ قناة التحديثات ⦘", url=SUPPORT_CHANNEL)]]
     )
