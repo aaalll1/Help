@@ -115,7 +115,7 @@ def get_bot_speed():
         return "غير متاح"
 
 @app.on_message(command(["معلومات التشغيل", "السيرفر"]) & (filters.private | filters.group))
-async def fetch_system_information(client, message):       
+async def fetch_system_information(client, message):     
         keyboard = InlineKeyboardMarkup(
             [
                 [
@@ -161,7 +161,7 @@ async def fetch_system_information(client, message):
         )
     
 @app.on_callback_query()
-async def callback_query_handler(client, query):  
+async def callback_query_handler(client, query):    
     splatform = platform.system()
     platform_release = platform.release()
     platform_version = platform.version()
@@ -189,55 +189,55 @@ async def callback_query_handler(client, query):
     bot_speed = get_bot_speed()
 
     if query.data == "system_os":
-        await query.answer(f"نظام التشغيل: {splatform}")
+        await query.answer(text=f"نظام التشغيل: {splatform}")
     
     elif query.data == "system_release":
-        await query.answer(f"إصدار نظام التشغيل: {platform_release}")
+        await query.answer(text=f"إصدار نظام التشغيل: {platform_release}")
     
     elif query.data == "system_ip":
-        await query.answer(f"عنوان IP: {ip_address}")
+        await query.answer(text=f"عنوان IP: {ip_address}")
     
     elif query.data == "system_mac":
-        await query.answer(f"عنوان MAC: {mac_address}")
+        await query.answer(text=f"عنوان MAC: {mac_address}")
     
     elif query.data == "system_processor":
-        await query.answer(f"المعالج: {processor}")
+        await query.answer(text=f"المعالج: {processor}")
     
     elif query.data == "system_cpu":
-        await query.answer(f"استخدام وحدة المعالجة المركزية: {cpu_load}")
+        await query.answer(text=f"استخدام وحدة المعالجة المركزية: {cpu_load}")
     
     elif query.data == "system_memory":
-        await query.answer(f"""
+        await query.answer(text=f"""
 - اجمالي الذاكرة : {total_memory}
 - الذاكرة الفعلية المستخدمة : {actual_used_memory}
 """)
     
     elif query.data == "system_network":
-        await query.answer(f"""
+        await query.answer(text=f"""
 - العنوان IP العام: {public_ip}
 - اسم مزود خدمة الإنترنت: {isp_name}
 """)
     
     elif query.data == "system_public_ip":
-        await query.answer(f"العنوان IP العام: {public_ip}")
+        await query.answer(text=f"العنوان IP العام: {public_ip}")
     
     elif query.data == "system_isp":
-        await query.answer(f"مقدم الخدمة: {isp_name}")
+        await query.answer(text=f"مقدم الخدمة: {isp_name}")
     
     elif query.data == "system_uptime":
-        await query.answer(f"وقت التشغيل: {uptime}")
+        await query.answer(text=f"وقت التشغيل: {uptime}")
     
     elif query.data == "total_memory":
-        await query.answer(f"اجمالي الذاكرة: {total_memory}")
+        await query.answer(text=f"اجمالي الذاكرة: {total_memory}")
     
     elif query.data == "used_memory":
-        await query.answer(f"الذاكرة المستخدمة: {used_memory} ({percent_memory}%)")
+        await query.answer(text=f"الذاكرة المستخدمة: {used_memory} ({percent_memory}%)")
     
     elif query.data == "available_memory":
-        await query.answer(f"الذاكرة المتاحة: {available_memory} ({100 - percent_memory}%)")
+        await query.answer(text=f"الذاكرة المتاحة: {available_memory} ({100 - percent_memory}%)")
     
     elif query.data == "network_status":
-        await query.answer(f"حالة الشبكة: {network_status}")
+        await query.answer(text=f"حالة الشبكة: {network_status}")
     
     elif query.data == "bot_speed":
-        await query.answer(f"سرعة البوت: {bot_speed}")
+        await query.answer(text=f"سرعة البوت: {bot_speed}")
