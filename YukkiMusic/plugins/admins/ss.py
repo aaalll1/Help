@@ -236,13 +236,13 @@ async def callback_query_handler(client, query):
         await query.answer(text=f"اجمالي الذاكرة: {total_memory}", show_alert=True)
     
     elif query.data == "used_memory":
-        await query.answer(text=f"الذاكرة المستخدمة: {used_memory} ({percent_memory}%)", show_alert=True)
+        await query.answer(text=f"الذاكرة المستخدمة: {used_memory} ({percent_memory}%)")
     
     elif query.data == "available_memory":
-        await query.answer(text=f"الذاكرة المتاحة: {available_memory} ({100 - percent_memory}%)", show_alert=True)
+        await query.answer(text=f"الذاكرة المتاحة: {available_memory} ({100 - percent_memory}%)")
     
     elif query.data == "network_status":
-        await query.answer(text=f"حالة الشبكة: {network_status}", show_alert=True)
+        await query.answer(text=f"حالة الشبكة: {network_status}")
     
     elif query.data == "bot_speed":
-        await query.answer(text=f"سرعة البوت: {bot_speed}", show_alert=True)
+        await query.answer(text=f"سرعة البوت: {bot_speed}")
