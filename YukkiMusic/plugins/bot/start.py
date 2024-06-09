@@ -29,9 +29,7 @@ async def start_(c: Client, message: Message):
             ]
         )
     )
-    
-    
-    
+
 @app.on_callback_query(filters.regex("home_start"))
 async def start_set(_, query: CallbackQuery):
     await query.answer("قائمة التحكم")
@@ -52,8 +50,7 @@ async def start_set(_, query: CallbackQuery):
             ]
         )
     )
-    
-    
+
 @app.on_callback_query(filters.regex("command_list"))
 async def commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة التشغيل")
@@ -73,8 +70,7 @@ async def commands_set(_, query: CallbackQuery):
             ]
         )
     )
-    
-    
+
 @app.on_callback_query(filters.regex("next"))
 async def commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة الأدمن")
@@ -94,29 +90,27 @@ async def commands_set(_, query: CallbackQuery):
             ]
         )
     )
-    
-    
-    
+
 @app.on_callback_query(filters.regex("ghaith"))
 async def commands_set(_, query: CallbackQuery):
-        await query.answer("تم فتح لوحة المطور")
-        await query.edit_message_text(
-            f"""- تم فتح لوحة التحكم ↓
+    await query.answer("تم فتح لوحة المطور")
+    await query.edit_message_text(
+        f"""- تم فتح لوحة التحكم ↓
  – – – – – – 
 ⦗ تستطيع التحكم عن طريق الأزرار أدناه ⦘""",
-            reply_markup=InlineKeyboardMarkup(
+        reply_markup=InlineKeyboardMarkup(
+            [
                 [
-                    [
-                        InlineKeyboardButton("⦗ اوامر المطور ⦘", callback_data="owner_commands"),
-                    ],
-                    [
-                        InlineKeyboardButton("⦗ الرجوع ⦘", callback_data="home_start"),
-                        InlineKeyboardButton("⦗ التالي ⦘", callback_data="command_list"),
-                    ],
-                ]
-            )
+                    InlineKeyboardButton("⦗ اوامر المطور ⦘", callback_data="owner_commands"),
+                ],
+                [
+                    InlineKeyboardButton("⦗ الرجوع ⦘", callback_data="home_start"),
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="command_list"),
+                ],
+            ]
         )
-    
+    )
+
 @app.on_callback_query(filters.regex("user_command"))
 async def user_commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح اوامر التشغيل")
@@ -134,7 +128,7 @@ async def user_commands_set(_, query: CallbackQuery):
             ]
         ),
     )
-    
+
 @app.on_callback_query(filters.regex("developer_commands"))
 async def developer_commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح اوامر الأدمن")
@@ -153,27 +147,24 @@ async def developer_commands_set(_, query: CallbackQuery):
             ]
         ),
     )
-    
+
 @app.on_callback_query(filters.regex("owner_commands"))
 async def owner_commands_set(_, query: CallbackQuery):
-    if query.from_user.id == int(OWNER):
-        await query.answer("تم فتح اوامر المطور")
-        await query.edit_message_text(
-            f"""هذه هيه اوامر المطور 
+    await query.answer("تم فتح اوامر المطور")
+    await query.edit_message_text(
+        f"""هذه هيه اوامر المطور 
 
 اذاعه مطور 
 
 """,
-            reply_markup=InlineKeyboardMarkup(
+        reply_markup=InlineKeyboardMarkup(
+            [
                 [
-                    [
-                        InlineKeyboardButton("⦗ التالي ⦘", callback_data="home_start")
-                    ],
-                ]
-            ),
-        )
-    else:
-        await query.answer("# هذا الزر خاص بمطور البوت .", show_alert=True)
+                    InlineKeyboardButton("⦗ التالي ⦘", callback_data="home_start")
+                ],
+            ]
+        ),
+    )
 
 # تعريف الدوال الضرورية بشكل مؤقت
 async def is_served_chat(chat_id):
