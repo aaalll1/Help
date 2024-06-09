@@ -9,7 +9,6 @@ import datetime
 import os
 import uuid
 import re  
-from strings.filters import command
 from config import OWNER_ID
 from YukkiMusic import app
 
