@@ -1,4 +1,4 @@
-from YukkiMusic import app
+from YukkiMusic import app as app_start
 from pyrogram import Client, filters
 from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 from config import SUPPORT_GROUP, SUPPORT_CHANNEL, OWNER, START_IMG_URL, assistant
@@ -7,7 +7,7 @@ from config import SUPPORT_GROUP, SUPPORT_CHANNEL, OWNER, START_IMG_URL, assista
 async def add_served_user(user_id: int):
     pass
 
-@app.on_message(filters.command(["start", "help"]) & filters.private)
+@app_start.on_message(filters.command(["start", "help"]) & filters.private)
 async def start_(c: Client, message: Message):
     user_id = message.from_user.id
     await add_served_user(user_id)
@@ -30,9 +30,8 @@ async def start_(c: Client, message: Message):
         )
     )
     
-    
-    
-@app.on_callback_query(filters.regex("home_start"))
+
+@app_start.on_callback_query(filters.regex("home_start"))
 async def start_set(_, query: CallbackQuery):
     await query.answer("قائمة التحكم")
     await query.edit_message_text(
@@ -54,7 +53,7 @@ async def start_set(_, query: CallbackQuery):
     )
     
     
-@app.on_callback_query(filters.regex("command_list"))
+@app_start.on_callback_query(filters.regex("command_list"))
 async def commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة التشغيل")
     await query.edit_message_text(
@@ -75,7 +74,7 @@ async def commands_set(_, query: CallbackQuery):
     )
     
     
-@app.on_callback_query(filters.regex("next"))
+@app_start.on_callback_query(filters.regex("next"))
 async def commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح لوحة الأدمن")
     await query.edit_message_text(
@@ -97,7 +96,7 @@ async def commands_set(_, query: CallbackQuery):
     
     
     
-@app.on_callback_query(filters.regex("ghaith"))
+@app_start.on_callback_query(filters.regex("ghaith"))
 async def commands_set(_, query: CallbackQuery):
         await query.answer("تم فتح لوحة المطور")
         await query.edit_message_text(
@@ -117,7 +116,7 @@ async def commands_set(_, query: CallbackQuery):
             )
         )
     
-@app.on_callback_query(filters.regex("user_command"))
+@app_start.on_callback_query(filters.regex("user_command"))
 async def user_commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح اوامر التشغيل")
     await query.edit_message_text(
@@ -135,7 +134,7 @@ async def user_commands_set(_, query: CallbackQuery):
         ),
     )
     
-@app.on_callback_query(filters.regex("developer_commands"))
+@app_start.on_callback_query(filters.regex("developer_commands"))
 async def developer_commands_set(_, query: CallbackQuery):
     await query.answer("تم فتح اوامر الأدمن")
     await query.edit_message_text(
@@ -154,9 +153,8 @@ async def developer_commands_set(_, query: CallbackQuery):
         ),
     )
     
-@app.on_callback_query(filters.regex("owner_commands"))
+@app_start.on_callback_query(filters.regex("owner_commands"))
 async def owner_commands_set(_, query: CallbackQuery):
-    if query.from_user.id == int(OWNER):
         await query.answer("تم فتح اوامر المطور")
         await query.edit_message_text(
             f"""هذه هيه اوامر المطور 
@@ -172,9 +170,7 @@ async def owner_commands_set(_, query: CallbackQuery):
                 ]
             ),
         )
-    else:
-        await query.answer("# هذا الزر خاص بمطور البوت .", show_alert=True)
-
+    
 # تعريف الدوال الضرورية بشكل مؤقت
 async def is_served_chat(chat_id):
 
@@ -188,7 +184,7 @@ async def blacklisted_chats():
 
     return []
 
-@app.on_message(filters.new_chat_members)
+@app_start.on_message(filters.new_chat_members)
 async def new_chat(c: Client, m: Message):
     chat_id = m.chat.id
     if not await is_served_chat(chat_id):
