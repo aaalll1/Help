@@ -3,10 +3,22 @@ from pyrogram import Client, filters
 from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 from config import SUPPORT_GROUP, SUPPORT_CHANNEL, OWNER, START_IMG_URL, assistant
 
-# المتغيرات العالمية
+# المتغيرات
 served_users = set()
 served_chats = set()
 blacklisted_chats_list = set()
+
+async def add_served_user(user_id: int):
+    served_users.add(user_id)
+
+async def is_served_chat(chat_id):
+    return chat_id in served_chats
+
+async def add_served_chat(chat_id):
+    served_chats.add(chat_id)
+
+async def blacklisted_chats():
+    return blacklisted_chats_list
 
 @app.on_message(filters.command(["start", "help"]) & filters.private)
 async def start_(c: Client, message: Message):
