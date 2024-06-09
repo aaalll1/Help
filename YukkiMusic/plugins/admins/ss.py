@@ -161,11 +161,7 @@ async def fetch_system_information(client, message):
         )
     
 @app.on_callback_query()
-async def callback_query_handler(client, query):
-    if query.from_user.id != int(OWNER):
-        await query.answer("هذا الزر خاص بمطور البوت .")
-        return
-      
+async def callback_query_handler(client, query):  
     splatform = platform.system()
     platform_release = platform.release()
     platform_version = platform.version()
