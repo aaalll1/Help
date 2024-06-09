@@ -1,5 +1,5 @@
 from pyrogram import Client, filters
-from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import platform
 import socket
 import psutil
@@ -10,8 +10,8 @@ import os
 import uuid
 import re  
 from strings.filters import command
-from config import OWNER
-from YukkiMusic import app
+from config import OWNER_ID
+from YukkiMusic import ... 
 
 def humanbytes(B):
     """تحويل بايتات إلى قراءة بشرية"""
@@ -110,12 +110,14 @@ def get_bot_speed():
         speed = st.results.dict()
         download_speed = humanbytes(speed["download"])
         upload_speed = humanbytes(speed["upload"])
-        return f"التحميل: {download_speed}\n الرفع: {upload_speed}"
+        return f"سرعة التحميل: {download_speed}\nسرعة الرفع: {upload_speed}"
     except Exception as e:
         return "غير متاح"
-        
-@app.on_message(command(["معلومات التشغيل", "السيرفر"]) & filters.user(OWNER))
-async def system(client, message):
+
+@app.on_message(command(["معلومات التشغيل", "السيرفر"]) & (filters.private | filters.group))
+async def fetch_system_information(client, message):
+    owner_ids = OWNER_ID if isinstance(OWNER_ID, list) else [OWNER_ID]
+    if message.from_user.id in owner_ids:      
         keyboard = InlineKeyboardMarkup(
             [
                 [
@@ -161,7 +163,12 @@ async def system(client, message):
         )
     
 @app.on_callback_query()
-async def callback_query(client, query):    
+async def callback_query_handler(client, query):
+    owner_ids = OWNER_ID if isinstance(OWNER_ID, list) else [OWNER_ID]
+    if query.from_user.id not in owner_ids:
+        await query.answer("لاتدوس ترى هذا الزر خاص بمطور البوت.", show_alert=True)
+        return
+
     splatform = platform.system()
     platform_release = platform.release()
     platform_version = platform.version()
@@ -189,55 +196,55 @@ async def callback_query(client, query):
     bot_speed = get_bot_speed()
 
     if query.data == "system_os":
-        await query.answer(text=f"نظام التشغيل: {splatform}")
+        await query.answer(text=f"نظام التشغيل: {splatform}", show_alert=True)
     
     elif query.data == "system_release":
-        await query.answer(text=f"إصدار نظام التشغيل: {platform_release}")
+        await query.answer(text=f"إصدار نظام التشغيل: {platform_release}", show_alert=True)
     
     elif query.data == "system_ip":
-        await query.answer(text=f"عنوان IP: {ip_address}")
+        await query.answer(text=f"عنوان IP: {ip_address}", show_alert=True)
     
     elif query.data == "system_mac":
-        await query.answer(text=f"عنوان MAC: {mac_address}")
+        await query.answer(text=f"عنوان MAC: {mac_address}", show_alert=True)
     
     elif query.data == "system_processor":
-        await query.answer(text=f"المعالج: {processor}")
+        await query.answer(text=f"المعالج: {processor}", show_alert=True)
     
     elif query.data == "system_cpu":
-        await query.answer(text=f"استخدام وحدة المعالجة المركزية: {cpu_load}")
+        await query.answer(text=f"استخدام وحدة المعالجة المركزية: {cpu_load}", show_alert=True)
     
     elif query.data == "system_memory":
         await query.answer(text=f"""
 - اجمالي الذاكرة : {total_memory}
 - الذاكرة الفعلية المستخدمة : {actual_used_memory}
-""")
+""", show_alert=True)
     
     elif query.data == "system_network":
         await query.answer(text=f"""
 - العنوان IP العام: {public_ip}
 - اسم مزود خدمة الإنترنت: {isp_name}
-""")
+""", show_alert=True)
     
     elif query.data == "system_public_ip":
-        await query.answer(text=f"العنوان IP العام: {public_ip}")
+        await query.answer(text=f"العنوان IP العام: {public_ip}", show_alert=True)
     
     elif query.data == "system_isp":
-        await query.answer(text=f"مقدم الخدمة: {isp_name}")
+        await query.answer(text=f"مقدم الخدمة: {isp_name}", show_alert=True)
     
     elif query.data == "system_uptime":
-        await query.answer(text=f"وقت التشغيل: {uptime}")
+        await query.answer(text=f"وقت التشغيل: {uptime}", show_alert=True)
     
     elif query.data == "total_memory":
-        await query.answer(text=f"اجمالي الذاكرة: {total_memory}")
+        await query.answer(text=f"اجمالي الذاكرة: {total_memory}", show_alert=True)
     
     elif query.data == "used_memory":
-        await query.answer(text=f"الذاكرة المستخدمة: {used_memory} ({percent_memory}%)")
+        await query.answer(text=f"الذاكرة المستخدمة: {used_memory} ({percent_memory}%)", show_alert=True)
     
     elif query.data == "available_memory":
-        await query.answer(text=f"الذاكرة المتاحة: {available_memory} ({100 - percent_memory}%)")
+        await query.answer(text=f"الذاكرة المتاحة: {available_memory} ({100 - percent_memory}%)", show_alert=True)
     
     elif query.data == "network_status":
-        await query.answer(text=f"حالة الشبكة: {network_status}")
+        await query.answer(text=f"حالة الشبكة: {network_status}", show_alert=True)
     
     elif query.data == "bot_speed":
-        await query.answer(text=f"سرعة البوت: {bot_speed}")
+        await query.answer(text=f"سرعة البوت: {bot_speed}", show_alert=True)
