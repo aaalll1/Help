@@ -9,6 +9,7 @@ import datetime
 import os
 import uuid
 import re  
+from strings.filters import command
 from config import OWNER_ID
 from YukkiMusic import app
 
@@ -113,7 +114,7 @@ def get_bot_speed():
     except Exception as e:
         return "غير متاح"
 
-@app.on_message(filters.regex("^/fredom"), group=39)
+@app.on_message(command(["معلومات التشغيل", "السيرفر"]) & (filters.private | filters.group))
 async def fetch_system_information(client, message):
     owner_ids = OWNER_ID if isinstance(OWNER_ID, list) else [OWNER_ID]
     if message.from_user.id in owner_ids:      
