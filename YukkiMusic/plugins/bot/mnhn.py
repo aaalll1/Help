@@ -43,7 +43,7 @@ async def gak_owne(client: Client, message: Message):
                 key = InlineKeyboardMarkup([[InlineKeyboardButton(m.first_name, user_id=developer_id)]])
                 return await message.reply_photo(photo, caption=f"🧞‍♂️ ¦𝙽𝙰𝙼𝙴 :{m.first_name}\n🎯 ¦𝚄𝚂𝙴𝚁 :@{m.username}\n🎃 ¦𝙸𝙳 :`{m.id}`\n💌 ¦𝙱𝙸𝙾 :{m.bio}", reply_markup=key)
             else:
-                return await message.reply(f"• {m.mention}"))
+                return await message.reply(f"• {m.mention}")
                     
                     
 
