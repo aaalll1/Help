@@ -9,6 +9,7 @@ import datetime
 import os
 import uuid
 import re  
+from YukkiMusic import app
 from strings.filters import command
 from config import OWNER_ID
 
@@ -112,8 +113,6 @@ def get_bot_speed():
         return f"سرعة التحميل: {download_speed}\nسرعة الرفع: {upload_speed}"
     except Exception as e:
         return "غير متاح"
-
-app = Client("my_bot")
 
 @app.on_message(command(["معلومات التشغيل", "السيرفر"]) & (filters.private | filters.group))
 async def fetch_system_information(client, message):
