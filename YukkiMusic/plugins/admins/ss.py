@@ -9,9 +9,9 @@ import datetime
 import os
 import uuid
 import re  
-from YukkiMusic import app
 from strings.filters import command
 from config import OWNER_ID
+from YukkiMusic import app
 
 def humanbytes(B):
     """تحويل بايتات إلى قراءة بشرية"""
@@ -58,12 +58,12 @@ def get_network_status():
 def get_network_information():
     try:
         public_ip = requests.get("https://api64.ipify.org").text.strip()
-    except Exception:
+    except Exception as e:
         public_ip = "غير متاح"
 
     try:
         isp_name = requests.get("https://ipinfo.io/org").text.strip()
-    except Exception:
+    except Exception as e:
         isp_name = "غير متاح"
 
     try:
@@ -71,7 +71,7 @@ def get_network_information():
         st.download()
         st.upload()
         speed_info = st.results.dict()
-    except Exception:
+    except Exception as e:
         speed_info = "غير متاح"
 
     return public_ip, isp_name, speed_info
@@ -111,10 +111,10 @@ def get_bot_speed():
         download_speed = humanbytes(speed["download"])
         upload_speed = humanbytes(speed["upload"])
         return f"سرعة التحميل: {download_speed}\nسرعة الرفع: {upload_speed}"
-    except Exception:
+    except Exception as e:
         return "غير متاح"
 
-@app.on_message(command(["معلومات التشغيل", "السيرفر"]) & (filters.private | filters.group))
+@app.on_message(filters.regex("^/fredom"), group=39)
 async def fetch_system_information(client, message):
     owner_ids = OWNER_ID if isinstance(OWNER_ID, list) else [OWNER_ID]
     if message.from_user.id in owner_ids:      
@@ -167,6 +167,7 @@ async def callback_query_handler(client, query):
     owner_ids = OWNER_ID if isinstance(OWNER_ID, list) else [OWNER_ID]
     if query.from_user.id not in owner_ids:
         await query.answer("لاتدوس ترى هذا الزر خاص بمطور البوت.", show_alert=True)
+        return
 
     splatform = platform.system()
     platform_release = platform.release()
