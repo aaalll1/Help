@@ -21,7 +21,7 @@ async def blacklisted_chats():
     return blacklisted_chats_list
 
 @app.on_message(filters.command(["start", "help"]) & filters.private)
-async def start_(c: Client, message: Message):
+async def home_start(c: Client, message: Message):
     user_id = message.from_user.id
     await add_served_user(user_id)
     await message.reply_photo(
@@ -44,7 +44,7 @@ async def start_(c: Client, message: Message):
     )
 
 @app.on_callback_query(filters.regex("home_start"))
-async def start_set(_, query: CallbackQuery):
+async def start(_, query: CallbackQuery):
     await query.answer("قائمة التحكم")
     await query.edit_message_text(
         f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯""",
