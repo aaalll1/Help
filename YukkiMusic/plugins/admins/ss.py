@@ -113,9 +113,9 @@ def get_bot_speed():
         return f"التحميل: {download_speed}\n الرفع: {upload_speed}"
     except Exception as e:
         return "غير متاح"
-
-@app.on_message(command(["معلومات التشغيل", "السيرفر"]) & filters.user(OWNER) | filters.group))
-async def system(client, message):     
+        
+@app.on_message(command(["معلومات التشغيل", "السيرفر"]) & filters.user(OWNER))
+async def system(client, message)
         keyboard = InlineKeyboardMarkup(
             [
                 [
