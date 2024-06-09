@@ -10,7 +10,6 @@ import os
 import uuid
 import re  
 from strings.filters import command
-from config import OWNER
 from YukkiMusic import app
 
 def humanbytes(B):
@@ -116,7 +115,7 @@ def get_bot_speed():
 
 @app.on_message(command(["معلومات التشغيل", "السيرفر"]) & (filters.private | filters.group))
 async def fetch_system_information(client, message):
-    if message.from_user.id in OWNER:      
+    if message.from_user.id in owner_ids:      
         keyboard = InlineKeyboardMarkup(
             [
                 [
@@ -163,7 +162,7 @@ async def fetch_system_information(client, message):
     
 @app.on_callback_query()
 async def callback_query_handler(client, query):
-    if query.from_user.id not in OWNER:
+    if query.from_user.id not in owner_ids:
         await query.answer("لاتدوس ترى هذا الزر خاص بمطور البوت.", show_alert=True)
         return
 
