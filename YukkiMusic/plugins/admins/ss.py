@@ -1,5 +1,5 @@
 from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 import platform
 import socket
 import psutil
@@ -114,8 +114,8 @@ def get_bot_speed():
     except Exception as e:
         return "غير متاح"
 
-@app.on_message(command(["معلومات التشغيل", "السيرفر"]) & (filters.private | filters.group))
-async def fetch_system_information(client, message):     
+@app.on_message(command(["معلومات التشغيل", "السيرفر"]) & filters.user(OWNER) | filters.group))
+async def system(client, message):     
         keyboard = InlineKeyboardMarkup(
             [
                 [
@@ -161,7 +161,7 @@ async def fetch_system_information(client, message):
         )
     
 @app.on_callback_query()
-async def callback_query_handler(client, query):    
+async def callback_query(client, query):    
     splatform = platform.system()
     platform_release = platform.release()
     platform_version = platform.version()
