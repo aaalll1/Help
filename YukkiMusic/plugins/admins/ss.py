@@ -58,12 +58,12 @@ def get_network_status():
 def get_network_information():
     try:
         public_ip = requests.get("https://api64.ipify.org").text.strip()
-    except Exception as e:
+    except Exception:
         public_ip = "غير متاح"
 
     try:
         isp_name = requests.get("https://ipinfo.io/org").text.strip()
-    except Exception as e:
+    except Exception:
         isp_name = "غير متاح"
 
     try:
@@ -71,7 +71,7 @@ def get_network_information():
         st.download()
         st.upload()
         speed_info = st.results.dict()
-    except Exception as e:
+    except Exception:
         speed_info = "غير متاح"
 
     return public_ip, isp_name, speed_info
@@ -111,7 +111,7 @@ def get_bot_speed():
         download_speed = humanbytes(speed["download"])
         upload_speed = humanbytes(speed["upload"])
         return f"سرعة التحميل: {download_speed}\nسرعة الرفع: {upload_speed}"
-    except Exception as e:
+    except Exception:
         return "غير متاح"
 
 @app.on_message(command(["معلومات التشغيل", "السيرفر"]) & (filters.private | filters.group))
