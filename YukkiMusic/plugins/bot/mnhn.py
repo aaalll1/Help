@@ -40,7 +40,7 @@ TEXT = [
     "• ادعوك الى الى الحضور هنا .",
 ]
 
-@app.on_message(command(["vctag", "vctagall"], prefixes=["/", ".", "@", "#"]))
+@app.on_message(command(["vctag", "vctagall"]))
 async def mentionall(client, message):
     chat_id = message.chat.id
     if message.chat.type == "private":
