@@ -11,7 +11,7 @@ import re
 API_ID = int(getenv("API_ID", "8934899"))
 API_HASH = getenv("API_HASH","bf3e98d2c351e4ad06946b4897374a1e")
 OWNER = int(os.getenv("OWNER", "1854384004"))
-BOT_TOKEN = getenv("BOT_TOKEN","6649437885:AAEv3yJINnzF6tMWjmw4EUmcirTvytgPc-0")
+BOT_TOKEN = getenv("BOT_TOKEN","6604522716:AAGSO5WhyPRAFKk7NVQaFb9m69Su7cZl1lI")
 Muntazer = getenv("Muntazer", "vvyvv6")
 assistant = getenv("assistant", "xl444")
 MONGO_DB_URI = getenv("MONGO_DB_URI", "mongodb+srv://omsnkok:muntazer@cluster0.ywxsjao.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
