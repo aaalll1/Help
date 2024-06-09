@@ -101,7 +101,7 @@ def get_system_info():
 
     return total_memory, available_memory, used_memory, percent_memory, cpu_percent
 
-@app.on_message(command(["معلومات التشغيل", "السيرفر"]) & (filters.private | filters.group))
+@app.on_message(command(["معلومات السيرفر", "السيرفر"]) & (filters.private | filters.group))
 async def fetch_system_information(client, message):
     if message.from_user.id != OWNER:
         await message.reply_text("لا يمكنك الوصول إلى هذا الأمر.")
