@@ -115,7 +115,7 @@ def get_bot_speed():
         return "غير متاح"
         
 @app.on_message(command(["معلومات التشغيل", "السيرفر"]) & filters.user(OWNER))
-async def system(client, message)
+async def system(client, message):
         keyboard = InlineKeyboardMarkup(
             [
                 [
