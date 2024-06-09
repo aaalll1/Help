@@ -3,9 +3,10 @@ from pyrogram import Client, filters
 from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 from config import SUPPORT_GROUP, SUPPORT_CHANNEL, OWNER, START_IMG_URL, assistant
 
-# وهمي
-async def add_served_user(user_id: int):
-    pass
+# المتغيرات العالمية
+served_users = set()
+served_chats = set()
+blacklisted_chats_list = set()
 
 @app.on_message(filters.command(["start", "help"]) & filters.private)
 async def start_(c: Client, message: Message):
@@ -166,19 +167,6 @@ async def owner_commands_set(_, query: CallbackQuery):
         ),
     )
 
-# تعريف الدوال الضرورية بشكل مؤقت
-async def is_served_chat(chat_id):
-
-    return False
-
-async def add_served_chat(chat_id):
-
-    pass
-
-async def blacklisted_chats():
-
-    return []
-
 @app.on_message(filters.new_chat_members)
 async def new_chat(c: Client, m: Message):
     chat_id = m.chat.id
@@ -214,5 +202,3 @@ async def new_chat(c: Client, m: Message):
                 )
         except Exception as e:
             print(f"Error: {e}")
-
-chat_watcher_group = 5
