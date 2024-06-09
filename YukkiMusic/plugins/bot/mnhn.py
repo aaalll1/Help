@@ -56,7 +56,7 @@ async def nummmm(client: app, message):
   if not chek.status in ["administrator", "creator"]:
     await message.reply("-› يجب ان تكون مشرفاً كي تستخدم الأمر .")
     return
-  await message.reply_text("-› جاري بدأ المنشن ، لإيقاف الامر اكتب منشن اوكف . ")")
+  await message.reply_text("-› جاري بدأ المنشن ، لإيقاف الامر اكتب منشن اوكف . ")
   i = 0
   txt = ""
   zz = message.text
