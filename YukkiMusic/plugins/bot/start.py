@@ -1,4 +1,4 @@
-from YukkiMusic import app
+from YukkiMusic import app as app_start
 from pyrogram import Client, filters
 from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 from config import SUPPORT_GROUP, SUPPORT_CHANNEL, OWNER, START_IMG_URL, assistant
