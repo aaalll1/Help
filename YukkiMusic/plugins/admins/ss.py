@@ -167,7 +167,6 @@ async def callback_query_handler(client, query):
     owner_ids = OWNER_ID if isinstance(OWNER_ID, list) else [OWNER_ID]
     if query.from_user.id not in owner_ids:
         await query.answer("لاتدوس ترى هذا الزر خاص بمطور البوت.", show_alert=True)
-        return
 
     splatform = platform.system()
     platform_release = platform.release()
