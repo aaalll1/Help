@@ -4,7 +4,7 @@ import random
 from pyrogram import Client, filters
 from pyrogram.enums import ChatType, ChatMemberStatus
 from pyrogram.errors import UserNotParticipant
-from pyrogram.types import ChatPermissions
+from pyrogram.types import ChatPermissions, ChatMember
 # قائمة تخزين المجموعات التي يتم فيها الإشارة
 spam_chats = []
 
