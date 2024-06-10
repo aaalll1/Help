@@ -23,7 +23,7 @@ async def delete_temp_files():
             last_cleanup_time = current_time
             print("تم حذف الملفات بنجاح .")
 
-@app.on_message(command(["⦗ تنظيف السجلات ⦘","تنظيف السجلات"], "") & filters.user(OWNER_ID))
+@app.on_message(command(["⦗ تنظيف السجلات ⦘","تنظيف السجلات"] & filters.user(OWNER_ID))
 async def clean(client: Client, message):
     global last_cleanup_time
 
