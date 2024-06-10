@@ -214,7 +214,6 @@ async def new_chat(c: Client, m: Message):
                 )
         except Exception as e:
             print(f"Error: {e}")
-            
 
 @app.on_message(filters.regex("^الاوامر$"))
 async def mmmezat(client, message):
@@ -229,9 +228,13 @@ async def mmmezat(client, message):
                 ],
                 [
                     InlineKeyboardButton(
-                        "⦗ قناة التحديثات ⦘", url="https://t.me/xl444"
+                        "⦗ مسح الزر ⦘", callback_data="close"
                     ),
                 ],
             ]
         ),
     )
+
+@app.on_callback_query(filters.regex("close"))
+async def close_button(client: Client, callback_query: CallbackQuery):
+    await callback_query.message.delete()
