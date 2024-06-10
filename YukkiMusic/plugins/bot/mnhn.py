@@ -1,19 +1,22 @@
 from YukkiMusic import app 
+from AarohiX import app
 import asyncio
 import random
-from strings.filters import command
 from pyrogram import Client, filters
 from pyrogram.enums import ChatType, ChatMemberStatus
 from pyrogram.errors import UserNotParticipant
-from pyrogram.types import ChatPermissions
 
 spam_chats = []
 
-@app.on_message(command(["منشن","@all","نادي الكل"]))
-async def mention_all(client, message):
+EMOJI = ["🦋🦋🦋🦋🦋"]
+TAGMES = [" **➠ ɢᴏᴏᴅ ɴɪɢʜᴛ 🌚** "]
+
+
+@app.on_message(filters.command(["منشن", "goodnighttag"], prefixes=["/"]))
+async def mentionall(client, message):
     chat_id = message.chat.id
     if message.chat.type == ChatType.PRIVATE:
-        return await message.reply("-› هذا الأمر فقط في المجموعات.")
+        return await message.reply("๏ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴏɴʟʏ ғᴏʀ ɢʀᴏᴜᴘs.")
 
     is_admin = False
     try:
@@ -27,47 +30,57 @@ async def mention_all(client, message):
         ):
             is_admin = True
     if not is_admin:
-        return await message.reply("-› هذا الأمر فقط للمشرفين .")
+        return await message.reply("๏ ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ʙᴀʙʏ, ᴏɴʟʏ ᴀᴅᴍɪɴs ᴄᴀɴ ᴛᴀɢ ᴍᴇᴍʙᴇʀs.")
 
     if message.reply_to_message and message.text:
-        return await message.reply("-› اكتب منشن والرسالة التي تريد منشها \n-› مثلاً منشن صباح الخير .\n-› ولأيقاف المنشن اكتب ستوب .")
+        return await message.reply("/منشن ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ ᴛʏᴘᴇ ʟɪᴋᴇ ᴛʜɪs / ʀᴇᴘʟʏ ᴀɴʏ ᴍᴇssᴀɢᴇ ɴᴇxᴛ ᴛɪᴍᴇ ʙᴏᴛ ᴛᴀɢɢɪɴɢ...")
     elif message.text:
         mode = "text_on_cmd"
-        msg_text = message.text.split(" ", 1)[1]
+        msg = message.text
     elif message.reply_to_message:
         mode = "text_on_reply"
         msg = message.reply_to_message
         if not msg:
-            return await message.reply("-› اكتب منشن والرسالة التي تريد منشها \n-› مثلاً منشن صباح الخير .\n-› ولأيقاف المنشن اكتب ستوب .")
-        msg_text = msg.text
+            return await message.reply("/منشن ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ ᴛʏᴘᴇ ʟɪᴋᴇ ᴛʜɪs / ʀᴇᴘʟʏ ᴀɴʏ ᴍᴇssᴀɢᴇ ɴᴇxᴛ ᴛɪᴍᴇ ғᴏᴛ ᴛᴀɢɢɪɴɢ...")
     else:
-        return await message.reply("-› اكتب منشن والرسالة التي تريد منشها \n-› مثلاً منشن صباح الخير .\n-› ولأيقاف المنشن اكتب ستوب .")
+        return await message.reply("/منشن ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ ᴛʏᴘᴇ ʟɪᴋᴇ ᴛʜɪs / ʀᴇᴘʟʏ ᴀɴʏ ᴍᴇssᴀɢᴇ ɴᴇxᴛ ᴛɪᴍᴇ ʙᴏᴛ ᴛᴀɢɢɪɴɢ...")
 
+    if chat_id in spam_chats:
+        return await message.reply("๏ ᴘʟᴇᴀsᴇ ᴀᴛ ғɪʀsᴛ sᴛᴏᴘ ʀᴜɴɴɪɴɢ ᴍᴇɴᴛɪᴏɴ ᴘʀᴏᴄᴇss...")
+    
     spam_chats.append(chat_id)
-    usr_list = []
+    usrnum = 0
+    usrtxt = ""
+    
     async for usr in client.get_chat_members(chat_id):
         if not chat_id in spam_chats:
             break
         if usr.user.is_bot:
             continue
-        usr_list.append(usr.user.id)
-        if len(usr_list) >= 10:
-            if mode == "text_on_cmd":
-                await client.send_message(chat_id, msg_text)
-            elif mode == "text_on_reply":
-                await msg.reply(msg_text)
-            usr_list = []
-            await asyncio.sleep(1)
+        usrnum += 1
+        usrtxt += f"[{usr.user.first_name}](tg://user?id={usr.user.id}) "
 
+        if usrnum == 1:
+            if mode == "text_on_cmd":
+                txt = f"{usrtxt} {random.choice(TAGMES)}"
+                await client.send_message(chat_id, txt)
+            elif mode == "text_on_reply":
+                await msg.reply(f"[{random.choice(EMOJI)}](tg://user?id={usr.user.id})")
+            await asyncio.sleep(4)
+            usrnum = 0
+            usrtxt = ""
+    
     try:
         spam_chats.remove(chat_id)
     except:
         pass
 
-@app.on_message(command(["منشن ايقاف", "ستوب"]))
+
+@app.on_message(filters.command(["gmstop", "gnstop"]))
 async def cancel_spam(client, message):
     if not message.chat.id in spam_chats:
-        return await message.reply("-› هذا الأمر فقط في المجموعات.")
+        return await message.reply("๏ ᴄᴜʀʀᴇɴᴛʟʏ ɪ'ᴍ ɴᴏᴛ ᴛᴀɢɢɪɴɢ ʙᴀʙʏ.")
+    
     is_admin = False
     try:
         participant = await client.get_chat_member(message.chat.id, message.from_user.id)
@@ -80,10 +93,10 @@ async def cancel_spam(client, message):
         ):
             is_admin = True
     if not is_admin:
-        return await message.reply("-› هذا الأمر فقط للمشرفين .")
+        return await message.reply("๏ ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ʙᴀʙʏ, ᴏɴʟʏ ᴀᴅᴍɪɴs ᴄᴀɴ ᴛᴀɢ ᴍᴇᴍʙᴇʀs.")
     else:
         try:
             spam_chats.remove(message.chat.id)
         except:
             pass
-        return await message.reply("-› تم الايقاف .")
+        return await message.reply("๏ 🦋 ᴍᴇɴᴛɪᴏɴ ʀᴏᴋɴᴇ ᴡᴀʟᴇ ᴋɪ ᴍᴀᴀ ᴋᴀ ʙʜᴀʀᴏsᴀ ᴊᴇᴇᴛᴜ.....🫠 ๏")
