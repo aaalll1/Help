@@ -13,17 +13,14 @@ def show_developer_info(client, message):
         photo_file = None
 
     # Check if bio exists, if so, copy it
-    if user.about:
-        bio = user.about
-    else:
-        bio = "No Bio"
+    bio = user.stringify() if user.bio else "No Bio"
 
     username = f"@{user.username}" if user.username else "No Username"
 
     caption = f"Name: {user.first_name}\nID: {user.id}\nBio: {bio}\nUsername: {username}"
 
     inline_keyboard = InlineKeyboardMarkup(
-        [[InlineKeyboardButton("⦗ مطور السورس ⦘", url=f"https://t.me/{username}")]]
+        [[InlineKeyboardButton("⦗ ожидании ⦘", url=f"https://t.me/{username}")]]
     )
 
     # Send photo to the user who sent the command
