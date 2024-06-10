@@ -13,12 +13,13 @@ async def show_developer_info(client, message):
         else:
             photo_file = None
 
-        # Check if bio exists, if so, copy it
-        bio = user.bio if user.bio else "No Bio"
+        # Check if bio exists, if not, use other available information
+        bio = user.bio if hasattr(user, 'bio') else "No Bio"
+        first_name = user.first_name if hasattr(user, 'first_name') else "No First Name"
+        last_name = user.last_name if hasattr(user, 'last_name') else "No Last Name"
+        username = f"@{user.username}" if hasattr(user, 'username') and user.username else "No Username"
 
-        username = f"@{user.username}" if user.username else "No Username"
-
-        caption = f"Name: {user.first_name}\nID: {user.id}\nBio: {bio}\nUsername: {username}"
+        caption = f"First Name: {first_name}\nLast Name: {last_name}\nID: {user.id}\nBio: {bio}\nUsername: {username}"
 
         inline_keyboard = InlineKeyboardMarkup(
             [[InlineKeyboardButton("⦗ مطور السورس ⦘", url=f"https://t.me/{username}")]]
@@ -40,3 +41,5 @@ async def show_developer_info(client, message):
                 reply_to_message_id=message.message_id,  # Reply to the user's message
                 reply_markup=inline_keyboard
             )
+    else:
+        await message.reply_text("Failed to fetch developer information.")
