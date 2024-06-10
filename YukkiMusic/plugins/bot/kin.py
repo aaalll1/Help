@@ -28,13 +28,13 @@ def show_developer_info(client, message):
             chat_id=message.chat.id,
             photo=photo_file,
             caption=caption,
-            reply_to_message_id=message.message_id,  # Reply to the user's message
+            reply_to_message_id=message.message_id if hasattr(message, "message_id") else None,
             reply_markup=inline_keyboard
         )
     else:
         client.send_message(
             chat_id=message.chat.id,
             text=caption,
-            reply_to_message_id=message.message_id,  # Reply to the user's message
+            reply_to_message_id=message.message_id if hasattr(message, "message_id") else None,
             reply_markup=inline_keyboard
         )
