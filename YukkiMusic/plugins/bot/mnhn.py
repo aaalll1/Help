@@ -19,7 +19,7 @@ async def mention_command(client, message):
     is_admin = False
     try:
         participant = await client.get_chat_member(chat_id, message.from_user.id)
-        is_admin = participant.status in (ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.OWNER)
+        is_admin = participant.status in (ChatMember.ADMINISTRATOR, ChatMember.OWNER)
     except UserNotParticipant:
         pass
     
@@ -57,7 +57,7 @@ async def cancel_spam(client, message):
     is_admin = False
     try:
         participant = await client.get_chat_member(message.chat.id, message.from_user.id)
-        is_admin = participant.status in (ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.OWNER)
+        is_admin = participant.status in (ChatMember.ADMINISTRATOR, ChatMember.OWNER)
     except UserNotParticipant:
         pass
     
