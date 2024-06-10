@@ -2,7 +2,6 @@ from YukkiMusic import app
 import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import ChatPermissions
-from pyrogram.types.chat import ChatPermissions
 
 # قائمة تخزين المجموعات التي يتم فيها الإشارة
 spam_chats = []
@@ -41,7 +40,7 @@ async def mention_reply(client, message):
     await message.reply(mention_text, disable_web_page_preview=True)
     await message.delete()
 
-# أمر لإيقاف عملية الإشارة
+# أمر لإيقاف عملية الإشار
 @app.on_message(filters.command(["وقف", "قف"]))
 async def cancel_spam(client, message):
     # التحقق مما إذا كانت المجموعة موجودة في قائمة الإشارة
