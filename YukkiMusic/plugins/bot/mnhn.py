@@ -2,8 +2,8 @@ from YukkiMusic import app
 import asyncio
 from pyrogram import Client, filters
 from pyrogram.errors import UserNotParticipant
-from pyrogram.types import ChatPermissions, ChatMember
-# قائمة تخزين المجموعات التي يتم فيها الإشارة
+from pyrogram.types import ChatPermissions, ChatMemberStatus
+
 spam_chats = []
 
 @app.on_message(filters.command(["منشن"]))
