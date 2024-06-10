@@ -7,6 +7,7 @@ from pyrogram.enums import ChatType, ChatMemberStatus
 from pyrogram.errors import UserNotParticipant
 from pyrogram.types import ChatPermissions
 
+spam_chats = []
 
 @app.on_message(command(["منشن","@all","نادي الكل"]))
 async def mentionall(client, message):
