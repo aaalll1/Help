@@ -1,103 +1,68 @@
 from YukkiMusic import app 
 import asyncio
-import random
 from pyrogram import Client, filters
-from pyrogram.enums import ChatType, ChatMemberStatus
+from pyrogram.types import ChatType, ChatMemberStatus
 from pyrogram.errors import UserNotParticipant
 
+# قائمة تخزين المجموعات التي يتم فيها الإشارة
 spam_chats = []
 
-EMOJI = ["🦋🦋🦋🦋🦋"]
-TAGMES = [" **➠ ɢᴏᴏᴅ ɴɪɢʜᴛ 🌚** "]
-
-
-@app.on_message(filters.command(["tagall"]))
-async def mentionall(client, message):
+@app.on_message(filters.command(["منشن"], prefixes=["/"]) & filters.reply)
+async def mention_reply(client, message):
     chat_id = message.chat.id
+    
     if message.chat.type == ChatType.PRIVATE:
-        return await message.reply("๏ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴏɴʟʏ ғᴏʀ ɢʀᴏᴜᴘs.")
-
+        return await message.reply("هذا الأمر متاح فقط في المجموعات.")
+    
+    # التحقق مما إذا كان المستخدم مسؤولًا في المجموعة
     is_admin = False
     try:
         participant = await client.get_chat_member(chat_id, message.from_user.id)
+        is_admin = participant.status in (ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.OWNER)
     except UserNotParticipant:
-        is_admin = False
-    else:
-        if participant.status in (
-            ChatMemberStatus.ADMINISTRATOR,
-            ChatMemberStatus.OWNER
-        ):
-            is_admin = True
-    if not is_admin:
-        return await message.reply("๏ ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ʙᴀʙʏ, ᴏɴʟʏ ᴀᴅᴍɪɴs ᴄᴀɴ ᴛᴀɢ ᴍᴇᴍʙᴇʀs.")
-
-    if message.reply_to_message and message.text:
-        return await message.reply("/tagall ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ ᴛʏᴘᴇ ʟɪᴋᴇ ᴛʜɪs / ʀᴇᴘʟʏ ᴀɴʏ ᴍᴇssᴀɢᴇ ɴᴇxᴛ ᴛɪᴍᴇ ʙᴏᴛ ᴛᴀɢɢɪɴɢ...")
-    elif message.text:
-        mode = "text_on_cmd"
-        msg = message.text
-    elif message.reply_to_message:
-        mode = "text_on_reply"
-        msg = message.reply_to_message
-        if not msg:
-            return await message.reply("/tagall ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ ᴛʏᴘᴇ ʟɪᴋᴇ ᴛʜɪs / ʀᴇᴘʟʏ ᴀɴʏ ᴍᴇssᴀɢᴇ ɴᴇxᴛ ᴛɪᴍᴇ ғᴏᴛ ᴛᴀɢɢɪɴɢ...")
-    else:
-        return await message.reply("/tagall ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ ᴛʏᴘᴇ ʟɪᴋᴇ ᴛʜɪs / ʀᴇᴘʟʏ ᴀɴʏ ᴍᴇssᴀɢᴇ ɴᴇxᴛ ᴛɪᴍᴇ ʙᴏᴛ ᴛᴀɢɢɪɴɢ...")
-
-    if chat_id in spam_chats:
-        return await message.reply("๏ ᴘʟᴇᴀsᴇ ᴀᴛ ғɪʀsᴛ sᴛᴏᴘ ʀᴜɴɴɪɴɢ ᴍᴇɴᴛɪᴏɴ ᴘʀᴏᴄᴇss...")
-    
-    spam_chats.append(chat_id)
-    usrnum = 0
-    usrtxt = ""
-    
-    async for usr in client.get_chat_members(chat_id):
-        if not chat_id in spam_chats:
-            break
-        if usr.user.is_bot:
-            continue
-        usrnum += 1
-        usrtxt += f"[{usr.user.first_name}](tg://user?id={usr.user.id}) "
-
-        if usrnum == 1:
-            if mode == "text_on_cmd":
-                txt = f"{usrtxt} {random.choice(TAGMES)}"
-                await client.send_message(chat_id, txt)
-            elif mode == "text_on_reply":
-                await msg.reply(f"[{random.choice(EMOJI)}](tg://user?id={usr.user.id})")
-            await asyncio.sleep(4)
-            usrnum = 0
-            usrtxt = ""
-    
-    try:
-        spam_chats.remove(chat_id)
-    except:
         pass
+    
+    # التحقق مما إذا كان المستخدم مسؤولًا
+    if not is_admin:
+        return await message.reply("يجب أن تكون مسؤولاً لتنفيذ هذا الأمر.")
+    
+    # فحص إذا كان هناك رد على الرسالة والتحقق من وجود نص فيها
+    reply_message = message.reply_to_message
+    if reply_message.from_user:
+        user = reply_message.from_user
+        user_mention = f"[{user.first_name}](tg://user?id={user.id})"
+        mention_text = f"{user_mention} {reply_message.text}" if reply_message.text else user_mention
+    else:
+        user_id = reply_message.from_user.id
+        user_mention = f"[{user_id}](tg://user?id={user_id})"
+        mention_text = f"{user_mention} {reply_message.text}" if reply_message.text else user_mention
+    
+    # إرسال الإشارة وحذف الرسالة الأصلية
+    await message.reply(mention_text, disable_web_page_preview=True)
+    await message.delete()
 
-@app.on_message(filters.command(["tagstop"]))
+# أمر لإيقاف عملية الإشارة
+@app.on_message(filters.command(["وقف", "قف"], prefixes=["/"]))
 async def cancel_spam(client, message):
-    chat_id = message.chat.id
-
-    if not chat_id in spam_chats:
-        return await message.reply("๏ ᴄᴜʀʀᴇɴᴛʟʏ ɪ'ᴍ ɴᴏᴛ ᴛᴀɢɢɪɴɢ ʙᴀʙʏ.")
+    # التحقق مما إذا كانت المجموعة موجودة في قائمة الإشارة
+    if not message.chat.id in spam_chats:
+        return await message.reply("لا يوجد عمليات إشارة جارية حاليًا.")
     
+    # التحقق مما إذا كان المستخدم مسؤولًا في المجموعة
     is_admin = False
     try:
-        participant = await client.get_chat_member(chat_id, message.from_user.id)
+        participant = await client.get_chat_member(message.chat.id, message.from_user.id)
+        is_admin = participant.status in (ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.OWNER)
     except UserNotParticipant:
-        is_admin = False
-    else:
-        if participant.status in (
-            ChatMemberStatus.ADMINISTRATOR,
-            ChatMemberStatus.OWNER
-        ):
-            is_admin = True
-    
-    if not is_admin:
-        return await message.reply("๏ ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ʙᴀʙʏ, ᴏɴʟʏ ᴀᴅᴍɪɴs ᴄᴀɴ sᴛᴏᴘ ᴛᴀɢɢɪɴɢ.")
-    
-    try:
-        spam_chats.remove(chat_id)
-        return await message.reply("๏ 🦋ᴍᴇɴᴛɪᴏɴ ᴘʀᴏᴄᴇss sᴛᴏᴘᴘᴇᴅ.")
-    except:
         pass
+    
+    # التحقق مما إذا كان المستخدم مسؤولًا
+    if not is_admin:
+        return await message.reply("يجب أن تكون مسؤولاً لإيقاف عملية الإشارة.")
+    else:
+        # إزالة المجموعة من قائمة الإشارة
+        try:
+            spam_chats.remove(message.chat.id)
+        except:
+            pass
+        return await message.reply("تم إيقاف عملية الإشارة بنجاح.")
