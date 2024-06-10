@@ -12,8 +12,8 @@ def show_developer_info(client, message):
     else:
         photo_file = None
 
-    # Check if bio and username are available
-    bio = user.bio if user.bio else "No Bio"
+    # Check if bio is available
+    bio = user.bio if hasattr(user, "bio") else "No Bio"
     username = f"@{user.username}" if user.username else "No Username"
 
     caption = f"Name: {user.first_name}\nID: {user.id}\nBio: {bio}\nUsername: {username}"
