@@ -14,9 +14,18 @@ def show_developer_info(client, message):
         photo_file = None
 
     bio = getattr(user, "bio", "No Bio")
-    birthdate = user.birthdate.strftime('%Y-%m-%d') if user.birthdate else "No Birthdate"
     
-    caption = f"Name: {user.first_name}\nID: {user.id}\nBio: {bio}\nBirthdate: {birthdate}"
+    # Check if birthdate is available
+    if user.birthdate:
+        birthdate = user.birthdate.strftime('%Y-%m-%d')
+    else:
+        birthdate = None
+
+    caption = f"Name: {user.first_name}\nID: {user.id}\nBio: {bio}"
+    
+    # Add birthdate to caption if available
+    if birthdate:
+        caption += f"\nBirthdate: {birthdate}"
 
     # Send photo to the user who sent "مطور السورس"
     if photo_file:
