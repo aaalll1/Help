@@ -223,12 +223,12 @@ async def mmmezat(client, message):
             [
                 [
                     InlineKeyboardButton(
-                        "⦗ قائمة الأوامر ⦘", callback_data="command_list"
+                        "⦗ قائمة الأوامر ⦘", callback_data="command_list")
                     ),
                 ],
                 [
                     InlineKeyboardButton(
-                        "⦗ مسح الزر ⦘", callback_data="close"
+                        "⦗ مسح الزر ⦘", callback_data="close")
                     ),
                 ],
             ]
