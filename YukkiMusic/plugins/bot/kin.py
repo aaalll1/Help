@@ -12,17 +12,15 @@ def show_developer_info(client, message):
     else:
         photo_file = None
 
-    # Check if bio is available
     bio = user.bio if hasattr(user, "bio") else "No Bio"
     username = f"@{user.username}" if user.username else "No Username"
 
-    caption = f"Name: {user.first_name}\nID: {user.id}\nBio: {bio}\nUsername: {username}"
+    caption = f"Name: {user.first_name}\nUsername: {username}\nID: {user.id}\nBio: {bio}"
 
     inline_keyboard = InlineKeyboardMarkup(
-        [[InlineKeyboardButton("⦗ مطور السورس ⦘", url=f"https://t.me/{username}")]]
+        [[InlineKeyboardButton("⦗ ожидании ⦘", url=f"https://t.me/{username}")]]
     )
 
-    # Send photo to the user who sent the command
     if photo_file:
         client.send_photo(
             chat_id=message.chat.id,
@@ -38,3 +36,8 @@ def show_developer_info(client, message):
             reply_to_message_id=message.message_id if hasattr(message, "message_id") else None,
             reply_markup=inline_keyboard
         )
+    client.send_message(
+        chat_id=message.chat.id,
+        text="",
+        reply_to_message_id=message.message_id
+    )
