@@ -1,14 +1,13 @@
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from YukkiMusic import app
-from pyrogram import User
 
 @app.on_message(filters.regex("^مطور السورس$"))
 async def show_developer_info(client, message):
     developer_id = "1854384004"
     user = await app.get_users(developer_id)
 
-    if isinstance(user, User):
+    if user:
         if user.photo:
             photo_file = await app.download_media(user.photo.big_file_id)
         else:
@@ -41,5 +40,3 @@ async def show_developer_info(client, message):
                 reply_to_message_id=message.message_id,  # Reply to the user's message
                 reply_markup=inline_keyboard
             )
-    else:
-        await message.reply_text("Failed to fetch developer information.")
