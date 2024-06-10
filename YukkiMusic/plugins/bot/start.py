@@ -218,7 +218,7 @@ async def new_chat(c: Client, m: Message):
 @app.on_message(filters.regex("^الاوامر$"))
 async def mmmezat(client, message):
     await message.reply_text(
-        f"-› إليك عزيزنا {message.from_user.mention}\n قائمة أوامر البوت لكي تتعرف على المميزات وطريقة التشغيل الجديدة .",
+        f"-› إليك عزيزنا {message.from_user.mention}\nقائمة أوامر البوت لكي تتعرف على المميزات وطريقة التشغيل الجديدة .",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
