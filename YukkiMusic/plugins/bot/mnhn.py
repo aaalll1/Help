@@ -55,8 +55,7 @@ async def mentionall(client, message):
 
         if usrnum == 1:
             if mode == "text_on_cmd":
-                txt = f"{random.choice(TAGMES)}\n\n{usrtxt}\n\n"
-                txt += random.choice(EMOJI)
+                txt = f"{random.choice{usrtxt}\n\n"
                 await client.send_message(chat_id, txt)
                 await asyncio.sleep(1)
                 usrnum = 0
