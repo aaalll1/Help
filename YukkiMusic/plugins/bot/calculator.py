@@ -18,13 +18,12 @@ def calculate_math(client, message):
         
     message.reply(response)
 
-@app.on_message(
-    filters.command(["مبرمج السورس", "السورس", "المبرمج"])
+@app.on_message(command(["مبرمج السورس", "السورس", "المبرمج"])
 )
 async def maker(client: Client, message: Message):
     await message.reply_photo(
         photo="https://graph.org/file/89c8950479192dcfe13e7.jpg",
-        caption="Welcome to Source Freedom , which specializes in programming music bots that Telegram launched in the latest updates .",
+        caption="Welcome to Source Freedom , which specializes in programming music bots .",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
