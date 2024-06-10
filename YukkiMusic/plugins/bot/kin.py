@@ -29,5 +29,3 @@ def show_developer_info(client, message):
         caption=f"Name: {developer_info['name']}\nID: {developer_info['id']}\nBio: {developer_info['bio']}\nBirthdate: {developer_info['birthdate']}",
         reply_markup=inline_markup
     )
-
-app.run()
