@@ -12,13 +12,18 @@ def show_developer_info(client, message):
     else:
         photo_file = None
 
-    bio = getattr(user, "bio", "No Bio")
-    username = getattr(user, "username", "No Username")
+    # Check if bio exists, if so, copy it
+    if user.bio:
+        bio = user.bio
+    else:
+        bio = "No Bio"
 
-    caption = f"Name: {user.first_name}\nID: {user.id}\nBio: {bio}\nUsername: @{username}"
+    username = f"@{user.username}" if user.username else "No Username"
+
+    caption = f"Name: {user.first_name}\nID: {user.id}\nBio: {bio}\nUsername: {username}"
 
     inline_keyboard = InlineKeyboardMarkup(
-        [[InlineKeyboardButton("⦗ مطور السورس ⦘", url=f"https://t.me/{username}")]]
+        [[InlineKeyboardButton("- ожидании .", url=f"https://t.me/{username}")]]
     )
 
     # Send photo to the user who sent the command
@@ -27,11 +32,13 @@ def show_developer_info(client, message):
             chat_id=message.chat.id,
             photo=photo_file,
             caption=caption,
+            reply_to_message_id=message.message_id,  # Reply to the user's message
             reply_markup=inline_keyboard
         )
     else:
         client.send_message(
             chat_id=message.chat.id,
             text=caption,
+            reply_to_message_id=message.message_id,  # Reply to the user's message
             reply_markup=inline_keyboard
         )
