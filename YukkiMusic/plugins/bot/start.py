@@ -223,14 +223,18 @@ async def mmmezat(client, message):
             [
                 [
                     InlineKeyboardButton(
-                        "⦗ قائمة الأوامر ⦘", callback_data="command_list")
+                        "⦗ قائمة الأوامر ⦘", callback_data="command_list"
                     ),
                 ],
                 [
                     InlineKeyboardButton(
-                        "⦗ مسح الزر ⦘", callback_data="close")
+                        "⦗ مسح الزر ⦘", callback_data="close"
                     ),
                 ],
             ]
         ),
     )
+
+@app.on_callback_query(filters.regex("close"))
+async def close_button(client: Client, callback_query: CallbackQuery):
+    await callback_query.message.delete()
