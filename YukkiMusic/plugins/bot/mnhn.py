@@ -1,5 +1,4 @@
 from YukkiMusic import app 
-from AarohiX import app
 import asyncio
 import random
 from pyrogram import Client, filters
