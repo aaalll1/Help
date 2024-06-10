@@ -214,3 +214,23 @@ async def new_chat(c: Client, m: Message):
                 )
         except Exception as e:
             print(f"Error: {e}")
+
+@app.on_message(filters.regex("^الاوامر$"))
+async def mmmezat(client, message):
+    await message.reply_text(
+        f"-› إليك عزيزنا {message.from_user.mention}\n قائمة أوامر البوت لكي تتعرف على المميزات وطريقة التشغيل الجديدة .",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        "⦗ قائمة الأوامر ⦘", callback_data="command_list"
+                    ),
+                ],
+                [
+                    InlineKeyboardButton(
+                        "⦗ مسح الزر ⦘", callback_data="close"
+                    ),
+                ],
+            ]
+        ),
+    )
