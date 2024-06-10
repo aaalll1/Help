@@ -3,6 +3,8 @@ from pyrogram.types import Message
 from YukkiMusic import app
 from strings.filters import command
 from config import OWNER_ID
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
+
 
 @app.on_message(command("احسب"))
 def calculate_math(client, message):   
