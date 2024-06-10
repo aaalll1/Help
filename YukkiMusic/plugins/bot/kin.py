@@ -24,14 +24,14 @@ def show_developer_info(client, message):
     # Send photo to the user who sent the command
     if photo_file:
         client.send_photo(
-            chat_id=message.from_user.id,
+            chat_id=message.chat.id,
             photo=photo_file,
             caption=caption,
             reply_markup=inline_keyboard
         )
     else:
         client.send_message(
-            chat_id=message.from_user.id,
+            chat_id=message.chat.id,
             text=caption,
             reply_markup=inline_keyboard
         )
