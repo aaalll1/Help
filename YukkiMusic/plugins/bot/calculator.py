@@ -19,12 +19,12 @@ def calculate_math(client, message):
     message.reply(response)
 
 @app.on_message(
-    command(["مبرمج السورس", "السورس", "المبرمج"])
+    filters.command(["مبرمج السورس", "السورس", "المبرمج"])
 )
 async def maker(client: Client, message: Message):
     await message.reply_photo(
         photo="https://graph.org/file/0eca83858bc006e05b8dc.jpg",
-        caption="~ Team freedom Arabi \n~ Dav Source",
+        caption="Welcome to Source Freedom , which specializes in programming music bots that Telegram launched in the latest updates .",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
@@ -34,12 +34,17 @@ async def maker(client: Client, message: Message):
                 ],
                 [
                     InlineKeyboardButton(
-                        "⦗ Source channel ⦘", url="https://t.me/Xl444"
+                        "⦗ Source ⦘", url="https://t.me/Xl444"
                     ),
                     InlineKeyboardButton(
-                        "⦗ Updates channel ⦘", url="https://t.me/vvyvv6"
+                        "⦗ Updates ⦘", url="https://t.me/vvyvv6"
                     ),
                 ],
+                [
+                    InlineKeyboardButton(
+                        "⦗ support ⦘", url="https://t.me/F0009"
+                    )
+                ]
             ]
         ),
     )
