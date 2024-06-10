@@ -1,8 +1,10 @@
 from YukkiMusic import app 
 import asyncio
+import random
 from pyrogram import Client, filters
+from pyrogram.enums import ChatType, ChatMemberStatus
 from pyrogram.errors import UserNotParticipant
-from pyrogram.types import ChatPermissions, ChatMember, ChatMemberStatus
+from pyrogram.types import ChatPermissions
 # قائمة تخزين المجموعات التي يتم فيها الإشارة
 spam_chats = []
 
