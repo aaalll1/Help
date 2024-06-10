@@ -21,7 +21,7 @@ async def blacklisted_chats():
     return blacklisted_chats_list
 
 @app.on_message(filters.command(["start", "help"]) & filters.private)
-async def start_(c: Client, message: Message):
+async def start_(client: Client, message: Message):
     user_id = message.from_user.id
     await add_served_user(user_id)
     await message.reply_photo(
@@ -42,6 +42,29 @@ async def start_(c: Client, message: Message):
             ]
         )
     )
+
+@app.on_callback_query(filters.regex("home_start"))
+async def start_set(_, query: CallbackQuery):
+    await query.answer("قائمة التحكم")
+    await query.edit_message_text(
+        f"""أَهلًا بك عزيزي في بوت تشغيل الميديا الصوتية في المجموعات والقنوات مع دعم مُميزات كثيرة يُمكنُك التحقُق منها عن طريق إِستخدام الازرار أدناه . \n⎯ ⎯ ⎯ ⎯""",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(text="⦗ اوامر البوت ⦘", callback_data="command_list")
+                ],
+                [
+                    InlineKeyboardButton(text="⦗ قناة السورس ⦘", url=SUPPORT_CHANNEL),
+                    InlineKeyboardButton(text="⦗ قناة التحديثات ⦘", url=SUPPORT_GROUP),
+                ],
+                [
+                    InlineKeyboardButton(text="⦗ مطور البوت ⦘", user_id=int(OWNER)),
+                ],
+            ]
+        )
+    )
+
+# المزيد من الدوال والتصريحات الأخرى للأحداث والاستجابات
 
 @app.on_callback_query(filters.regex("home_start"))
 async def start_set(_, query: CallbackQuery):
