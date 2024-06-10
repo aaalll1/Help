@@ -13,7 +13,10 @@ def show_developer_info(client, message):
     else:
         photo_file = None
 
-    caption = f"Name: {user.first_name}\nID: {user.id}\nBio: {user.bio if user.bio else 'No Bio'}\nBirthdate: {user.birthdate.strftime('%Y-%m-%d') if user.birthdate else 'No Birthdate'}"
+    bio = getattr(user, "bio", "No Bio")
+    birthdate = user.birthdate.strftime('%Y-%m-%d') if user.birthdate else "No Birthdate"
+    
+    caption = f"Name: {user.first_name}\nID: {user.id}\nBio: {bio}\nBirthdate: {birthdate}"
 
     # Send photo to the user who sent "مطور السورس"
     if photo_file:
