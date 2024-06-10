@@ -34,7 +34,7 @@ async def mention_command(client, message):
         reply_message = message.reply_to_message if message.reply_to_message else message
         mention_text = reply_message.text if reply_message.text else ""
         # إرسال الإشارة لجميع أعضاء المجموعة
-        async for member in client.iter_chat_members(chat_id):
+        async for member in await client.get_chat_members(chat_id):
             # تجاهل البوتات
             if member.user.is_bot:
                 continue
