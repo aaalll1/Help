@@ -1,50 +1,109 @@
+from YukkiMusic import app 
 import asyncio
-import os
-import time
-import requests
-import aiohttp
-from pyrogram import filters
-from pyrogram import Client
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup
-from strings.filters import command
-from YukkiMusic import (Apple, Resso, SoundCloud, Spotify, Telegram, YouTube, app)
-from YukkiMusic import app
-from asyncio import gather
-from pyrogram.errors import FloodWait
+import random
+from pyrogram import Client, filters
+from pyrogram.enums import ChatType, ChatMemberStatus
 from pyrogram.errors import UserNotParticipant
 from pyrogram.types import ChatPermissions
 
-
-
-@app.on_message(command(["المالك", "صاحب الخرابه", "المنشي"]) & filters.group)
-async def gak_owne(client: Client, message: Message):
-      if len(message.command) >= 2:
-         return 
-      else:
-            chat_id = message.chat.id
-            f = "administrators"
-            async for member in client.iter_chat_members(chat_id, filter=f):
-               if member.status == "creator":
-                 id = member.user.id
-                 key = InlineKeyboardMarkup([[InlineKeyboardButton(member.user.first_name, user_id=id)]])
-                 m = await client.get_chat(id)
-                 if m.photo:
-                       photo = await app.download_media(m.photo.big_file_id)
-                       return await message.reply_photo(photo, caption=f"🧞‍♂️ ¦𝙽𝙰𝙼𝙴 :{m.first_name}\n🎯 ¦𝚄𝚂𝙴𝚁 :@{m.username}\n🎃 ¦𝙸𝙳 :`{m.id}`\n💌 ¦𝙱𝙸𝙾 :{m.bio}\n✨ ¦𝙲𝙷𝙰𝚃: {message.chat.title}\n♻️ ¦𝙸𝙳.𝙲𝙷𝙰𝚃 :`{message.chat.id}`",reply_markup=key)
-                 else:
-                    return await message.reply("• " + member.user.mention)                    
-
 spam_chats = []
 
-TEXT = [
-    "• ادعوك الى الى الحضور هنا .",
-]
+EMOJI = [ "🦋🦋🦋🦋🦋",
+          "🧚🌸🧋🍬🫖",
+          "🥀🌷🌹🌺💐",
+          "🌸🌿💮🌱🌵",
+          "❤️💚💙💜🖤",
+          "💓💕💞💗💖",
+          "🌸💐🌺🌹🦋",
+          "🍔🦪🍛🍲🥗",
+          "🍎🍓🍒🍑🌶️",
+          "🧋🥤🧋🥛🍷",
+          "🍬🍭🧁🎂🍡",
+          "🍨🧉🍺☕🍻",
+          "🥪🥧🍦🍥🍚",
+          "🫖☕🍹🍷🥛",
+          "☕🧃🍩🍦🍙",
+          "🍁🌾💮🍂🌿",
+          "🌨️🌥️⛈️🌩️🌧️",
+          "🌷🏵️🌸🌺💐",
+          "💮🌼🌻🍀🍁",
+          "🧟🦸🦹🧙👸",
+          "🧅🍠🥕🌽🥦",
+          "🐷🐹🐭🐨🐻‍❄️",
+          "🦋🐇🐀🐈🐈‍⬛",
+          "🌼🌳🌲🌴🌵",
+          "🥩🍋🍐🍈🍇",
+          "🍴🍽️🔪🍶🥃",
+          "🕌🏰🏩⛩️🏩",
+          "🎉🎊🎈🎂🎀",
+          "🪴🌵🌴🌳🌲",
+          "🎄🎋🎍🎑🎎",
+          "🦅🦜🕊️🦤🦢",
+          "🦤🦩🦚🦃🦆",
+          "🐬🦭🦈🐋🐳",
+          "🐔🐟🐠🐡🦐",
+          "🦩🦀🦑🐙🦪",
+          "🐦🦂🕷️🕸️🐚",
+          "🥪🍰🥧🍨🍨",
+          " 🥬🍉🧁🧇",
+        ]
 
-@app.on_message(command(["vctag", "vctagall"]))
+TAGMES = [ " **➠ تصبح على خير 🌚** ",
+           " **➠ نام بهدوء 🙊** ",
+           " **➠ ضع الهاتف ونام، وإلا سيأتيك شبح..👻** ",
+           " **➠ أيها الحبيب نام في النهار، الآن نم..?? 🥲** ",
+           " **➠ أمي، انظر إلى ابنك يتحدث مع صديقته تحت البطانية، لا يريد النوم 😜** ",
+           " **➠ أبي، انظر إلى ابنك ما زال يستخدم الهاتف في الليل 🤭** ",
+           " **➠ عزيزي، الليلة نخطط لأمسية رومانسية..?? 🌠** ",
+           " **➠ تصبح على خير، اعتن بنفسك.. 🙂** ",
+           " **➠ تصبح على خير وأحلام سعيدة..?? ✨** ",
+           " **➠ الليل تأخر، نم..?? 🌌** ",
+           " **➠ أمي، انظر الساعة الحادية عشرة وما زال يستخدم الهاتف، لا يريد النوم 🕦** ",
+           " **➠ هل ستذهب إلى المدرسة غداً، لماذا ما زلت مستيقظاً 🏫** ",
+           " **➠ حبيبي، تصبح على خير، اعتن بنفسك..?? 😊** ",
+           " **➠ الجو بارد جداً اليوم، نم باكراً واستمتع بالدفء 🌼** ",
+           " **➠ حبيبي، تصبح على خير 🌷** ",
+           " **➠ سأذهب للنوم، تصبح على خير، اعتن بنفسك 🏵️** ",
+           " **➠ مرحباً، تصبح على خير 🍃** ",
+           " **➠ عزيزي، هل لم تنم بعد ☃️** ",
+           " **➠ تصبح على خير، الليل تأخر..? ⛄** ",
+           " **➠ سأذهب للنوم، تصبح على خير 😁** ",
+           " **➠ تصبح على خير، لا تنساني، سأذهب للنوم 🌄** ",
+           " **➠ تصبح على خير، وأحلام سعيدة ❤️** ",
+           " **➠ تصبح على خير، لا تنسى الابتسام 💚** ",
+           " **➠ تصبح على خير، أنام الآن 🥱** ",
+           " **➠ تصبح على خير يا صديقي 💤** ",
+           " **➠ حبيبي، الليلة نخطط لأمسية رومانسية 🥰** ",
+           " **➠ لماذا ما زلت مستيقظاً، هل لم تنم بعد 😜** ",
+           " **➠ أغلق عينيك، والتزم بالهدوء، الملائكة ستراقبك الليلة... 💫** ",
+           ]
+
+VC_TAG = [ "**➠ صباح الخير، كيف حالك 🐱**",
+         "**➠ صباح الخير، استيقظ 🌤️**",
+         "**➠ صباح الخير يا حبيبي، اشرب الشاي ☕**",
+         "**➠ استيقظ، هل لن تذهب إلى المدرسة اليوم 🏫**",
+         "**➠ استيقظ بسرعة، وإلا سأصب الماء عليك 🧊**",
+         "**➠ حبيبي، استيقظ واغتسل، الإفطار جاهز 🫕**",
+         "**➠ هل لن تذهب إلى العمل اليوم، ما زلت نائماً 🏣**",
+         "**➠ صباح الخير، ماذا ستشرب قهوة أم شاي ☕🍵**",
+         "**➠ حبيبي، الساعة الثامنة وأنت ما زلت نائماً 🕖**",
+         "**➠ استيقظ أيها الكسول... ☃️**",
+         "**➠ صباح الخير، يوم سعيد... 🌄**",
+         "**➠ صباح الخير، أتمنى لك يوماً سعيداً... 🪴**",
+         "**➠ صباح الخير، كيف حالك حبيبي 😇**",
+         "**➠ أمي، انظر هذا النائم لم يستيقظ بعد... 😵‍💫**",
+         "**➠ هل كنت نائماً طوال الليل، لماذا ما زلت نائماً... 😏**",
+         "**➠ حبيبي، استيقظ وقل صباح الخير لأصدقائك في المجموعة... 🌟**",
+         "**➠ أبي، هذا النائم لم يستيقظ بعد، المدرسة على وشك البدء... 🥲**",
+         "**➠ حبيبي، صباح الخير، ماذا تفعل ... 😅**",
+         "**➠ صباح الخير يا صديقي، هل تناولت الإفطار... 🍳**",
+        ]
+
+@app.on_message(filters.command(["gntag"]))
 async def mentionall(client, message):
     chat_id = message.chat.id
-    if message.chat.type == "private":
-        return await message.reply("هذا الأمر مخصص للمجموعات فقط.")
+    if message.chat.type == ChatType.PRIVATE:
+        return await message.reply("๏ هذه الأوامر فقط للمجموعات.")
 
     is_admin = False
     try:
@@ -52,13 +111,16 @@ async def mentionall(client, message):
     except UserNotParticipant:
         is_admin = False
     else:
-        if participant.status in ("administrator", "creator"):
+        if participant.status in (
+            ChatMemberStatus.ADMINISTRATOR,
+            ChatMemberStatus.OWNER
+        ):
             is_admin = True
     if not is_admin:
-        return await message.reply("أنت لست مشرفًا، فقط المشرفين يمكنهم وضع العلامات للأعضاء.")
+        return await message.reply("๏ أنت لست مسؤولاً، فقط المسؤولين يمكنهم مناداة الأعضاء. ")
 
     if message.reply_to_message and message.text:
-        return await message.reply("/Vctag ادخلوا إلى الدردشة الصوتية الآن 👈 اكتب بهذا الشكل / أو رد على أي رسالة في المرة القادمة للعلامة...")
+        return await message.reply("/tagall اكتب صباح الخير أو قم بالرد على رسالة للتنبيه...")
     elif message.text:
         mode = "text_on_cmd"
         msg = message.text
@@ -66,15 +128,16 @@ async def mentionall(client, message):
         mode = "text_on_reply"
         msg = message.reply_to_message
         if not msg:
-            return await message.reply("/Vctag ادخلوا إلى الدردشة الصوتية الآن 👈 اكتب بهذا الشكل / أو رد على أي رسالة في المرة القادمة للعلامة...")
+            return await message.reply("/tagall اكتب صباح الخير أو قم بالرد على رسالة للتنبيه...")
     else:
-        return await message.reply("/Vctag ادخلوا إلى الدردشة الصوتية الآن 👈 اكتب بهذا الشكل / أو رد على أي رسالة في المرة القادمة للعلامة...")
-
+        return await message.reply("/tagall اكتب صباح الخير أو قم بالرد على رسالة للتنبيه...")
+    if chat_id in spam_chats:
+        return await message.reply("๏ أوقف التنبيه أولاً...")
     spam_chats.append(chat_id)
     usrnum = 0
     usrtxt = ""
-    async for usr in client.iter_chat_members(chat_id):
-        if chat_id not in spam_chats:
+    async for usr in client.get_chat_members(chat_id):
+        if not chat_id in spam_chats:
             break
         if usr.user.is_bot:
             continue
@@ -83,35 +146,81 @@ async def mentionall(client, message):
 
         if usrnum == 1:
             if mode == "text_on_cmd":
-                txt = f"{usrtxt} {random.choice(TEXT)}"
+                txt = f"{random.choice(TAGMES)}\n\n{usrtxt}\n\n"
+                txt += random.choice(EMOJI)
                 await client.send_message(chat_id, txt)
+                await asyncio.sleep(1)
+                usrnum = 0
+                usrtxt = ""
             elif mode == "text_on_reply":
-                await msg.reply(f"[{random.choice(TEXT)}](tg://user?id={usr.user.id})")
-            await asyncio.sleep(4)
-            usrnum = 0
-            usrtxt = ""
+                await msg.reply(f"{usrtxt}")
+                await asyncio.sleep(1)
+                usrnum = 0
+                usrtxt = ""
     try:
         spam_chats.remove(chat_id)
     except:
         pass
 
-@app.on_message(command(["cancel", "stop", "stopvctag", "vctagstop", "cancelvctag", "canceltag", "stoptag", "stoptagall", "canceltagall"]))
-async def cancel_spam(client, message):
-    if message.chat.id not in spam_chats:
-        return await message.reply("حاليًا، لست في عملية وضع العلامات.")
+@app.on_message(filters.command(["mntag"]))
+async def mentionall(client, message):
+    chat_id = message.chat.id
+    if message.chat.type == ChatType.PRIVATE:
+        return await message.reply("๏ هذه الأوامر فقط للمجموعات.")
+
     is_admin = False
     try:
-        participant = await client.get_chat_member(message.chat.id, message.from_user.id)
+        participant = await client.get_chat_member(chat_id, message.from_user.id)
     except UserNotParticipant:
         is_admin = False
     else:
-        if participant.status in ("administrator", "creator"):
+        if participant.status in (
+            ChatMemberStatus.ADMINISTRATOR,
+            ChatMemberStatus.OWNER
+        ):
             is_admin = True
     if not is_admin:
-        return await message.reply("أنت لست مشرفًا، فقط المشرفين يمكنهم إيقاف عملية وضع العلامات.")
+        return await message.reply("๏ أنت لست مسؤولاً، فقط المسؤولين يمكنهم مناداة الأعضاء.")
+
+    if message.reply_to_message and message.text:
+        return await message.reply("/tagall اكتب صباح الخير أو قم بالرد على رسالة للتنبيه...")
+    elif message.text:
+        mode = "text_on_cmd"
+        msg = message.text
+    elif message.reply_to_message:
+        mode = "text_on_reply"
+        msg = message.reply_to_message
+        if not msg:
+            return await message.reply("/tagall اكتب صباح الخير أو قم بالرد على رسالة للتنبيه...")
     else:
-        try:
-            spam_chats.remove(message.chat.id)
-        except:
-            pass
-        return await message.reply("تم إلغاء عملية وضع العلامات.")
+        return await message.reply("/tagall اكتب صباح الخير أو قم بالرد على رسالة للتنبيه...")
+    if chat_id in spam_chats:
+        return await message.reply("๏ أوقف التنبيه أولاً...")
+    spam_chats.append(chat_id)
+    usrnum = 0
+    usrtxt = ""
+    async for usr in client.get_chat_members(chat_id):
+        if not chat_id in spam_chats:
+            break
+        if usr.user.is_bot:
+            continue
+        usrnum += 1
+        usrtxt += f"[{usr.user.first_name}](tg://user?id={usr.user.id}) "
+
+        if usrnum == 1:
+            if mode == "text_on_cmd":
+                txt = f"{random.choice(VC_TAG)}\n\n{usrtxt}\n\n"
+                txt += random.choice(EMOJI)
+                await client.send_message(chat_id, txt)
+                await asyncio.sleep(1)
+                usrnum = 0
+                usrtxt = ""
+            elif mode == "text_on_reply":
+                await msg.reply(f"{usrtxt}")
+                await asyncio.sleep(1)
+                usrnum = 0
+                usrtxt = ""
+    try:
+        spam_chats.remove(chat_id)
+    except:
+        pass
