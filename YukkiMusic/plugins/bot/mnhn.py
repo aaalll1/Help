@@ -53,9 +53,9 @@ async def mention_all(client, message):
         usr_list.append(usr.user.id)
         if len(usr_list) >= 10:
             if mode == "text_on_cmd":
-                await client.send_message(chat_id, msg_text, parse_mode="markdown")
+                await client.send_message(chat_id, msg_text)
             elif mode == "text_on_reply":
-                await msg.reply(msg_text, parse_mode="markdown")
+                await msg.reply(msg_text)
             usr_list = []
             await asyncio.sleep(1)
 
