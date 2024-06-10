@@ -1,5 +1,3 @@
-
-
 import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import Message
@@ -18,7 +16,7 @@ async def initiate_broadcast_pin(c: Client, message: Message):
     await message.reply_text("📣 ارسل الاذاعة الآن ليتم تثبيتها.")
     pending_broadcasts[message.from_user.id] = "broadcast_pin"
 
-@app.on_message(filters.reply & filters.user(pending_broadcasts.keys()))
+@app.on_message(filters.reply & filters.user(list(pending_broadcasts.keys())))
 async def handle_broadcast(c: Client, message: Message):
     if message.from_user.id not in pending_broadcasts:
         return
