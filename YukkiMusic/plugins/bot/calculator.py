@@ -23,7 +23,7 @@ def calculate_math(client, message):
 )
 async def maker(client: Client, message: Message):
     await message.reply_photo(
-        photo="https://graph.org/file/0eca83858bc006e05b8dc.jpg",
+        photo="https://graph.org/file/89c8950479192dcfe13e7.jpg",
         caption="Welcome to Source Freedom , which specializes in programming music bots that Telegram launched in the latest updates .",
         reply_markup=InlineKeyboardMarkup(
             [
