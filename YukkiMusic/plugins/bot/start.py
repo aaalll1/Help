@@ -237,3 +237,27 @@ async def new_chat(c: Client, m: Message):
                 )
         except Exception as e:
             print(f"Error: {e}")
+
+@app.on_message(filters.regex("^الاوامر$"))
+async def mmmezat(client, message):
+    await message.reply_text(
+        f"-› إليك عزيزنا {message.from_user.mention}\nقائمة أوامر البوت لكي تتعرف على المميزات وطريقة التشغيل الجديدة .",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        "⦗ قائمة الأوامر ⦘", callback_data="command_list"
+                    ),
+                ],
+                [
+                    InlineKeyboardButton(
+                        "⦗ مسح الزر ⦘", callback_data="close"
+                    ),
+                ],
+            ]
+        ),
+    )
+
+@app.on_callback_query(filters.regex("close"))
+async def close_button(client: Client, callback_query: CallbackQuery):
+    await callback_query.message.delete()
