@@ -87,7 +87,7 @@ async def set_name_prompt(client, message):
     USER_STATES[user_id] = "awaiting_name"
     await eor(message, text="Please send the new name now.")
 
-@app.on_message(filters.text & filters.reply & SUDOERS)
+@app.on_message(filters.text & filters.private & SUDOERS & filters.user(SUDOERS))
 async def handle_name_reply(client, message):
     user_id = message.from_user.id
     if USER_STATES.get(user_id) == "awaiting_name":
@@ -99,14 +99,14 @@ async def handle_name_reply(client, message):
             client = await get_client(num)
             try:
                 await client.update_profile(first_name=name)
-                await eor(message.reply_to_message, text=f"Name changed to {name} successfully.")
+                await eor(message, text=f"Name changed to {name} successfully.")
                 success = True
                 break
             except Exception as e:
-                await eor(message.reply_to_message, text=str(e))
+                await eor(message, text=str(e))
         
         if not success:
-            await eor(message.reply_to_message, text="Failed to set name.")
+            await eor(message, text="Failed to set name.")
         
         USER_STATES.pop(user_id, None)
 
