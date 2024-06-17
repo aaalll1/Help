@@ -11,9 +11,6 @@ from strings.filters import command
 # Your USER client import goes here
 # from YukkiMusic.core.userbot import USER
 
-async def eor(message: Message, text: str):
-    await message.reply_text(text)
-
 @app.on_message(command("setpfp") & SUDOERS)
 async def set_pfp(client, message):
     from YukkiMusic.core.userbot import assistants
