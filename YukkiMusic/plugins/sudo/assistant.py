@@ -18,15 +18,12 @@ async def eor(message: Message, text: str):
 async def set_pfp_prompt(client, message):
     user_id = message.from_user.id
     USER_STATES[user_id] = "awaiting_pfp"
-    await eor(message, text="Send the new profile picture now.")
+    await eor(message, text="Please send the new profile picture now.")
 
-@app.on_message(filters.reply & SUDOERS)
+@app.on_message(filters.photo & filters.reply & SUDOERS)
 async def handle_pfp_reply(client, message):
     user_id = message.from_user.id
     if USER_STATES.get(user_id) == "awaiting_pfp":
-        if not message.photo and not message.video:
-            return await eor(message, text="Please reply with a valid photo or video.")
-
         from YukkiMusic.core.userbot import assistants
 
         photo = await message.download()
@@ -34,20 +31,17 @@ async def handle_pfp_reply(client, message):
         for num in assistants:
             client = await get_client(num)
             try:
-                if message.photo:
-                    await client.set_profile_photo(photo=photo)
-                elif message.video:
-                    await client.set_profile_photo(video=photo)
-                await eor(message, text="Successfully changed profile picture.")
+                await client.set_profile_photo(photo=photo)
+                await eor(message.reply_to_message, text="Successfully changed profile picture.")
                 success = True
                 os.remove(photo)
                 break
             except Exception as e:
-                await eor(message, text=str(e))
+                await eor(message.reply_to_message, text=str(e))
                 os.remove(photo)
         
         if not success:
-            await eor(message, text="Failed to set profile picture.")
+            await eor(message.reply_to_message, text="Failed to set profile picture.")
         
         USER_STATES.pop(user_id, None)
 
@@ -56,9 +50,9 @@ async def handle_pfp_reply(client, message):
 async def set_bio_prompt(client, message):
     user_id = message.from_user.id
     USER_STATES[user_id] = "awaiting_bio"
-    await eor(message, text="Send the new bio text now.")
+    await eor(message, text="Please send the new bio text now.")
 
-@app.on_message(filters.reply & SUDOERS)
+@app.on_message(filters.text & filters.reply & SUDOERS)
 async def handle_bio_reply(client, message):
     user_id = message.from_user.id
     if USER_STATES.get(user_id) == "awaiting_bio":
@@ -70,14 +64,14 @@ async def handle_bio_reply(client, message):
             client = await get_client(num)
             try:
                 await client.update_profile(bio=bio)
-                await eor(message, text="Bio changed successfully.")
+                await eor(message.reply_to_message, text="Bio changed successfully.")
                 success = True
                 break
             except Exception as e:
-                await eor(message, text=str(e))
+                await eor(message.reply_to_message, text=str(e))
         
         if not success:
-            await eor(message, text="Failed to set bio.")
+            await eor(message.reply_to_message, text="Failed to set bio.")
         
         USER_STATES.pop(user_id, None)
 
@@ -86,9 +80,9 @@ async def handle_bio_reply(client, message):
 async def set_name_prompt(client, message):
     user_id = message.from_user.id
     USER_STATES[user_id] = "awaiting_name"
-    await eor(message, text="Send the new name now.")
+    await eor(message, text="Please send the new name now.")
 
-@app.on_message(filters.reply & SUDOERS)
+@app.on_message(filters.text & filters.reply & SUDOERS)
 async def handle_name_reply(client, message):
     user_id = message.from_user.id
     if USER_STATES.get(user_id) == "awaiting_name":
@@ -100,14 +94,14 @@ async def handle_name_reply(client, message):
             client = await get_client(num)
             try:
                 await client.update_profile(first_name=name)
-                await eor(message, text=f"Name changed to {name} successfully.")
+                await eor(message.reply_to_message, text=f"Name changed to {name} successfully.")
                 success = True
                 break
             except Exception as e:
-                await eor(message, text=str(e))
+                await eor(message.reply_to_message, text=str(e))
         
         if not success:
-            await eor(message, text="Failed to set name.")
+            await eor(message.reply_to_message, text="Failed to set name.")
         
         USER_STATES.pop(user_id, None)
 
