@@ -81,7 +81,7 @@ async def handle_delpfp_reply(client, message):
 
 
 # أمر تعيين الاسم
-@app.on_message(command("setname") & SUDOERS)
+@app.on_message(command("setname") & filters.private & SUDOERS)
 async def set_name_prompt(client, message):
     user_id = message.from_user.id
     USER_STATES[user_id] = "awaiting_name"
