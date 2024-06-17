@@ -1,12 +1,3 @@
-#
-# Copyright (C) 2024-present by TeamYukki@Github, < https://github.com/TeamYukki >.
-#
-# This file is part of < https://github.com/TeamYukki/YukkiMusicBot > project,
-# and is released under the "GNU v3.0 License Agreement".
-# Please see < https://github.com/TeamYukki/YukkiMusicBot/blob/master/LICENSE >
-#
-# All rights reserved.
-#
 
 import asyncio
 import logging
@@ -14,9 +5,8 @@ import logging
 from pyrogram import filters
 from pyrogram.enums import ChatMembersFilter
 from pyrogram.types import CallbackQuery, Message
-
+from strings.filters import command
 from config import BANNED_USERS, adminlist, lyrical
-from strings import get_command
 from YukkiMusic import app
 from YukkiMusic.core.call import Yukki
 from YukkiMusic.misc import db
@@ -24,12 +14,8 @@ from YukkiMusic.utils.database import get_authuser_names, get_cmode
 from YukkiMusic.utils.decorators import ActualAdminCB, AdminActual, language
 from YukkiMusic.utils.formatters import alpha_to_int
 
-### Multi-Lang Commands
-RELOAD_COMMAND = get_command("RELOAD_COMMAND")
-REBOOT_COMMAND = get_command("REBOOT_COMMAND")
 
-
-@app.on_message(filters.command(RELOAD_COMMAND) & filters.group & ~BANNED_USERS)
+@app.on_message(command(["التحديث", "اوقف", "أدمن", "حدث"]) & filters.group & ~BANNED_USERS)
 @language
 async def reload_admin_cache(client, message: Message, _):
     try:
@@ -46,15 +32,15 @@ async def reload_admin_cache(client, message: Message, _):
         await message.reply_text(_["admin_20"])
     except:
         await message.reply_text(
-            "ғᴀɪʟᴇᴅ ᴛᴏ ʀᴇʟᴏᴀᴅ ᴀᴅᴍɪɴᴄᴀᴄʜᴇ  ᴍᴀᴋᴇ sᴜʀᴇ ʙᴏᴛ ɪs ᴀɴ ᴀᴅᴍɪɴ ɪɴ ʏᴏᴜʀ ᴄʜᴀᴛ."
+            " ~ لم يتم التحديث ."
         )
 
 
-@app.on_message(filters.command(REBOOT_COMMAND) & filters.group & ~BANNED_USERS)
+@app.on_message(command(["ريست", "رست"]) & filters.group & ~BANNED_USERS)
 @AdminActual
 async def restartbot(client, message: Message, _):
     mystic = await message.reply_text(
-        f"ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ .. \nʀᴇʙᴏᴏᴛɪɴɢ {app.mention} ғᴏʀ ʏᴏᴜʀ ᴄʜᴀᴛ.."
+        f"~ جاري عمل ريست سريع البوت ..."
     )
     await asyncio.sleep(1)
     try:
@@ -73,7 +59,7 @@ async def restartbot(client, message: Message, _):
             await Yukki.stop_stream(chat_id)
         except:
             pass
-    return await mystic.edit_text("sᴜᴄᴇssғᴜʟʟʏ ʀᴇsᴛᴀʀᴛᴇᴅ. \nTʀʏ ᴘʟᴀʏɪɴɢ ɴᴏᴡ..")
+    return await mystic.edit_text("~ تم الريست، تستطيع إستخدام البوت الأن ...")
 
 
 @app.on_callback_query(filters.regex("close") & ~BANNED_USERS)
@@ -109,11 +95,11 @@ async def stop_download(client, CallbackQuery: CallbackQuery, _):
     task = lyrical.get(message_id)
     if not task:
         return await CallbackQuery.answer(
-            "ᴅᴏᴡɴʟᴏᴀᴅ ᴀʟʀᴇᴀᴅʏ ᴄᴏᴍᴘʟᴇᴛᴇᴅ..", show_alert=True
+            "• تم التنزيل ..", show_alert=True
         )
     if task.done() or task.cancelled():
         return await CallbackQuery.answer(
-            "Downloading already Completed or Cancelled.",
+            "• بالفعل تم التنزيل .",
             show_alert=True,
         )
     if not task.done():
@@ -123,13 +109,13 @@ async def stop_download(client, CallbackQuery: CallbackQuery, _):
                 lyrical.pop(message_id)
             except:
                 pass
-            await CallbackQuery.answer("ᴅᴏᴡɴʟᴏᴀᴅɪɴɢ ᴄᴀɴᴄᴇʟʟᴇᴅ", show_alert=True)
+            await CallbackQuery.answer("• تم إلغاء التنزيل .", show_alert=True)
             return await CallbackQuery.edit_message_text(
-                f"ᴅᴏᴡɴʟᴏᴀᴅɪɴɢ ᴄᴀɴᴄᴇʟʟᴇᴅ ʙʏ {CallbackQuery.from_user.mention}"
+                f"• تم التنزيل بواسطة {CallbackQuery.from_user.mention}"
             )
         except:
             return await CallbackQuery.answer(
-                "ғᴀɪʟᴇᴅ ᴛᴏ sᴛᴏᴘ ᴅᴏᴡɴʟᴏᴀᴅɪɴɢ", show_alert=True
+                "• فشلت إيقاف التنزيل .", show_alert=True
             )
 
-    await CallbackQuery.answer("ғᴀɪʟᴇᴅ ᴛᴏ ʀᴇᴄᴏɢɴɪsᴇ ᴛʜᴇ ʀᴜɴɴɪɴɢ ᴛᴀsᴋ", show_alert=True)
+    await CallbackQuery.answer("• فشل .", show_alert=True)
