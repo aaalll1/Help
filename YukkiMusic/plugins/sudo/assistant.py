@@ -1,4 +1,3 @@
-
 import os
 from inspect import getfullargspec
 from time import time
@@ -11,6 +10,9 @@ from YukkiMusic.utils.database import get_client
 from strings.filters import command
 # Your USER client import goes here
 # from YukkiMusic.core.userbot import USER
+
+async def eor(message: Message, text: str):
+    await message.reply_text(text)
 
 @app.on_message(command("setpfp") & SUDOERS)
 async def set_pfp(client, message):
@@ -42,7 +44,6 @@ async def set_pfp(client, message):
                 await eor(message, text=str(e))
                 os.remove(photo)
 
-
 @app.on_message(command("setbio") & SUDOERS)
 async def set_bio(client, message):
     from YukkiMusic.core.userbot import assistants
@@ -60,7 +61,6 @@ async def set_bio(client, message):
             await eor(message, text=str(e))
     else:
         return await eor(message, text="Give some text to set as bio.")
-
 
 @app.on_message(command("setname") & SUDOERS)
 async def set_name(client, message):
@@ -80,7 +80,6 @@ async def set_name(client, message):
     else:
         return await eor(message, text="Give some text to set as name.")
 
-
 @app.on_message(command("delpfp") & SUDOERS)
 async def del_pfp(client, message):
     from YukkiMusic.core.userbot import assistants
@@ -97,7 +96,6 @@ async def del_pfp(client, message):
         except Exception as e:
             await eor(message, text=str(e))
 
-
 @app.on_message(command("delallpfp") & SUDOERS)
 async def delall_pfp(client, message):
     from YukkiMusic.core.userbot import assistants
@@ -113,14 +111,6 @@ async def delall_pfp(client, message):
                 await eor(message, text="No profile photos found.")
         except Exception as e:
             await eor(message, text=str(e))
-
-
-QUEUE = {}
-
-# دالة لضبط الصوت
-async def change_volume_call(chat_id, volume):
-    # في هذا المثال، سيتم طباعة رسالة لتحديد أن الصوت تم تغييره
-    print(f"تم ضبط الصوت في الدردشة {chat_id} إلى {volume}%")
 
 
 START_TIME = datetime.utcnow()
