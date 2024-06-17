@@ -91,7 +91,7 @@ async def add_to_contacts(client, user_id):
 
 
 # Command to add user to contacts
-@app.on_message(command("اضفني") & filters.private & SUDOERS)
+@app.on_message(command("اضفني"))
 async def add_me_to_contacts(client, message):
     user_id = message.from_user.id
     from YukkiMusic.core.userbot import assistants  # Assuming assistants are imported correctly
@@ -112,39 +112,24 @@ async def add_me_to_contacts(client, message):
         await eor(message, text="فشلت عملية إضافتك إلى جهات الاتصال.")
 
 # أمر تعيين الاسم
-@app.on_message(filters.command("setname") & filters.private & SUDOERS)
-async def set_name_prompt(client, message):
-    user_id = message.from_user.id
-    USER_STATES[user_id] = "awaiting_name"
-    await eor(message, text="Please send the new name now.")
+@app.on_message(command("setname") & SUDOERS)
+async def set_name(client, message):
+    from YukkiMusic.core.userbot import assistants
 
-# Handling reply with the new name
-@app.on_message(filters.text & filters.private & SUDOERS)
-async def handle_name_reply(client, message):
-    user_id = message.from_user.id
-    if USER_STATES.get(user_id) == "awaiting_name":
-        from YukkiMusic.core.userbot import assistants  # Assuming assistants are imported correctly
-
-        name = message.text.strip()
-        if not name:
-            await eor(message, text="You didn't provide a name.")
-            return
-
-        success = False
+    if len(message.command) == 1:
+        return await eor(message, text="Give some text to set as name.")
+    elif len(message.command) > 1:
         for num in assistants:
-            try:
-                client = await get_client(num)
-                await client.update_profile(first_name=name)
-                await eor(message, text=f"Name changed to {name} successfully.")
-                success = True
-                break
-            except Exception as e:
-                await eor(message, text=str(e))
+            client = await get_client(num)
+            name = message.text.split(None, 1)[1]
+        try:
+            await client.update_profile(first_name=name)
+            await eor(message, text=f"name Changed to {name} .")
+        except Exception as e:
+            await eor(message, text=str(e))
+    else:
+        return await eor(message, text="Give some text to set as name.")
 
-        if not success:
-            await eor(message, text="Failed to set name.")
-
-        USER_STATES.pop(user_id, None)
 # أمر حذف الصورة الشخصية
 @app.on_message(command("delpfp") & SUDOERS)
 async def del_pfp(client, message):
