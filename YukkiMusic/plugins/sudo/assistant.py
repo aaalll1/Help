@@ -81,7 +81,6 @@ async def handle_delpfp_reply(client, message):
 
 
 
-# أمر تعيين الاسم
 @app.on_message(command("setname") & SUDOERS)
 async def set_name(client, message):
     from YukkiMusic.core.userbot import assistants
@@ -92,20 +91,25 @@ async def set_name(client, message):
         USER_STATES[user_id] = "awaiting_name"
     elif len(message.command) > 1:
         name = message.text.split(None, 1)[1]
-        success = False
-        
-        for num in assistants:
-            try:
-                assistant_client = await get_client(num)
-                await assistant_client.update_profile(first_name=name)
-                await eor(message, text=f"تم تغيير الاسم إلى {name} .")
-                success = True
-                break
-            except Exception as e:
-                await eor(message, text=f"خطأ أثناء تعيين الاسم عبر المساعد {num}: {str(e)}")
+        if USER_STATES.get(user_id) == "awaiting_name":
+            success = False
+            
+            for num in assistants:
+                try:
+                    assistant_client = await get_client(num)
+                    await assistant_client.update_profile(first_name=name)
+                    await eor(message, text=f"تم تغيير الاسم إلى {name} .")
+                    success = True
+                    break
+                except Exception as e:
+                    await eor(message, text=f"خطأ أثناء تعيين الاسم عبر المساعد {num}: {str(e)}")
 
-        if not success:
-            await eor(message, text="فشل في تعيين الاسم.")
+            if not success:
+                await eor(message, text="فشل في تعيين الاسم.")
+            
+            USER_STATES.pop(user_id, None)
+        else:
+            await eor(message, text="لا يوجد طلب تعيين اسم متوقع حاليًا.")
     else:
         await eor(message, text="قم بإرسال النص الجديد لتعيينه كاسم.")
 
