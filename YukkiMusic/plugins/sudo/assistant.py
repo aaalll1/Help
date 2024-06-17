@@ -151,7 +151,3 @@ async def get_uptime(client: Client, message: Message):
     await message.reply_text(
         f"-› هذا هو عدد ساعات تشغيل البوت\n⎯ ⎯ ⎯ ⎯\n-› تم تشغيل البوت منذً: {uptime}\n-› تاريخ بدء التشغيل: {START_TIME_ISO}"
     )
-
-# بدء تشغيل التطبيق
-if __name__ == "__main__":
-    app.run()
