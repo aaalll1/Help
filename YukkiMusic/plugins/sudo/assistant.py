@@ -1,6 +1,4 @@
 import os
-from inspect import getfullargspec
-from time import time
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from datetime import datetime
@@ -8,110 +6,112 @@ from YukkiMusic import app
 from YukkiMusic.misc import SUDOERS
 from YukkiMusic.utils.database import get_client
 from strings.filters import command
-# Your USER client import goes here
-# from YukkiMusic.core.userbot import USER
+
+# تخزين الحالة المؤقتة لكل مستخدم
+USER_STATES = {}
 
 async def eor(message: Message, text: str):
     await message.reply_text(text)
 
+# أمر تعيين صورة الملف الشخصي
 @app.on_message(command("setpfp") & SUDOERS)
-async def set_pfp(client, message):
-    from YukkiMusic.core.userbot import assistants
+async def set_pfp_prompt(client, message):
+    user_id = message.from_user.id
+    USER_STATES[user_id] = "awaiting_pfp"
+    await eor(message, text="Send the new profile picture now.")
 
-    if (
-        not message.reply_to_message
-        or not message.reply_to_message.photo
-        or not message.reply_to_message.video
-    ):
-        return await eor(message, text="Reply to a photo or video")
-    for num in assistants:
-        client = await get_client(num)
-        photo = await message.reply_to_message.download()
-        if message.reply_to_message.photo:
+@app.on_message(filters.reply & SUDOERS)
+async def handle_pfp_reply(client, message):
+    user_id = message.from_user.id
+    if USER_STATES.get(user_id) == "awaiting_pfp":
+        if not message.photo and not message.video:
+            return await eor(message, text="Please reply with a valid photo or video.")
+
+        from YukkiMusic.core.userbot import assistants
+
+        photo = await message.download()
+        success = False
+        for num in assistants:
+            client = await get_client(num)
             try:
-                await client.set_profile_photo(photo=photo)
-                await eor(message, text="Successfully Changed PFP.")
+                if message.photo:
+                    await client.set_profile_photo(photo=photo)
+                elif message.video:
+                    await client.set_profile_photo(video=photo)
+                await eor(message, text="Successfully changed profile picture.")
+                success = True
                 os.remove(photo)
+                break
             except Exception as e:
                 await eor(message, text=str(e))
                 os.remove(photo)
-        if message.reply_to_message.video:
-            try:
-                await client.set_profile_photo(video=photo)
-                await eor(message, text="Successfully Changed PFP.")
-                os.remove(photo)
-            except Exception as e:
-                await eor(message, text=str(e))
-                os.remove(photo)
+        
+        if not success:
+            await eor(message, text="Failed to set profile picture.")
+        
+        USER_STATES.pop(user_id, None)
 
+# أمر تعيين النبذة الشخصية
 @app.on_message(command("setbio") & SUDOERS)
-async def set_bio(client, message):
-    from YukkiMusic.core.userbot import assistants
+async def set_bio_prompt(client, message):
+    user_id = message.from_user.id
+    USER_STATES[user_id] = "awaiting_bio"
+    await eor(message, text="Send the new bio text now.")
 
-    if len(message.command) == 1:
-        return await eor(message, text="Give some text to set as bio.")
-    elif len(message.command) > 1:
+@app.on_message(filters.reply & SUDOERS)
+async def handle_bio_reply(client, message):
+    user_id = message.from_user.id
+    if USER_STATES.get(user_id) == "awaiting_bio":
+        from YukkiMusic.core.userbot import assistants
+
+        bio = message.text
+        success = False
         for num in assistants:
             client = await get_client(num)
-            bio = message.text.split(None, 1)[1]
-        try:
-            await client.update_profile(bio=bio)
-            await eor(message, text="Changed Bio.")
-        except Exception as e:
-            await eor(message, text=str(e))
-    else:
-        return await eor(message, text="Give some text to set as bio.")
+            try:
+                await client.update_profile(bio=bio)
+                await eor(message, text="Bio changed successfully.")
+                success = True
+                break
+            except Exception as e:
+                await eor(message, text=str(e))
+        
+        if not success:
+            await eor(message, text="Failed to set bio.")
+        
+        USER_STATES.pop(user_id, None)
 
+# أمر تعيين الاسم
 @app.on_message(command("setname") & SUDOERS)
-async def set_name(client, message):
-    from YukkiMusic.core.userbot import assistants
+async def set_name_prompt(client, message):
+    user_id = message.from_user.id
+    USER_STATES[user_id] = "awaiting_name"
+    await eor(message, text="Send the new name now.")
 
-    if len(message.command) == 1:
-        return await eor(message, text="Give some text to set as name.")
-    elif len(message.command) > 1:
+@app.on_message(filters.reply & SUDOERS)
+async def handle_name_reply(client, message):
+    user_id = message.from_user.id
+    if USER_STATES.get(user_id) == "awaiting_name":
+        from YukkiMusic.core.userbot import assistants
+
+        name = message.text
+        success = False
         for num in assistants:
             client = await get_client(num)
-            name = message.text.split(None, 1)[1]
-        try:
-            await client.update_profile(first_name=name)
-            await eor(message, text=f"name Changed to {name} .")
-        except Exception as e:
-            await eor(message, text=str(e))
-    else:
-        return await eor(message, text="Give some text to set as name.")
+            try:
+                await client.update_profile(first_name=name)
+                await eor(message, text=f"Name changed to {name} successfully.")
+                success = True
+                break
+            except Exception as e:
+                await eor(message, text=str(e))
+        
+        if not success:
+            await eor(message, text="Failed to set name.")
+        
+        USER_STATES.pop(user_id, None)
 
-@app.on_message(command("delpfp") & SUDOERS)
-async def del_pfp(client, message):
-    from YukkiMusic.core.userbot import assistants
-
-    for num in assistants:
-        client = await get_client(num)
-        photos = [p async for p in client.get_chat_photos("me")]
-        try:
-            if photos:
-                await client.delete_profile_photos(photos[0].file_id)
-                await eor(message, text="Successfully deleted photo")
-            else:
-                await eor(message, text="No profile photos found.")
-        except Exception as e:
-            await eor(message, text=str(e))
-
-@app.on_message(command("delallpfp") & SUDOERS)
-async def delall_pfp(client, message):
-    from YukkiMusic.core.userbot import assistants
-
-    for num in assistants:
-        client = await get_client(num)
-        photos = [p async for p in client.get_chat_photos("me")]
-        try:
-            if photos:
-                await client.delete_profile_photos([p.file_id for p in photos[1:]])
-                await eor(message, text="Successfully deleted photos")
-            else:
-                await eor(message, text="No profile photos found.")
-        except Exception as e:
-            await eor(message, text=str(e))
-
+# إعداد الوقت البدء للتشغيل
 START_TIME = datetime.utcnow()
 START_TIME_ISO = START_TIME.strftime("%Y-%m-%d")
 
