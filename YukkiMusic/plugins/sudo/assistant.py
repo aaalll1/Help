@@ -79,38 +79,71 @@ async def handle_delpfp_reply(client, message):
         
         USER_STATES.pop(user_id, None)
 
-# أمر حذف جميع صور الملف الشخصي
-@app.on_message(command("delallpfp") & SUDOERS & filters.reply)
-async def delall_pfp_prompt(client, message):
+
+# أمر تعيين الاسم
+@app.on_message(command("setname") & SUDOERS)
+async def set_name_prompt(client, message):
     user_id = message.from_user.id
-    USER_STATES[user_id] = "awaiting_delallpfp"
-    await eor(message, text="Are you sure you want to delete all profile pictures? Reply 'yes' to confirm.")
+    USER_STATES[user_id] = "awaiting_name"
+    await eor(message, text="Please send the new name now.")
 
 @app.on_message(filters.text & filters.reply & SUDOERS)
-async def handle_delallpfp_reply(client, message):
+async def handle_name_reply(client, message):
     user_id = message.from_user.id
-    if USER_STATES.get(user_id) == "awaiting_delallpfp" and message.text.lower() == "yes":
+    if USER_STATES.get(user_id) == "awaiting_name":
         from YukkiMusic.core.userbot import assistants
 
+        name = message.text
         success = False
         for num in assistants:
             client = await get_client(num)
             try:
-                photos = [p async for p in client.get_chat_photos("me")]
-                if photos:
-                    await client.delete_profile_photos([p.file_id for p in photos[1:]])
-                    await eor(message.reply_to_message, text="Successfully deleted all profile photos.")
-                    success = True
-                    break
-                else:
-                    await eor(message.reply_to_message, text="No profile photos found.")
+                await client.update_profile(first_name=name)
+                await eor(message.reply_to_message, text=f"Name changed to {name} successfully.")
+                success = True
+                break
             except Exception as e:
                 await eor(message.reply_to_message, text=str(e))
         
         if not success:
-            await eor(message.reply_to_message, text="Failed to delete profile photos.")
+            await eor(message.reply_to_message, text="Failed to set name.")
         
         USER_STATES.pop(user_id, None)
+
+# أمر حذف الصورة الشخصية
+@app.on_message(command("delpfp") & SUDOERS)
+async def del_pfp(client, message):
+    from YukkiMusic.core.userbot import assistants
+
+    for num in assistants:
+        client = await get_client(num)
+        photos = [p async for p in client.get_chat_photos("me")]
+        try:
+            if photos:
+                await client.delete_profile_photos(photos[0].file_id)
+                await eor(message, text="Successfully deleted photo")
+            else:
+                await eor(message, text="No profile photos found.")
+        except Exception as e:
+            await eor(message, text=str(e))
+
+
+# أمر حذف جميع الصور الشخصية
+@app.on_message(command("delallpfp") & SUDOERS)
+async def delall_pfp(client, message):
+    from YukkiMusic.core.userbot import assistants
+
+    for num in assistants:
+        client = await get_client(num)
+        photos = [p async for p in client.get_chat_photos("me")]
+        try:
+            if photos:
+                await client.delete_profile_photos([p.file_id for p in photos[1:]])
+                await eor(message, text="Successfully deleted photos")
+            else:
+                await eor(message, text="No profile photos found.")
+        except Exception as e:
+            await eor(message, text=str(e))
 
 # دالة لتحويل الوقت إلى صيغة قراءة الإنسان
 async def _human_time_duration(seconds: int) -> str:
