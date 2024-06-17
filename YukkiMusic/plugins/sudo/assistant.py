@@ -20,7 +20,7 @@ async def set_pfp_prompt(client, message):
     USER_STATES[user_id] = "awaiting_pfp"
     await eor(message, text="Please send the new profile picture now.")
 
-@app.on_message(filters.photo & filters.private & filters.chat(SUDOERS))
+@app.on_message(filters.photo & filters.private & filters.user(SUDOERS))
 async def handle_pfp_reply(client, message):
     user_id = message.from_user.id
     if USER_STATES.get(user_id) == "awaiting_pfp":
@@ -31,8 +31,7 @@ async def handle_pfp_reply(client, message):
         for num in assistants:
             client = await get_client(num)
             try:
-                if message.photo:
-                    await client.set_profile_photo(photo=photo)
+                await client.set_profile_photo(photo=photo)
                 await eor(message, text="Successfully changed profile picture.")
                 success = True
                 os.remove(photo)
@@ -53,7 +52,7 @@ async def set_bio_prompt(client, message):
     USER_STATES[user_id] = "awaiting_bio"
     await eor(message, text="Please send the new bio text now.")
 
-@app.on_message(filters.text & filters.private & filters.chat(SUDOERS))
+@app.on_message(filters.text & filters.private & filters.user(SUDOERS))
 async def handle_bio_reply(client, message):
     user_id = message.from_user.id
     if USER_STATES.get(user_id) == "awaiting_bio":
@@ -83,7 +82,7 @@ async def set_name_prompt(client, message):
     USER_STATES[user_id] = "awaiting_name"
     await eor(message, text="Please send the new name now.")
 
-@app.on_message(filters.text & filters.private & filters.chat(SUDOERS))
+@app.on_message(filters.text & filters.private & filters.user(SUDOERS))
 async def handle_name_reply(client, message):
     user_id = message.from_user.id
     if USER_STATES.get(user_id) == "awaiting_name":
