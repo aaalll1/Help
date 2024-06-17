@@ -11,6 +11,9 @@ from strings.filters import command
 # Your USER client import goes here
 # from YukkiMusic.core.userbot import USER
 
+async def eor(message: Message, text: str):
+    await message.reply_text(text)
+
 @app.on_message(command("setpfp") & SUDOERS)
 async def set_pfp(client, message):
     from YukkiMusic.core.userbot import assistants
@@ -108,7 +111,6 @@ async def delall_pfp(client, message):
                 await eor(message, text="No profile photos found.")
         except Exception as e:
             await eor(message, text=str(e))
-
 
 START_TIME = datetime.utcnow()
 START_TIME_ISO = START_TIME.strftime("%Y-%m-%d")
