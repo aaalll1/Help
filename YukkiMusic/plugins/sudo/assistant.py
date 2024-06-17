@@ -87,26 +87,30 @@ async def set_name_prompt(client, message):
     USER_STATES[user_id] = "awaiting_name"
     await eor(message, text="Please send the new name now.")
 
-@app.on_message(filters.text & filters.private & SUDOERS & filters.user(SUDOERS))
+@app.on_message(filters.text & filters.reply & SUDOERS)
 async def handle_name_reply(client, message):
     user_id = message.from_user.id
     if USER_STATES.get(user_id) == "awaiting_name":
         from YukkiMusic.core.userbot import assistants
 
-        name = message.text
+        name = message.text.strip()
+        if not name:
+            await eor(message.reply_to_message, text="You didn't provide a name.")
+            return
+        
         success = False
         for num in assistants:
             client = await get_client(num)
             try:
                 await client.update_profile(first_name=name)
-                await eor(message, text=f"Name changed to {name} successfully.")
+                await eor(message.reply_to_message, text=f"Name changed to {name} successfully.")
                 success = True
                 break
             except Exception as e:
-                await eor(message, text=str(e))
+                await eor(message.reply_to_message, text=str(e))
         
         if not success:
-            await eor(message, text="Failed to set name.")
+            await eor(message.reply_to_message, text="Failed to set name.")
         
         USER_STATES.pop(user_id, None)
 
