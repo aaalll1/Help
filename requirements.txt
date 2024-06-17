@@ -43,10 +43,8 @@ tgcrypto
 urllib3
 yt-dlp
 youtube_dl
-#youtube-search-python
-#youtube_search
-git+https://github.com/alexmercerind/youtube-search-python@main
-git+https://github.com/joetats/youtube_search@master
+youtube-search-python
+youtube_search
 uuid==1.30
 SafoneAPI
 pybind11>=2.12
