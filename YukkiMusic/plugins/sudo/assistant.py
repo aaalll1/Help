@@ -14,11 +14,11 @@ async def eor(message: Message, text: str):
     await message.reply_text(text)
 
 # أمر تعيين صورة الملف الشخصي
-@app.on_message(command("setpfp") & SUDOERS)
+@app.on_message(command("تعيين صورة النساعد","⦗ تعيين صورة المساعد ⦘") & SUDOERS)
 async def set_pfp_prompt(client, message):
     user_id = message.from_user.id
     USER_STATES[user_id] = "awaiting_pfp"
-    await eor(message, text="Please send the new profile picture now.")
+    await eor(message, text="⦗ عزيزي المطور قم بالرد على هذا الرسالة وارسل الصورة الأن .⦘")
 
 @app.on_message(filters.photo & filters.reply & SUDOERS)
 async def handle_pfp_reply(client, message):
@@ -33,7 +33,7 @@ async def handle_pfp_reply(client, message):
             try:
                 if message.photo:
                     await client.set_profile_photo(photo=photo)
-                await eor(message.reply_to_message, text="Successfully changed profile picture.")
+                await eor(message.reply_to_message, text="⦗ تم تعيين الصورة بنجاح ⦘.")
                 success = True
                 os.remove(photo)
                 break
@@ -42,12 +42,12 @@ async def handle_pfp_reply(client, message):
                 os.remove(photo)
         
         if not success:
-            await eor(message.reply_to_message, text="Failed to set profile picture.")
+            await eor(message.reply_to_message, text="⦗ فشل التغيير ⦘.")
         
         USER_STATES.pop(user_id, None)
 
 # أمر حذف صورة الملف الشخصي الحالية
-@app.on_message(command("delpfp") & SUDOERS & filters.reply)
+@app.on_message(command("⦗ حذف صورة المساعد ⦘","حذف صورة المساعد") & SUDOERS & filters.reply)
 async def del_pfp_prompt(client, message):
     user_id = message.from_user.id
     USER_STATES[user_id] = "awaiting_delpfp"
@@ -66,28 +66,28 @@ async def handle_delpfp_reply(client, message):
                 photos = [p async for p in client.get_chat_photos("me")]
                 if photos:
                     await client.delete_profile_photos(photos[0].file_id)
-                    await eor(message.reply_to_message, text="Successfully deleted profile photo.")
+                    await eor(message.reply_to_message, text="⦗ تم حذف اخر صورة ⦘.")
                     success = True
                     break
                 else:
-                    await eor(message.reply_to_message, text="No profile photos found.")
+                    await eor(message.reply_to_message, text="⦗ لاتوجد اي صورة في الحساب ⦘.")
             except Exception as e:
                 await eor(message.reply_to_message, text=str(e))
         
         if not success:
-            await eor(message.reply_to_message, text="Failed to delete profile photo.")
+            await eor(message.reply_to_message, text="⦗ فشل الحذف ⦘.")
         
         USER_STATES.pop(user_id, None)
 
 
 
-@app.on_message(command("setname") & SUDOERS)
+@app.on_message(command("اسم المساعد") & SUDOERS)
 async def set_name(client, message):
     from YukkiMusic.core.userbot import assistants
 
     user_id = message.from_user.id
     if len(message.command) == 1:
-        await eor(message, text="قم بإرسال النص الجديد لتعيينه كاسم.")
+        await eor(message, text="⦗ قم بالرد على الاسم او اكتب الأمر مع الأسم ⦘.")
         USER_STATES[user_id] = "awaiting_name"
     elif len(message.command) > 1:
         name = message.text.split(None, 1)[1]
@@ -98,7 +98,7 @@ async def set_name(client, message):
                 try:
                     assistant_client = await get_client(num)
                     await assistant_client.update_profile(first_name=name)
-                    await eor(message, text=f"تم تغيير الاسم إلى {name} .")
+                    await eor(message, text=f"⦗ تم تعيين الأسم {name} ⦘ .")
                     success = True
                     break
                 except Exception as e:
@@ -114,7 +114,7 @@ async def set_name(client, message):
         await eor(message, text="قم بإرسال النص الجديد لتعيينه كاسم.")
 
 # أمر حذف الصورة الشخصية
-@app.on_message(command("delpfp") & SUDOERS)
+@app.on_message(command("⦗ مسح صورة المساعد ⦘") & SUDOERS)
 async def del_pfp(client, message):
     from YukkiMusic.core.userbot import assistants
 
@@ -124,15 +124,15 @@ async def del_pfp(client, message):
         try:
             if photos:
                 await client.delete_profile_photos(photos[0].file_id)
-                await eor(message, text="Successfully deleted photo")
+                await eor(message, text="⦗ تم حذف صورة المساعد ⦘")
             else:
-                await eor(message, text="No profile photos found.")
+                await eor(message, text="⦗ لاتوجد صور حاليا ⦘.")
         except Exception as e:
             await eor(message, text=str(e))
 
 
 # أمر حذف جميع الصور الشخصية
-@app.on_message(command("delallpfp") & SUDOERS)
+@app.on_message(command("⦗ حذف كافة صور المساعد ⦘","حذف الصور") & SUDOERS)
 async def delall_pfp(client, message):
     from YukkiMusic.core.userbot import assistants
 
@@ -142,9 +142,9 @@ async def delall_pfp(client, message):
         try:
             if photos:
                 await client.delete_profile_photos([p.file_id for p in photos[1:]])
-                await eor(message, text="Successfully deleted photos")
+                await eor(message, text="⦗ تم حذف كافة الصور ⦘")
             else:
-                await eor(message, text="No profile photos found.")
+                await eor(message, text="⦗ لاتوجد صور حالياً ⦘.")
         except Exception as e:
             await eor(message, text=str(e))
 
