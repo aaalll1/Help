@@ -111,7 +111,7 @@ async def sudoers_list(client, message: Message, _):
             count += 1
         except Exception:
             continue
-        text += f"{count}➤ {user} \n - ايدي المطور {x}\n"
+        text += f"- عزيزي المطور الأساسي \n- هذا انت المالك {count} {user} \n -وهذا هو الايدي الخاص بك : {x}\n ."
     smex = 0
     for user_id in SUDOERS:
         if user_id not in OWNER_ID:
@@ -122,7 +122,7 @@ async def sudoers_list(client, message: Message, _):
                     smex += 1
                     text += _["sudo_6"]
                 count += 1
-                text += f"{count}➤ {user} - {user_id}\n"
+                text += f"- قائمة مطورين البوت {count} {user} \n - هو ايدي المطور  : {user_id}\n"
             except Exception:
                 continue
     
@@ -132,7 +132,7 @@ async def sudoers_list(client, message: Message, _):
 
     # إنشاء زر الدعم
     support_button = InlineKeyboardButton(
-        text="قناة الدعم",
+        text="⦗ قناة التحديثات ⦘",
         url=SUPPORT_CHANNEL
     )
 
