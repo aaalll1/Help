@@ -78,7 +78,7 @@ async def handle_delpfp_reply(client, message):
         
         USER_STATES.pop(user_id, None)
 
-@app.on_message(command("اسم المساعد") & SUDOERS)
+@app.on_message(command("اسم") & SUDOERS)
 async def set_name(client, message):
     from YukkiMusic.core.userbot import assistants
 
