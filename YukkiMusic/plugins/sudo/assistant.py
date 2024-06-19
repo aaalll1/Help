@@ -15,7 +15,7 @@ async def eor(message: Message, text: str):
     await message.reply_text(text)
 
 # أمر تعيين صورة الملف الشخصي
-@app.on_message(command("تعيين صورة المساعد", "⦗ تعيين صورة المساعد ⦘") & SUDOERS)
+@app.on_message(command(["تعيين صورة المساعد", "⦗ تعيين صورة المساعد ⦘"]) & SUDOERS)
 async def set_pfp_prompt(client, message):
     user_id = message.from_user.id
     USER_STATES[user_id] = "awaiting_pfp"
