@@ -3,7 +3,7 @@ from pyrogram.types import Message
 from YukkiMusic import app
 
 # تعريف الأمر /broadcast ودالته
-@app.on_message(filters.command("broadcast") & filters.private)
+@app.on_message(filters.command("brod") & filters.private)
 async def broadcast(client, message):
     await message.reply("أرسل الإذاعة الآن.")
 
