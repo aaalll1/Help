@@ -9,9 +9,8 @@
 #
 
 from pyrogram import filters
-from pyrogram.types import Message
-
-from config import BANNED_USERS, MONGO_DB_URI, OWNER_ID
+from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
+from config import BANNED_USERS, MONGO_DB_URI, OWNER_ID, SUPPORT_CHANNEL
 from strings import get_command
 from YukkiMusic import app
 from YukkiMusic.misc import SUDOERS
@@ -29,7 +28,7 @@ SUDOUSERS_COMMAND = get_command("SUDOUSERS_COMMAND")
 async def useradd(client, message: Message, _):
     if MONGO_DB_URI is None:
         return await message.reply_text(
-            "**Dᴜᴇ ᴛᴏ ʙᴏᴛ's ᴘʀɪᴠᴀᴄʏ ɪssᴜᴇs, Yᴏᴜ ᴄᴀɴ'ᴛ ᴍᴀɴᴀɢᴇ sᴜᴅᴏ ᴜsᴇʀs ᴡʜᴇɴ ʏᴏᴜ'ʀᴇ ᴜsɪɴɢ Yᴜᴋᴋɪ's Dᴀᴛᴀʙᴀsᴇ.\n\n Pʟᴇᴀsᴇ ғɪʟʟ ʏᴏᴜʀ MONGO_DB_URI ɪɴ ʏᴏᴜʀ ᴠᴀʀs ᴛᴏ ᴜsᴇ ᴛʜɪs ғᴇᴀᴛᴜʀᴇ**"
+            "**Due to bot's privacy issues, you can't manage sudo users when you're using Yukki's Database.\n\nPlease fill your MONGO_DB_URI in your vars to use this feature**"
         )
     if not message.reply_to_message:
         if len(message.command) != 2:
@@ -45,7 +44,7 @@ async def useradd(client, message: Message, _):
             SUDOERS.add(user.id)
             await message.reply_text(_["sudo_2"].format(user.mention))
         else:
-            await message.reply_text("ғᴀɪʟᴇᴅ")
+            await message.reply_text("Failed")
         return
     if message.reply_to_message.from_user.id in SUDOERS:
         return await message.reply_text(
@@ -58,7 +57,7 @@ async def useradd(client, message: Message, _):
             _["sudo_2"].format(message.reply_to_message.from_user.mention)
         )
     else:
-        await message.reply_text("ғᴀɪʟᴇᴅ")
+        await message.reply_text("Failed")
     return
 
 
@@ -67,7 +66,7 @@ async def useradd(client, message: Message, _):
 async def userdel(client, message: Message, _):
     if MONGO_DB_URI is None:
         return await message.reply_text(
-            "**Dᴜᴇ ᴛᴏ ʙᴏᴛ's ᴘʀɪᴠᴀᴄʏ ɪssᴜᴇs, Yᴏᴜ ᴄᴀɴ'ᴛ ᴍᴀɴᴀɢᴇ sᴜᴅᴏ ᴜsᴇʀs ᴡʜᴇɴ ʏᴏᴜ'ʀᴇ ᴜsɪɴɢ Yᴜᴋᴋɪ's Dᴀᴛᴀʙᴀsᴇ.\n\n Pʟᴇᴀsᴇ ғɪʟʟ ʏᴏᴜʀ MONGO_DB_URI ɪɴ ʏᴏᴜʀ ᴠᴀʀs ᴛᴏ ᴜsᴇ ᴛʜɪs ғᴇᴀᴛᴜʀᴇ**"
+            "**Due to bot's privacy issues, you can't manage sudo users when you're using Yukki's Database.\n\nPlease fill your MONGO_DB_URI in your vars to use this feature**"
         )
     if not message.reply_to_message:
         if len(message.command) != 2:
@@ -83,7 +82,7 @@ async def userdel(client, message: Message, _):
             SUDOERS.remove(user.id)
             await message.reply_text(_["sudo_4"])
             return
-        await message.reply_text(f"sᴏᴍᴇᴛʜɪɴɢ ᴡʀᴏɴɢ ʜᴀᴘᴘᴇɴᴇᴅ")
+        await message.reply_text(f"Something went wrong")
         return
     user_id = message.reply_to_message.from_user.id
     if user_id not in SUDOERS:
@@ -93,11 +92,8 @@ async def userdel(client, message: Message, _):
         SUDOERS.remove(user_id)
         await message.reply_text(_["sudo_4"])
         return
-    await message.reply_text(f"sᴏᴍᴇᴛʜɪɴɢ ᴡʀᴏɴɢ ʜᴀᴘᴘᴇɴᴇᴅ.")
+    await message.reply_text(f"Something went wrong.")
 
-
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from config import SUPPORT_CHANNEL
 
 @app.on_message(filters.command(SUDOUSERS_COMMAND) & ~BANNED_USERS)
 @language
@@ -109,7 +105,7 @@ async def sudoers_list(client, message: Message, _):
             user = await app.get_users(x)
             user = user.first_name if not user.mention else user.mention
             count += 1
-            text += f"{count}➤ {user}\n"
+            text += f"{count}➤ [{user}](https://t.me/{user.username})\n"
         except Exception:
             continue
 
@@ -123,21 +119,21 @@ async def sudoers_list(client, message: Message, _):
                     smex += 1
                     text += _["sudo_6"]
                 count += 1
-                text += f"{count}➤ {user}\n"
+                text += f"{count}➤ [{user}](https://t.me/{user.username})\n"
             except Exception:
                 continue
 
     if not text.strip():
         text = _["sudo_7"]
 
-    # إنشاء زر الدعم
+    # Creating the support button
     support_button = InlineKeyboardButton(
-        text="قناة الدعم",
+        text="Support Channel",
         url=SUPPORT_CHANNEL
     )
 
-    # إنشاء InlineKeyboardMarkup للزر
+    # Creating InlineKeyboardMarkup for the button
     reply_markup = InlineKeyboardMarkup([[support_button]])
 
-    # إرسال الرسالة مع الزر
-    await message.reply_text(text, reply_markup=reply_markup)
+    # Sending the message with the button and user account links
+    await message.reply_text(text, reply_markup=reply_markup, disable_web_page_preview=True)
