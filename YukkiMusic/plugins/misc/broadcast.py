@@ -1,5 +1,15 @@
+#
+# Copyright (C) 2024-present by TeamYukki@Github, < https://github.com/TeamYukki >.
+#
+# This file is part of < https://github.com/TeamYukki/YukkiMusicBot > project,
+# and is released under the "GNU v3.0 License Agreement".
+# Please see < https://github.com/TeamYukki/YukkiMusicBot/blob/master/LICENSE >
+#
+# All rights reserved.
+#
+
+
 import asyncio
-from datetime import datetime
 
 from pyrogram import filters
 from pyrogram.enums import ChatMembersFilter
@@ -7,7 +17,6 @@ from pyrogram.errors import FloodWait
 
 import config
 from config import adminlist, chatstats, clean, userstats
-from strings import get_command
 from YukkiMusic import app
 from YukkiMusic.utils.database import (
     get_active_chats,
@@ -22,7 +31,6 @@ from YukkiMusic.utils.database import (
 )
 from YukkiMusic.utils.decorators.language import language
 from YukkiMusic.utils.formatters import alpha_to_int
-
 
 IS_BROADCASTING = False
 
@@ -67,113 +75,109 @@ async def broadcast_message(client, message, _):
 
             IS_BROADCASTING = True
 
+    # Bot broadcast inside chats
+    if "-nobot" not in message.text:
+        sent = 0
+        pin = 0
+        chats = []
+        schats = await get_served_chats()
+        for chat in schats:
+            chats.append(int(chat["chat_id"]))
+        for i in chats:
+            if i == config.LOG_GROUP_ID:
+                continue
             try:
-                # Bot broadcast inside chats
-                if "-nobot" not in message.text:
-                    sent = 0
-                    pin = 0
-                    chats = []
-                    schats = await get_served_chats()
-                    for chat in schats:
-                        chats.append(int(chat["chat_id"]))
-                    for i in chats:
-                        if i == config.LOG_GROUP_ID:
-                            continue
-                        try:
-                            m = (
-                                await app.forward_messages(i, y, x)
-                                if message.reply_to_message
-                                else await app.send_message(i, text=query)
-                            )
-                            if "-pin" in message.text:
-                                try:
-                                    await m.pin(disable_notification=True)
-                                    pin += 1
-                                except Exception:
-                                    continue
-                            elif "-pinloud" in message.text:
-                                try:
-                                    await m.pin(disable_notification=False)
-                                    pin += 1
-                                except Exception:
-                                    continue
-                            sent += 1
-                        except FloodWait as e:
-                            flood_time = int(e.value)
-                            if flood_time > 200:
-                                continue
-                            await asyncio.sleep(flood_time)
-                        except Exception:
-                            continue
+                m = (
+                    await app.forward_messages(i, y, x)
+                    if message.reply_to_message
+                    else await app.send_message(i, text=query)
+                )
+                if "-pin" in message.text:
                     try:
-                        await message.reply_text(_["broad_1"].format(sent, pin))
-                    except:
-                        pass
-
-                # Bot broadcasting to users
-                if "-user" in message.text:
-                    susr = 0
-                    served_users = []
-                    susers = await get_served_users()
-                    for user in susers:
-                        served_users.append(int(user["user_id"]))
-                    for i in served_users:
-                        try:
-                            m = (
-                                await app.forward_messages(i, y, x)
-                                if message.reply_to_message
-                                else await app.send_message(i, text=query)
-                            )
-                            susr += 1
-                        except FloodWait as e:
-                            flood_time = int(e.value)
-                            if flood_time > 200:
-                                continue
-                            await asyncio.sleep(flood_time)
-                        except Exception:
-                            pass
+                        await m.pin(disable_notification=True)
+                        pin += 1
+                    except Exception:
+                        continue
+                elif "-pinloud" in message.text:
                     try:
-                        await message.reply_text(_["broad_7"].format(susr))
-                    except:
-                        pass
+                        await m.pin(disable_notification=False)
+                        pin += 1
+                    except Exception:
+                        continue
+                sent += 1
+            except FloodWait as e:
+                flood_time = int(e.value)
+                if flood_time > 200:
+                    continue
+                await asyncio.sleep(flood_time)
+            except Exception:
+                continue
+        try:
+            await message.reply_text(_["broad_1"].format(sent, pin))
+        except:
+            pass
 
-                # Bot broadcasting by assistant
-                if "-assistant" in message.text:
-                    aw = await message.reply_text(_["broad_2"])
-                    text = _["broad_3"]
-                    from YukkiMusic.core.userbot import assistants
+    # Bot broadcasting to users
+    if "-user" in message.text:
+        susr = 0
+        served_users = []
+        susers = await get_served_users()
+        for user in susers:
+            served_users.append(int(user["user_id"]))
+        for i in served_users:
+            try:
+                m = (
+                    await app.forward_messages(i, y, x)
+                    if message.reply_to_message
+                    else await app.send_message(i, text=query)
+                )
+                susr += 1
+            except FloodWait as e:
+                flood_time = int(e.value)
+                if flood_time > 200:
+                    continue
+                await asyncio.sleep(flood_time)
+            except Exception:
+                pass
+        try:
+            await message.reply_text(_["broad_7"].format(susr))
+        except:
+            pass
 
-                    for num in assistants:
-                        sent = 0
-                        client = await get_client(num)
-                        async for dialog in client.get_dialogs():
-                            if dialog.chat.id == config.LOG_GROUP_ID:
-                                continue
-                            try:
-                                (
-                                    await client.forward_messages(dialog.chat.id, y, x)
-                                    if message.reply_to_message
-                                    else await client.send_message(dialog.chat.id, text=query)
-                                )
-                                sent += 1
-                            except FloodWait as e:
-                                flood_time = int(e.value)
-                                if flood_time > 200:
-                                    continue
-                                await asyncio.sleep(flood_time)
-                            except Exception as e:
-                                print(e)
-                                continue
-                        text += _["broad_4"].format(num, sent)
-                    try:
-                        await aw.edit_text(text)
-                    except:
-                        pass
-            finally:
-                IS_BROADCASTING = False
-        finally:
-            # Remove the handler after the broadcast is complete
-            app.remove_handler(handle_broadcast)
+    # Bot broadcasting by assistant
+    if "-assistant" in message.text:
+        aw = await message.reply_text(_["broad_2"])
+        text = _["broad_3"]
+        from YukkiMusic.core.userbot import assistants
+
+        for num in assistants:
+            sent = 0
+            client = await get_client(num)
+            async for dialog in client.get_dialogs():
+                if dialog.chat.id == config.LOG_GROUP_ID:
+                    continue
+                try:
+                    (
+                        await client.forward_messages(dialog.chat.id, y, x)
+                        if message.reply_to_message
+                        else await client.send_message(dialog.chat.id, text=query)
+                    )
+                    sent += 1
+                except FloodWait as e:
+                    flood_time = int(e.value)
+                    if flood_time > 200:
+                        continue
+                    await asyncio.sleep(flood_time)
+                except Exception as e:
+                    print(e)
+                    continue
+            text += _["broad_4"].format(num, sent)
+        try:
+            await aw.edit_text(text)
+        except:
+            pass
+    IS_BROADCASTING = False
+
 
 async def auto_clean():
     while not await asyncio.sleep(10):
@@ -246,3 +250,20 @@ async def auto_clean():
 
 
 asyncio.create_task(auto_clean())
+
+
+__MODULE__ = "Brᴏᴀᴅᴄᴀsᴛ"
+__HELP__ = """🍒 **<u>ʙʀᴏᴀᴅᴄᴀsᴛ ғᴇᴀᴛᴜʀᴇ</u>** [ᴏɴʟʏ ғᴏʀ sᴜᴅᴏᴇʀs] :
+
+/broadcast [ᴍᴇssᴀɢᴇ ᴏʀ ʀᴇᴩʟʏ ᴛᴏ ᴀ ᴍᴇssᴀɢᴇ] » ʙʀᴏᴀᴅᴄᴀsᴛ ᴀ ᴍᴇssᴀɢᴇ ᴛᴏ sᴇʀᴠᴇᴅ ᴄʜᴀᴛs ᴏғ ᴛʜᴇ ʙᴏᴛ.
+
+<u>ʙʀᴏᴀᴅᴄᴀsᴛɪɴɢ ᴍᴏᴅᴇs:</u>
+**-pin** » ᴩɪɴs ʏᴏᴜʀ ʙʀᴏᴀᴅᴄᴀsᴛᴇᴅ ᴍᴇssᴀɢᴇs ɪɴ sᴇʀᴠᴇᴅ ᴄʜᴀᴛs.
+**-pinloud** » ᴩɪɴs ʏᴏᴜʀ ʙʀᴏᴀᴅᴄᴀsᴛᴇᴅ ᴍᴇssᴀɢᴇ ɪɴ sᴇʀᴠᴇᴅ ᴄʜᴀᴛs ᴀɴᴅ sᴇɴᴅ ɴᴏᴛɪғɪᴄᴀᴛɪᴏɴ ᴛᴏ ᴛʜᴇ ᴍᴇᴍʙᴇʀs.
+**-user** » ʙʀᴏᴀᴅᴄᴀsᴛs ᴛʜᴇ ᴍᴇssᴀɢᴇ ᴛᴏ ᴛʜᴇ ᴜsᴇʀs ᴡʜᴏ ʜᴀᴠᴇ sᴛᴀʀᴛᴇᴅ ʏᴏᴜʀ ʙᴏᴛ.
+**-assistant** » ʙʀᴏᴀᴅᴄᴀsᴛ ʏᴏᴜʀ ᴍᴇssᴀɢᴇ ғʀᴏᴍ ᴛʜᴇ ᴀssɪᴛᴀɴᴛ ᴀᴄᴄᴏᴜɴᴛ ᴏғ ᴛʜᴇ ʙᴏᴛ.
+**-nobot** » ғᴏʀᴄᴇs ᴛʜᴇ ʙᴏᴛ ᴛᴏ ɴᴏᴛ ʙʀᴏᴀᴅᴄᴀsᴛ ᴛʜᴇ ᴍᴇssᴀɢᴇ..
+
+**ᴇxᴀᴍᴩʟᴇ:** `/broadcast -user -assistant -pin ᴛᴇsᴛɪɴɢ ʙʀᴏᴀᴅᴄᴀsᴛ`
+
+"""
