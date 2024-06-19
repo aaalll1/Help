@@ -46,7 +46,7 @@ async def handle_pfp_reply(client, message):
         
         USER_STATES.pop(user_id, None)
 
-@app.on_message(command("حذف صورة المساعد", "⦗ حذف صورة المساعد ⦘") & SUDOERS & filters.reply)
+@app.on_message(command(["حذف صورة المساعد", "⦗ حذف صورة المساعد ⦘"]) & SUDOERS & filters.reply)
 async def del_pfp_prompt(client, message):
     user_id = message.from_user.id
     USER_STATES[user_id] = "awaiting_delpfp"
@@ -108,7 +108,7 @@ async def set_name(client, message):
         await eor(message, text="قم بإرسال النص الجديد لتعيينه كاسم.")
 
 # أمر حذف جميع الصور الشخصية
-@app.on_message(command("⦗ حذف كافة صور المساعد ⦘", "حذف الصور") & SUDOERS)
+@app.on_message(command(["⦗ حذف كافة صور المساعد ⦘", "حذف الصور"]) & SUDOERS)
 async def delall_pfp(client, message):
     from YukkiMusic.core.userbot import assistants
 
