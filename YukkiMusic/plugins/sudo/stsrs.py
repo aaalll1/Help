@@ -1,7 +1,7 @@
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from collections import defaultdict
-
+from YukkiMusic import app
 # متغيرات لتخزين الإحصائيات
 stats = defaultdict(int)  # استخدام defaultdict لتخزين العدد بشكل تلقائي
 
