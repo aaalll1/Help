@@ -96,6 +96,9 @@ async def userdel(client, message: Message, _):
     await message.reply_text(f"sᴏᴍᴇᴛʜɪɴɢ ᴡʀᴏɴɢ ʜᴀᴘᴘᴇɴᴇᴅ.")
 
 
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from config import SUPPORT_CHANNEL
+
 @app.on_message(filters.command(SUDOUSERS_COMMAND) & ~BANNED_USERS)
 @language
 async def sudoers_list(client, message: Message, _):
@@ -106,9 +109,10 @@ async def sudoers_list(client, message: Message, _):
             user = await app.get_users(x)
             user = user.first_name if not user.mention else user.mention
             count += 1
+            text += f"{count}➤ {user}\n"
         except Exception:
             continue
-        text += f"{count}➤ {user}\n"
+
     smex = 0
     for user_id in SUDOERS:
         if user_id not in OWNER_ID:
@@ -122,7 +126,18 @@ async def sudoers_list(client, message: Message, _):
                 text += f"{count}➤ {user}\n"
             except Exception:
                 continue
-    if not text:
-        await message.reply_text(_["sudo_7"])
-    else:
-        await message.reply_text(text)
+
+    if not text.strip():
+        text = _["sudo_7"]
+
+    # إنشاء زر الدعم
+    support_button = InlineKeyboardButton(
+        text="قناة الدعم",
+        url=SUPPORT_CHANNEL
+    )
+
+    # إنشاء InlineKeyboardMarkup للزر
+    reply_markup = InlineKeyboardMarkup([[support_button]])
+
+    # إرسال الرسالة مع الزر
+    await message.reply_text(text, reply_markup=reply_markup)
