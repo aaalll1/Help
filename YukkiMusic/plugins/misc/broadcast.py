@@ -7,6 +7,7 @@ from pyrogram.errors import FloodWait
 
 import config
 from config import adminlist, chatstats, clean, userstats
+from strings import get_command
 from YukkiMusic import app
 from YukkiMusic.utils.database import (
     get_active_chats,
@@ -39,6 +40,7 @@ async def broadcast_message(client, message, _):
     # Wait for the actual broadcast message
     @app.on_message(filters.text & filters.user(config.OWNER_ID))
     async def handle_broadcast(client, message):
+        global IS_BROADCASTING
         if not IS_BROADCASTING:
             return
 
