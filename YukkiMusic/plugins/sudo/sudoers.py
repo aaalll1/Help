@@ -105,7 +105,7 @@ async def sudoers_list(client, message: Message, _):
             count += 1
         except Exception:
             continue
-        text += f"- عزيزي المطور الأساسي\n⎯ ⎯ ⎯ ⎯ \n-هذا انت المالك {count} {user}\n-وهذا هو ايديك : {x}\n ."
+        text += f"هذا انت المالك {count} {user}\n-وهذا هو ايديك : {x}\n ."
     smex = 0
     for user_id in SUDOERS:
         if user_id not in OWNER_ID:
