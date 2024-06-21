@@ -1,10 +1,10 @@
 from MukeshAPI import api
 from pyrogram import filters
-
+from strings.filters import command
 from YukkiMusic import app
 
 
-@app.on_message(filters.command("hastag"))
+@app.on_message(command("هاشتاكات"))
 async def hastag(bot, message):
 
     try:
@@ -14,10 +14,10 @@ async def hastag(bot, message):
         hashtags = results.replace(",", "").replace("[", "").replace("]", "")
 
     except IndexError:
-        return await message.reply_text("Example:\n\n/hastag python")
+        return await message.reply_text("- اكتب هاشتاكات واسم هاشتاك برمجي كمثال بايثون")
 
     await message.reply_text(
-        f"ʜᴇʀᴇ ɪs ʏᴏᴜʀ  ʜᴀsᴛᴀɢ :\n<pre>{hashtags}</pre>", quote=True
+        f"- اليك الهاشتاكات :\n<pre>{hashtags}</pre>", quote=True
     )
 
 
