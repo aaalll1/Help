@@ -24,7 +24,7 @@ DELSUDO_COMMAND = get_command("DELSUDO_COMMAND")
 SUDOUSERS_COMMAND = get_command("SUDOUSERS_COMMAND")
 
 
-@app.on_message(command("اضف") & filters.user(OWNER_ID))
+@app.on_message(command("اضف مطور") & filters.user(OWNER_ID))
 @language
 async def useradd(client, message: Message, _):
     if MONGO_DB_URI is None:
@@ -96,7 +96,10 @@ async def userdel(client, message: Message, _):
     await message.reply_text(f"sᴏᴍᴇᴛʜɪɴɢ ᴡʀᴏɴɢ ʜᴀᴘᴘᴇɴᴇᴅ.")
 
 
-@app.on_message(command(["المطورين","⦗ مطورين البوت ⦘"]) & ~BANNED_USERS)
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from config import SUPPORT_CHANNEL 
+
+@app.on_message(command(["المطورين", "⦗ مطورين البوت ⦘"]) & SUDOERS & ~BANNED_USERS)
 @language
 async def sudoers_list(client, message: Message, _):
     text = _["sudo_5"]
@@ -122,7 +125,13 @@ async def sudoers_list(client, message: Message, _):
                 text += f"{count}-› {user} -› `{user_id}`\n"
             except Exception:
                 continue
+
     if not text:
         await message.reply_text(_["sudo_7"])
     else:
-        await message.reply_text(text)
+        buttons = InlineKeyboardMarkup(
+            [
+                [InlineKeyboardButton("⦗ قناة التحديثات ⦘", url=SUPPORT_CHANNEL)]
+            ]
+        )
+        await message.reply_text(text, reply_markup=buttons)
