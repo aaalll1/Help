@@ -7,7 +7,7 @@ from ntgcalls import __version__ as ngtgver
 from pyrogram import __version__ as pyrover
 from pyrogram import filters
 from pyrogram.types import Message
-
+from config import BANNED_USERS
 import config
 from YukkiMusic import app
 from YukkiMusic.core.userbot import assistants
@@ -16,7 +16,7 @@ from YukkiMusic.plugins import ALL_MODULES
 from YukkiMusic.utils.database import get_served_chats, get_served_users, get_queries, get_sudoers
 
 
-@app.on_message(filters.command("stats") & ~filters.user(config.BANNED_USERS))
+@app.on_message(filters.command("stats") & BANNED_USERS))
 async def stats(client, message: Message):
     # Collecting system information
     sc = platform.system()
