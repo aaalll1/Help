@@ -4,7 +4,7 @@ import os.path
 import time
 from inspect import getfullargspec
 from os.path import exists, isdir
-
+from strings.filters import command
 from pyrogram import filters
 from pyrogram.types import Message
 
@@ -15,7 +15,7 @@ from YukkiMusic.utils.error import capture_err
 MAX_MESSAGE_SIZE_LIMIT = 4095
 
 
-@app.on_message(filters.command("ls") & ~filters.forwarded & ~filters.via_bot & SUDOERS)
+@app.on_message(command("ملفات السورس") & ~filters.forwarded & ~filters.via_bot & SUDOERS)
 @capture_err
 async def lst(_, message):
     prefix = message.text.split()[0][0]
@@ -29,7 +29,7 @@ async def lst(_, message):
     if not exists(path):
         await eor(
             message,
-            text=f"There is no such directory or file with the name `{directory}` check again!",
+            text=f"لايوجد `{directory}` بهذا الأسم !",
         )
         return
     if isdir(path):
@@ -37,7 +37,7 @@ async def lst(_, message):
             msg = "Folders and Files in `{}` :\n\n".format(path)
             lists = os.listdir(path)
         else:
-            msg = "Folders and Files in Current Directory :\n\n"
+            msg = "⦗ اليك ملفات السورس ⦘ :\n\n"
             lists = os.listdir(path)
         files = ""
         folders = ""
@@ -122,17 +122,17 @@ async def lst(_, message):
         await eor(message, text=msg)
 
 
-@app.on_message(filters.command("rm") & ~filters.forwarded & ~filters.via_bot & SUDOERS)
+@app.on_message(command("حذف ملف") & ~filters.forwarded & ~filters.via_bot & SUDOERS)
 @capture_err
 async def rm_file(client, message):
     if len(message.command) < 2:
-        return await eor(message, text="Please provide a file name to delete.")
+        return await eor(message, text="⦗ ارسل اسم الملف لحذفة ⦘.")
     file = message.text.split(" ", 1)[1]
     if exists(file):
         os.remove(file)
-        await eor(message, text=f"{file} has been deleted.")
+        await eor(message, text=f"{file} تم حذفة بنجاح .")
     else:
-        await eor(message, text=f"{file} doesn't exist!")
+        await eor(message, text=f"{file} ماكو ملف بهيج اسم !")
 
 
 async def eor(msg: Message, **kwargs):
