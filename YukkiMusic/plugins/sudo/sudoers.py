@@ -10,15 +10,21 @@
 
 from pyrogram import filters
 from pyrogram.types import Message
-from strings.filters import command
+
 from config import BANNED_USERS, MONGO_DB_URI, OWNER_ID
+from strings import get_command
 from YukkiMusic import app
 from YukkiMusic.misc import SUDOERS
 from YukkiMusic.utils.database import add_sudo, remove_sudo
 from YukkiMusic.utils.decorators.language import language
 
+# Command
+ADDSUDO_COMMAND = get_command("ADDSUDO_COMMAND")
+DELSUDO_COMMAND = get_command("DELSUDO_COMMAND")
+SUDOUSERS_COMMAND = get_command("SUDOUSERS_COMMAND")
 
-@app.on_message(command("اضف مطور") & filters.user(OWNER_ID))
+
+@app.on_message(filters.command(ADDSUDO_COMMAND) & filters.user(OWNER_ID))
 @language
 async def useradd(client, message: Message, _):
     if MONGO_DB_URI is None:
@@ -56,7 +62,7 @@ async def useradd(client, message: Message, _):
     return
 
 
-@app.on_message(command("حذف مطور") & filters.user(OWNER_ID))
+@app.on_message(filters.command(DELSUDO_COMMAND) & filters.user(OWNER_ID))
 @language
 async def userdel(client, message: Message, _):
     if MONGO_DB_URI is None:
@@ -90,10 +96,7 @@ async def userdel(client, message: Message, _):
     await message.reply_text(f"sᴏᴍᴇᴛʜɪɴɢ ᴡʀᴏɴɢ ʜᴀᴘᴘᴇɴᴇᴅ.")
 
 
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from config import SUPPORT_CHANNEL
-
-@app.on_message(command("المطورين") & SUDOERS & ~BANNED_USERS)
+@app.on_message(filters.command(SUDOUSERS_COMMAND) & ~BANNED_USERS)
 @language
 async def sudoers_list(client, message: Message, _):
     text = _["sudo_5"]
@@ -105,7 +108,7 @@ async def sudoers_list(client, message: Message, _):
             count += 1
         except Exception:
             continue
-        text += f"{count}➤ {user} - `{x}`\n"
+        text += f"{count}➤ {user}\n"
     smex = 0
     for user_id in SUDOERS:
         if user_id not in OWNER_ID:
@@ -116,21 +119,10 @@ async def sudoers_list(client, message: Message, _):
                     smex += 1
                     text += _["sudo_6"]
                 count += 1
-                text += f"{count}➤ {user} - `{user_id}`\n"
+                text += f"{count}➤ {user}\n"
             except Exception:
                 continue
-   
-    if not text.strip():
-        text = _["sudo_7"]
-
-    # إنشاء زر الدعم
-    support_button = InlineKeyboardButton(
-        text="⦗ قناة التحديثات ⦘",
-        url=SUPPORT_CHANNEL
-    )
-
-    # إنشاء InlineKeyboardMarkup للزر
-    reply_markup = InlineKeyboardMarkup([[support_button]])
-
-    # إرسال الرسالة مع الزر
-    await message.reply_text(text, reply_markup=reply_markup)
+    if not text:
+        await message.reply_text(_["sudo_7"])
+    else:
+        await message.reply_text(text)
