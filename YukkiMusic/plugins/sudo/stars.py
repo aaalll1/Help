@@ -15,6 +15,9 @@ from YukkiMusic.misc import SUDOERS
 from YukkiMusic.plugins import ALL_MODULES
 from YukkiMusic.utils.database import get_served_chats, get_served_users, get_active_chats, get_queries
 
+# تعريف start_time عند تشغيل البوت
+app.start_time = datetime.now()
+
 def is_owner(user_id):
     return user_id == config.OWNER_ID
 
@@ -42,11 +45,9 @@ async def stats(client, message: Message):
     play_duration = config.DURATION_LIMIT_MIN
     auto_leaving = "Yes" if config.AUTO_LEAVING_ASSISTANT else "No"
 
-   
     uptime_seconds = round((datetime.now() - app.start_time).total_seconds())
     uptime = str(timedelta(seconds=uptime_seconds))
 
-    
     SUPPORT_CHANNEL = config.SUPPORT_CHANNEL  
 
     keyboard = InlineKeyboardMarkup(
