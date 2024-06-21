@@ -71,7 +71,7 @@ async def stats(client, message: Message):
 **Software Versions:**
 - Python Version: {pyver.split()[0]}
 - Pyrogram Version: {pyrover}
-- Py-TgCalls Version: {pytgver}
+- Py-TgCalls Version: {ngtgver}
 - N-TgCalls Version: {ngtgver}
 """
 
