@@ -13,11 +13,17 @@ from YukkiMusic import app
 from YukkiMusic.core.userbot import assistants
 from YukkiMusic.misc import SUDOERS
 from YukkiMusic.plugins import ALL_MODULES
-from YukkiMusic.utils.database import get_served_chats, get_served_users, get_active_users, get_active_chats, get_sudoers
+from YukkiMusic.utils.database import get_served_chats, get_served_users, get_active_users, get_sudoers
 
 # Function to check if user is the owner
 def is_owner(user_id):
     return user_id == config.OWNER_ID
+
+# Function to get active chats
+async def get_active_chats():
+    # Logic to fetch active chats from database or wherever applicable
+    active_chats = []  # Replace with your logic to fetch active chats
+    return active_chats
 
 @app.on_message(command(["احصائيات البوت", "⦗ احصائيات البوت ⦘"]) & filters.user(config.OWNER_ID))
 async def stats(client, message: Message):
