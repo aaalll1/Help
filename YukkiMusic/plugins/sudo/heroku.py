@@ -327,7 +327,7 @@ async def updater_(client, message, _):
     for checks in repo.iter_commits(f"HEAD..origin/{config.UPSTREAM_BRANCH}"):
         verification = str(checks.count())
     if verification == "":
-        return await response.edit("» ʙᴏᴛ ɪs ᴜᴘ-ᴛᴏ-ᴅᴀᴛᴇ.")
+        return await response.edit("⦗ عزيزي المطور السورس محدث أحدث إصدار ⦘ .")
     ordinal = lambda format: "%d%s" % (
         format,
         "tsnrhtdd"[(format // 10 % 10 != 1) * (format % 10 < 4) * format % 10 :: 4],
@@ -353,7 +353,7 @@ async def updater_(client, message, _):
             try:
                 await app.send_message(
                     chat_id=int(x),
-                    text="{0} ɪs ᴜᴘᴅᴀᴛᴇᴅ ʜᴇʀsᴇʟғ\n\nʏᴏᴜ ᴄᴀɴ sᴛᴀʀᴛ ᴩʟᴀʏɪɴɢ ᴀɢᴀɪɴ ᴀғᴛᴇʀ 15-20 sᴇᴄᴏɴᴅs.".format(
+                    text="{0} \n- تم اعادة تشغيل البوت .".format(
                         app.mention
                     ),
                 )
@@ -362,7 +362,7 @@ async def updater_(client, message, _):
             except:
                 pass
         await response.edit(
-            f"{nrs.text}\n\n» ʙᴏᴛ ᴜᴩᴅᴀᴛᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ ! ɴᴏᴡ ᴡᴀɪᴛ ғᴏʀ ғᴇᴡ ᴍɪɴᴜᴛᴇs ᴜɴᴛɪʟ ᴛʜᴇ ʙᴏᴛ ʀᴇsᴛᴀʀᴛs"
+            f"{nrs.text}\n⦗ سيتم تشغيل البوت بعد دقائق  ⦘"
         )
     except:
         pass
@@ -371,15 +371,15 @@ async def updater_(client, message, _):
     exit()
 
 
-@app.on_message(filters.command(["restart"]) & SUDOERS)
+@app.on_message(command(["اعادة تشغيل", "⦗ اعادة تشغيل ⦘"]) & SUDOERS)
 async def restart_(_, message):
-    response = await message.reply_text("ʀᴇsᴛᴀʀᴛɪɴɢ...")
+    response = await message.reply_text("⦗ جاري اعادة التشغيل ⦘")
     ac_chats = await get_active_chats()
     for x in ac_chats:
         try:
             await app.send_message(
                 chat_id=int(x),
-                text=f"{app.mention} ɪs ʀᴇsᴛᴀʀᴛɪɴɢ...\n\nʏᴏᴜ ᴄᴀɴ sᴛᴀʀᴛ ᴩʟᴀʏɪɴɢ ᴀɢᴀɪɴ ᴀғᴛᴇʀ 15-20 sᴇᴄᴏɴᴅs.",
+                text=f"{app.mention} \n- تم اعادة التشغيل بنجاح .",
             )
             await remove_active_chat(x)
             await remove_active_video_chat(x)
@@ -393,7 +393,7 @@ async def restart_(_, message):
     except:
         pass
     await response.edit_text(
-        "» ʀᴇsᴛᴀʀᴛ ᴘʀᴏᴄᴇss sᴛᴀʀᴛᴇᴅ, ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ ғᴏʀ ғᴇᴡ sᴇᴄᴏɴᴅs ᴜɴᴛɪʟ ᴛʜᴇ ʙᴏᴛ sᴛᴀʀᴛs..."
+        "⦗ اعادة التشغيل جاريٍ انتضر قليلاً ... ⦘"
     )
     os.system(f"kill -9 {os.getpid()} && python3 -m YukkiMusic")
 
