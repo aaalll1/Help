@@ -16,7 +16,7 @@ from YukkiMusic.plugins import ALL_MODULES
 from YukkiMusic.utils.database import get_served_chats, get_served_users, get_queries, get_sudoers
 
 
-@app.on_message(filters.command("stats") & BANNED_USERS))
+@app.on_message(filters.command("stats") & BANNED_USERS)
 async def stats(client, message: Message):
     # Collecting system information
     sc = platform.system()
