@@ -253,7 +253,7 @@ async def update_(client, message, _):
         "tsnrhtdd"[(format // 10 % 10 != 1) * (format % 10 < 4) * format % 10 :: 4],
     )
     updates = "".join(
-        f"<b>-› #{info.count()}: <a href={REPO_}/commit/{info}>{info.summary}</a> ʙʏ -> {info.author}</b>\n\t\t\t\t<b>-› بتاريخ :</b> {ordinal(int(datetime.fromtimestamp(info.committed_date).strftime('%d')))} {datetime.fromtimestamp(info.committed_date).strftime('%b')}, {datetime.fromtimestamp(info.committed_date).strftime('%Y')}\n\n"
+        f"<b>-› #{info.count()}: <a href={REPO_}/commit/{info}>{info.summary}</a> بواسطة -> {info.author}</b>\n\t\t\t\t<b>-› بتاريخ :</b> {ordinal(int(datetime.fromtimestamp(info.committed_date).strftime('%d')))} {datetime.fromtimestamp(info.committed_date).strftime('%b')}, {datetime.fromtimestamp(info.committed_date).strftime('%Y')}\n\n"
         for info in repo.iter_commits(f"HEAD..origin/{config.UPSTREAM_BRANCH}")
     )
     _update_response_ = "<b>⦗ عزيزي المطور تم الحصول على تحديثات جديدة  ⦘ </b>\n -› سيتم رفع التحديثات الجديدة على السورس\n\n<b><u>الأضافات :</u></b>\n\n"
