@@ -21,11 +21,11 @@ async def stats(client, message: Message):
     sc = platform.system()
     p_core = psutil.cpu_count(logical=False)
     t_core = psutil.cpu_count(logical=True)
-    ram = str(round(psutil.virtual_memory().total / (1024.0 ** 3))) + " GB"
+    ram = f"{round(psutil.virtual_memory().total / (1024.0 ** 3), 2)} GB"
     hdd = psutil.disk_usage("/")
-    total = str.round(hdd.total / (1024.0 ** 3), 2) + " GB"
-    used = str.round(hdd.used / (1024.0 ** 3), 2) + " GB"
-    free = str.round(hdd.free / (1024.0 ** 3), 2) + " GB"
+    total = f"{round(hdd.total / (1024.0 ** 3), 2)} GB"
+    used = f"{round(hdd.used / (1024.0 ** 3), 2)} GB"
+    free = f"{round(hdd.free / (1024.0 ** 3), 2)} GB"
     
     # Collecting bot statistics
     served_chats = len(await get_served_chats())
