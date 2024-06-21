@@ -15,7 +15,7 @@ from YukkiMusic.utils.error import capture_err
 MAX_MESSAGE_SIZE_LIMIT = 4095
 
 
-@app.on_message(command("ملفات السورس") & ~filters.forwarded & ~filters.via_bot & SUDOERS)
+@app.on_message(command("الملفات") & ~filters.forwarded & ~filters.via_bot & SUDOERS)
 @capture_err
 async def lst(_, message):
     prefix = message.text.split()[0][0]
@@ -126,7 +126,7 @@ async def lst(_, message):
 @capture_err
 async def rm_file(client, message):
     if len(message.command) < 2:
-        return await eor(message, text="⦗ ارسل اسم الملف لحذفة ⦘.")
+        return await eor(message, text="⦗ ارسل الأمر مع اسم الملف لحذفة ⦘ .")
     file = message.text.split(" ", 1)[1]
     if exists(file):
         os.remove(file)
