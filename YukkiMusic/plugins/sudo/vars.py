@@ -18,7 +18,7 @@ from YukkiMusic.misc import SUDOERS
 from YukkiMusic.utils.database.memorydatabase import get_video_limit
 from YukkiMusic.utils.formatters import convert_bytes
 
-@app.on_message(command("⦗ فاراتي ⦘","فاراتي"]) & SUDOERS)
+@app.on_message(command(["⦗ فاراتي ⦘", "فاراتي"]) & SUDOERS)
 async def varsFunc(client, message):
     mystic = await message.reply_text("⦗ سيتم جلب الفارات الأن ⦘")
     v_limit = await get_video_limit()
