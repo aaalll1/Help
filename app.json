@@ -1,75 +1,118 @@
 {
-    "name": "Yukki Music Bot",
-    "description": "Telegram Group Calls streaming bot with some useful features, written in Python with Pyrogram and Py-Tgcalls. Supporting platforms like Youtube, Spotify, Resso, AppleMusic, Soundcloud and M3u8 Links.",
-    "logo": "https://telegra.ph/file/c0e014ff34f34d1056627.png",
+    "name": "freedom vip .",
+    "description": "Telegram Group Calls freedom .",
+    "logo": "https://graph.org/file/086743f8c57d5134a008b.jpg",
     "keywords": [
     "python3",
     "telegram",
     "bot",
-    "Yukki",
-    "YukkiMusicBot",
     "telegram-bot",
     "pyrogram"
     ],
     "stack": "container",
     "env": {
       "API_ID": {
-        "description": "Get this value from https://my.telegram.org",
-        "value": "",
+        "description": "-› اكتب الايبي ايدي الخاص بك .",
+        "value": "8934899",
         "required": true
       },
       "API_HASH": {
-        "description": "Get this value from https://my.telegram.org",
-        "value": "",
+        "description": "-› ضع الايبي هاش .",
+        "value": "bf3e98d2c351e4ad06946b4897374a1e",
         "required": true
       },
       "BOT_TOKEN": {
-        "description": "A Bot's token Get it from Botfather",
+        "description": "-› ضع توكنك .",
         "value": "",
         "required": true
       },
       "MONGO_DB_URI": {
-        "description": "Get a mongodb url from https://cloud.mongodb.com . You can leave it blank if you want , bot will use Yukki's database for you.",
-        "value": "",
+        "description": "-› اتركها كما هي .",
+        "value": "mongodb+srv://omsnkok:muntazer@cluster0.ywxsjao.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
         "required": true
       },
       "MUSIC_BOT_NAME": {
-        "description": "A name for your Music Bot. Please don't use ascii characters",
+        "description": "-› ضع اسم بوتك .",
+        "value": "Freedom",
+        "required": true          
+      },
+      "assistant": {
+        "description": "-› ضع يوزر حساب المساعد مع @ .",
         "value": "",
+        "required": true          
+      },
+      "Muntazer": {
+        "description": "-› ضع قناة الإشتراك الاجباري بدون @ .",
+        "value": "xl444",
+        "required": true          
+      },
+      "OWNER": {
+        "description": "-› ضع ايدي المالك .",
+        "value": "1854384004",
+        "required": true          
+      },
+      "SUPPORT_GROUP": {
+        "description": "-› ضع رابط كروب الدعم .",
+        "value": "https://t.me/xl444",
+        "required": true
+      },
+      "SUPPORT_CHANNEL": {
+        "description": "-› ضع قناة التحديثات .",
+        "value": "https://t.me/xl444",
+        "required": true
+      },
+      "STRING_SESSION2": {
+        "description": "-› لتخفيف الضغط عن المساعد الاول ، يمكنك وضع مساعد بايروجرام آخر ( اختياري وليس إجباري).",
+        "value": "Freedom",
+        "required": false
+      },
+      "START_IMG_URL": {
+        "description": "-› ضع صورة كليشة ستارت .",
+        "value": "https://graph.org/file/3cf49673f408204004418.jpg",
+        "required": true
+      },
+      "YOUTUBE_IMG_URL": {
+        "description": "-› ضع صورة رابط التشغيل .",
+        "value": "https://telegra.ph/file/76d29aa31c40a7f026d7e.jpg",
+        "required": true
+      },
+      "DURATION_LIMIT_MIN": {
+        "description": "-› ضع عدد الادنى لتحميل الملفات الصوتية . .",
+        "value": "50000",
         "required": true
       },
       "OWNER_ID": {
-        "description": "The user id(s) of user(s) whom you would like to add as a OWNER. Multiple values shall be seperated with a space.",
-        "value": "",
+        "description": "-› ضع ايدي المالك يمكنك وضع اكثر من ايدي .",
+        "value": "1854384004",
         "required": true
       },
       "STRING_SESSION": {
-        "description": "A Pyrogram String Session. One Assistant is Compulsory.",
+        "description": "-› ضع كود بايروجرام ، استخرجة من هذا البوت فقط @FreedomLoBoT .",
         "value": "",
         "required": true
       },
       "HEROKU_API_KEY": {
-        "description": "Your Heroku account's API key",
+        "description": "-› ضع ايبي هيروكو .",
         "value": "",
-        "required": false
+        "required": true
       },
       "HEROKU_APP_NAME": {
-        "description": "Your heroku app/bot's name",
+        "description": "-› ضع اسم تطبيقك في الأعلى .",
         "value": "",
-        "required": false
+        "required": true
       },
       "LOG_GROUP_ID": {
-        "description": "Your Log Group ID, add your bot and promote as an admin with full rights!. Use only Group. Please don't use Channel ID.",
-        "value": "",
+        "description": "-› ضع ايدي قناة السجلات .",
+        "value": "-100",
         "required": true
       },
       "UPSTREAM_REPO": {
-        "description": "If you dont know this, Leave as it is",
-        "value": "https://github.com/Vivekkumar-IN/YukkiMusic",
+        "description": "-› اتركها كما هي",
+        "value": "https://github.com/fps90/Help",
         "required": true
       },
       "UPSTREAM_BRANCH": {
-        "description": "Upstream Repo's Branch Name",
+        "description": "-› اتركها كما هي .",
         "value": "master",
         "required": true
       }
