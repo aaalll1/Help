@@ -38,7 +38,7 @@
       },
       "assistant": {
         "description": "-› ضع يوزر حساب المساعد مع @ .",
-        "value": "",
+        "value": "@",
         "required": true          
       },
       "Muntazer": {
@@ -62,8 +62,8 @@
         "required": true
       },
       "STRING_SESSION2": {
-        "description": "-› لتخفيف الضغط عن المساعد الاول ، يمكنك وضع مساعد بايروجرام آخر ( اختياري وليس إجباري).",
-        "value": "Freedom",
+        "description": "-› لتخفيف الضغط عن المساعد الاول ، يمكنك وضع مساعد بايروجرام آخر ( اختياري وليس إجباري ).",
+        "value": "",
         "required": false
       },
       "START_IMG_URL": {
