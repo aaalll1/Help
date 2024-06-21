@@ -3,17 +3,17 @@ import re
 from pymongo import MongoClient
 from pyrogram import filters
 from pyrogram.types import Message
-
+from strings.filters import command
 from YukkiMusic import app
 
 mongo_url_pattern = re.compile(r"mongodb(?:\+srv)?:\/\/[^\s]+")
 
 
-@app.on_message(filters.command("mongochk"))
+@app.on_message(command("مونجو"))
 async def mongo_command(client, message: Message):
     if len(message.command) < 2:
         await message.reply(
-            "ᴘʟᴇᴀsᴇ ᴇɴᴛᴇʀ ʏᴏᴜʀ ᴍᴏɴɢᴏᴅʙ ᴜʀʟ ᴀғᴛᴇʀ ᴛʜᴇ ᴄᴏᴍᴍᴀɴᴅ  `/mongochk your_mongodb_url`"
+            "- اكتب الأمر مونجو وضع رابط المونجو ."
         )
         return
 
@@ -23,8 +23,8 @@ async def mongo_command(client, message: Message):
             # Attempt to connect to the MongoDB instance
             client = MongoClient(mongo_url, serverSelectionTimeoutMS=5000)
             client.server_info()  # Will cause an exception if connection fails
-            await message.reply("ᴍᴏɴɢᴏᴅʙ ᴜʀʟ ɪs ᴠᴀʟɪᴅ ᴀɴᴅ ᴄᴏɴɴᴇᴄᴛɪᴏɴ sᴜᴄᴇssғᴜʟ ✅")
+            await message.reply("- تم إضافة المونجو الجديد بنجاح ✅")
         except Exception as e:
-            await message.reply(f"ғᴀɪʟᴇᴅ ᴛᴏ ᴄᴏɴɴᴇᴄᴛ ᴍᴏɴɢᴏᴅʙ: {e}")
+            await message.reply(f"حدث خطا : {e}")
     else:
-        await message.reply("ᴜᴘs! ʏᴏᴜʀ ᴍᴏɴɢᴏᴅʙ ғᴏʀᴍᴀᴛ ɪs ɪɴᴠᴀʟɪᴅ")
+        await message.reply("- حدث خطا .")
