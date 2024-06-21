@@ -169,7 +169,7 @@ async def set_var(client, message, _):
         os.system(f"kill -9 {os.getpid()} && python3 -m YukkiMusic")
 
 
-@app.on_message(command["الداينو", "⦗ الداينو ⦘"]) & SUDOERS)
+@app.on_message(command(["الداينو", "⦗ الداينو ⦘"]) & SUDOERS)
 @language
 async def usage_dynos(client, message, _):
     ### Credits CatUserbot
