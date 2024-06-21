@@ -40,19 +40,19 @@ async def varsFunc(client, message):
     if not config.GITHUB_REPO:
         git = "No"
     else:
-        git = f"[Repo]({config.GITHUB_REPO})"
+        git = f"[السورس]({config.GITHUB_REPO})"
     if not config.START_IMG_URL:
         start = "No"
     else:
-        start = f"[Image]({config.START_IMG_URL})"
+        start = f"[صورة]({config.START_IMG_URL})"
     if not config.SUPPORT_CHANNEL:
         s_c = "No"
     else:
-        s_c = f"[Channel]({config.SUPPORT_CHANNEL})"
+        s_c = f"[القناة]({config.SUPPORT_CHANNEL})"
     if not config.SUPPORT_GROUP:
         s_g = "No"
     else:
-        s_g = f"[Group]({config.SUPPORT_GROUP})"
+        s_g = f"[التحديثات]({config.SUPPORT_GROUP})"
     if not config.GIT_TOKEN:
         token = "No"
     else:
@@ -90,11 +90,11 @@ async def varsFunc(client, message):
 ⎯ ⎯ ⎯ ⎯
 -› قناة التحديثات : ** {s_g}**
 -› صورة كليشة ستارت : ** {start}**
--› رابط صورة تشغيل الصوت : **[Image]({telegram_audio_url})**
+-› رابط صورة تشغيل الصوت : **[صورة]({telegram_audio_url})**
 ⎯ ⎯ ⎯ ⎯
--› رابط صورة تشغيل الفيديو : **[Image]({telegram_video_url})**
--› قناة الأشتراك الاجباري : **{muntazer}**
--› حساب المساعد : **{assistant}**
+-› رابط صورة تشغيل الفيديو : **[صورة]({telegram_video_url})**
+-› قناة الأشتراك الاجباري : **@{muntazer}**
+-› حساب المساعد : **@{assistant}**
     """
     await asyncio.sleep(1)
 
