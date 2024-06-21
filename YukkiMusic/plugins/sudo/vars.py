@@ -18,7 +18,7 @@ from YukkiMusic.misc import SUDOERS
 from YukkiMusic.utils.database.memorydatabase import get_video_limit
 from YukkiMusic.utils.formatters import convert_bytes
 
-@app.on_message(filters.command("⦗ فاراتي ⦘","فاراتي"]) & SUDOERS)
+@app.on_message(command("⦗ فاراتي ⦘","فاراتي"]) & SUDOERS)
 async def varsFunc(client, message):
     mystic = await message.reply_text("⦗ سيتم جلب الفارات الأن ⦘")
     v_limit = await get_video_limit()
@@ -68,6 +68,12 @@ async def varsFunc(client, message):
     owner_id = " ,".join(owners)
     tg_aud = convert_bytes(config.TG_AUDIO_FILESIZE_LIMIT)
     tg_vid = convert_bytes(config.TG_VIDEO_FILESIZE_LIMIT)
+    
+    telegram_audio_url = config.TELEGRAM_AUDIO_URL
+    telegram_video_url = config.TELEGRAM_VIDEO_URL
+    muntazer = config.Muntazer
+    assistant = config.assistant
+
     text = f"""**⦗ عزيزي المطور هذا هي فارات تنصيبك ⦘**\n⎯ ⎯ ⎯ ⎯
 -› اسم بوتك : **{bot_name}**
 -› الحد الأدنى للتشغيل : **{play_duration} دقيقة**
@@ -78,15 +84,20 @@ async def varsFunc(client, message):
 -› توكن السورس :** {token}**
 ⎯ ⎯ ⎯ ⎯
 -› مغادرة المساعد : **{ass}**
--› وقت كل مغادرة : **{auto_leave} seconds**
+-› وقت كل مغادرة : **{auto_leave} ثانية**
 -› نوع البوت : **{pvt}**
 ⎯ ⎯ ⎯ ⎯
 -› تحميل الأدنى للصوت :** {tg_aud}**
 -› تحميل الأدنى للفيديوهات :** {tg_vid}**
-⎯ ⎯ ⎯ ⎯
 -› قناة السورس : **{s_c}**
+⎯ ⎯ ⎯ ⎯
 -› قناة التحديثات : ** {s_g}**
 -› صورة كليشة ستارت : ** {start}**
+-› رابط صورة تشغيل الصوت : **[Image]({telegram_audio_url})**
+⎯ ⎯ ⎯ ⎯
+-› رابط صورة تشغيل الفيديو : **[Image]({telegram_video_url})**
+-› قناة الأشتراك الاجباري : **{muntazer}**
+-› حساب المساعد : **{assistant}**
     """
     await asyncio.sleep(1)
 
