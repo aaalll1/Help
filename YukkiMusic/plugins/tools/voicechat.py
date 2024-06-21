@@ -12,7 +12,10 @@ from pyrogram.raw.functions.phone import (
     GetGroupParticipants,
 )
 from pyrogram.types import Message
-
+from pyrogram import Client, filters
+from pyrogram.types import Message
+from pyrogram.errors import ChatAdminRequired, BadRequest
+import logging
 from YukkiMusic import app
 from YukkiMusic.utils.database import get_assistant
 
@@ -73,27 +76,31 @@ async def endvc(client, message: Message):
 @app.on_message(filters.command("vclink"))
 async def vclink(client, message: Message):
     userbot = await get_assistant(message.chat.id)
-    hell = await message.reply_text("Getting Voice Chat link...")
+    hell = await message.reply_text("جارٍ الحصول على رابط المكالمة الصوتية...")
 
     try:
-        full_chat: base.messages.ChatFull = await userbot.invoke(
-            GetFullChannel(channel=(await userbot.resolve_peer(message.chat.id)))
-        )
-
-        invite: base.phone.ExportedGroupCallInvite = await userbot.invoke(
-            ExportGroupCallInvite(call=full_chat.full_chat.call)
-        )
-        await hell.edit_text(f"Voice Chat Link: {invite.link}")
+        # Resolve the chat information
+        chat_id = await userbot.resolve_peer(message.chat.id)
+        
+        # Export the chat invite link (works for both groups and channels)
+        invite = await userbot.export_chat_invite_link(chat_id)
+        
+        # Edit the message to show the invite link
+        await hell.edit_text(f"رابط المكالمة الصوتية: {invite}")
+    
     except ChatAdminRequired:
         await hell.edit_text(
-            "Give me Manage vc power To My Assistant instead to use this Command"
+            "يجب منح البوت صلاحية إدارة المكالمات الصوتية لاستخدام هذا الأمر."
         )
-    except Exception as e:
-        if "'NoneType' object has no attribute 'write'" in str(e):
-            await hell.edit_text("vc is  off baby")
+    except BadRequest as e:
+        if e.MESSAGE == "Not enough rights to access this feature":
+            await hell.edit_text("يجب منح البوت صلاحية الوصول إلى الميزة.")
         else:
             logging.exception(e)
-            await hell.edit_text(e)
+            await hell.edit_text(f"خطأ: {e}")
+    except Exception as e:
+        logging.exception(e)
+        await hell.edit_text(f"خطأ غير معروف: {e}")
 
 
 @app.on_message(filters.command("vcmembers"))
