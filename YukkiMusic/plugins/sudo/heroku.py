@@ -7,7 +7,7 @@
 #
 # All rights reserved.
 #
-
+from strings.filters import command
 import asyncio
 import math
 import os
