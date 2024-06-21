@@ -7,7 +7,6 @@ from ntgcalls import __version__ as ngtgver
 from pyrogram import __version__ as pyrover
 from pyrogram import filters
 from pyrogram.types import Message
-from config import BANNED_USERS
 import config
 from YukkiMusic import app
 from YukkiMusic.core.userbot import assistants
@@ -16,7 +15,7 @@ from YukkiMusic.plugins import ALL_MODULES
 from YukkiMusic.utils.database import get_served_chats, get_served_users, get_queries, get_sudoers
 
 
-@app.on_message(filters.command("stats") & BANNED_USERS)
+@app.on_message(filters.command("stats"))
 async def stats(client, message: Message):
     # Collecting system information
     sc = platform.system()
@@ -24,9 +23,9 @@ async def stats(client, message: Message):
     t_core = psutil.cpu_count(logical=True)
     ram = str(round(psutil.virtual_memory().total / (1024.0 ** 3))) + " GB"
     hdd = psutil.disk_usage("/")
-    total = str(round(hdd.total / (1024.0 ** 3), 2)) + " GB"
-    used = str(round(hdd.used / (1024.0 ** 3), 2)) + " GB"
-    free = str(round(hdd.free / (1024.0 ** 3), 2)) + " GB"
+    total = str.round(hdd.total / (1024.0 ** 3), 2) + " GB"
+    used = str.round(hdd.used / (1024.0 ** 3), 2) + " GB"
+    free = str.round(hdd.free / (1024.0 ** 3), 2) + " GB"
     
     # Collecting bot statistics
     served_chats = len(await get_served_chats())
@@ -38,7 +37,6 @@ async def stats(client, message: Message):
     assistant_count = len(assistants)
     playlist_limit = config.SERVER_PLAYLIST_LIMIT
     fetch_playlist = config.PLAYLIST_FETCH_LIMIT
-    song_duration = config.SONG_DOWNLOAD_DURATION
     play_duration = config.DURATION_LIMIT_MIN
     auto_leaving = "Yes" if config.AUTO_LEAVING_ASSISTANT else "No"
 
@@ -67,7 +65,6 @@ async def stats(client, message: Message):
 **Bot Settings:**
 - Playlist Limit: {playlist_limit}
 - Fetch Playlist Limit: {fetch_playlist}
-- Song Download Duration Limit: {song_duration} mins
 - Play Duration Limit: {play_duration} mins
 - Auto Leaving Assistant: {auto_leaving}
 
