@@ -54,11 +54,11 @@ async def init():
             if hasattr(imported_module, "__HELP__") and imported_module.__HELP__:
                 HELPABLE[imported_module.__MODULE__.lower()] = imported_module
 
-    LOGGER("YukkiMusic.plugins").info("Successfully Imported Modules ")
+    LOGGER("YukkiMusic.plugins").info("تم تحميل ملفات فولدر . ")
     await userbot.start()
     await Yukki.start()
     await Yukki.decorators()
-    LOGGER("YukkiMusic").info("Yukki Music Bot Started Successfully")
+    LOGGER("YukkiMusic").info("بدء تشغيل البوت .")
     await idle()
     if len(argv) not in (1, 3, 4):
         await telethn.disconnect()
@@ -69,4 +69,4 @@ async def init():
 if __name__ == "__main__":
     telethn.start(bot_token=config.BOT_TOKEN)
     asyncio.get_event_loop_policy().get_event_loop().run_until_complete(init())
-    LOGGER("YukkiMusic").info("Stopping Yukki Music Bot! GoodBye")
+    LOGGER("YukkiMusic").info("باي")
