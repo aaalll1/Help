@@ -42,7 +42,7 @@ def dirr():
     if workdir in listdir():
         shutil.rmtree(workdir)
         mkdir(workdir)
-    logging.info("Directories Updated.")
+    logging.info("جاري تشغيل البيانات .")
 
 
 if __name__ == "__main__":
