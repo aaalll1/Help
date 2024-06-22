@@ -1,7 +1,7 @@
 from YukkiMusic import app
 from pyrogram import Client, filters
 from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
-from config import SUPPORT_GROUP, SUPPORT_CHANNEL, OWNER, START_IMG_URL, assistant
+from config import SUPPORT_GROUP, SUPPORT_CHANNEL, OWNER, START_IMG_URL, assistant, Muntazer
 
 # المتغيرات
 served_users = set()
@@ -149,13 +149,28 @@ async def commands_set(_, query: CallbackQuery):
 
 @app.on_callback_query(filters.regex("user_command"))
 async def user_commands_set(_, query: CallbackQuery):
-    await query.answer("تم فتح اوامر التشغيل")
+    await query.answer("- تم فتح اوامر التشغيل .")
     await query.edit_message_text(
-        f"""هذا هي أوامر التشغيل
-شغل 
-تشغيل 
+        f"""-› تم فتح اوامر التشغيل ♡゙  .
+– – – – – –
 
-""",
+-› شغل - لتشغيل ملفات صوتية في القناة 
+-› مباشر - لتشغيل رابط بث مبارة مباشر 
+-› يوت -  تحميل ملف صوت من اليوتيوب 
+-› تحميل - يمكنك تحميل فيديو من اليوتيوب
+-› ايقاف - إيقاف تشغيل الملف الصوتي نهائيا
+-› تخطي - تخطي اغنية من قوائم التشغيل 
+-› تكرار - وعدد الرقم حتى يتم تكرارة
+-› تقديم - وعدد الثواني لتقديم الصوت المشغل
+-› كتم الصوت - كتم صوت حساب المساعد 
+-› الغاء الكتم - رفع كتم صوت حساب المساعد
+-› مزج - مزج قائمة الانتضار وتشغيل عشوائي
+-› مؤقتا -  ايقاف الملف الصوتي المشغل مؤقتا 
+-› استمرار - استمرار تشغيل الملف الصوتي 
+-› انضم - دعوة المساعد الى مجموعة التشغيل
+-› غادر - لمغادرة المساعد من مجموعة التشغيل
+
+× للمزيد تابع قناة التحديثات : @{Muntazer} .""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
