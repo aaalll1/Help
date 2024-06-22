@@ -24,7 +24,7 @@ DELSUDO_COMMAND = get_command("DELSUDO_COMMAND")
 SUDOUSERS_COMMAND = get_command("SUDOUSERS_COMMAND")
 
 
-@app.on_message(command("اضف مطور") & filters.user(OWNER_ID))
+@app.on_message(command("اضف") & filters.user(OWNER_ID))
 @language
 async def useradd(client, message: Message, _):
     if MONGO_DB_URI is None:
