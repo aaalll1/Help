@@ -41,32 +41,32 @@ class YukkiBot(Client):
         try:
             await self.send_message(
                 config.LOG_GROUP_ID,
-                text=f"<u><b>{self.mention} ʙᴏᴛ sᴛᴀʀᴛᴇᴅ :</b><u>\n\nɪᴅ : <code>{self.id}</code>\nɴᴀᴍᴇ : {self.name}\nᴜsᴇʀɴᴀᴍᴇ : @{self.username}",
+                text=f"<u><b>{self.mention}\n - تم بدء تشغيل البوت :</b><u>\n- ايدي البوت : <code>{self.id}</code>\n- الأسم : {self.name}\n- يوزر البوت : @{self.username}",
             )
         except:
             LOGGER(__name__).error(
-                "Bot has failed to access the log Group. Make sure that you have added your bot to your log channel and promoted as admin!"
+                "- ارفع حساب المساعد مشرف وافتح اتصال ."
             )
             sys.exit()
         if config.SET_CMDS:
             try:
                 await self.set_bot_commands(
                     [
-                        BotCommand("start", "start the bot"),
-                        BotCommand("ping", "ᴄʜᴇᴄᴋ ʙᴏᴛ ɪs ᴀʟɪᴠᴇ ᴏʀ ᴅᴇᴀᴅ"),
-                        BotCommand("play", "sᴛᴀʀᴛ ᴘʟᴀʏɪɴɢ ʀᴇǫᴜᴇᴛᴇᴅ sᴏɴɢ"),
-                        BotCommand("skip", "ᴍᴏᴠᴇ ᴛᴏ ɴᴇxᴛ ᴛʀᴀᴄᴋ ɪɴ ǫᴜᴇᴜᴇ"),
-                        BotCommand("pause", "ᴘʟᴀᴜsᴇ ᴛʜᴇ ᴄᴜʀʀᴇɴᴛ ᴘʟᴀʏɪɴɢ sᴏɴɢ"),
-                        BotCommand("resume", "ʀᴇsᴜᴍᴇ ᴛʜᴇ ᴘᴀᴜsᴇᴅ sᴏɴɢ"),
-                        BotCommand("end", "ᴄʟᴇᴀʀ ᴛʜᴇ ǫᴜᴇᴜᴇ ᴀᴍᴅ ʟᴇᴀᴠᴇ ᴠᴏɪᴄᴇᴄʜᴀᴛ"),
-                        BotCommand("shuffle", "Rᴀɴᴅᴏᴍʟʏ sʜᴜғғʟᴇs ᴛʜᴇ ǫᴜᴇᴜᴇᴅ ᴘʟᴀʏʟɪsᴛ."),
+                        BotCommand("تشغيل", "تشغيل ملف في المجموعة"),
+                        BotCommand("بنك", "عرض بنك البوت"),
+                        BotCommand("سكب", "تخطي ملف صوتي"),
+                        BotCommand("ايقاف", "ايقاف ملف صوتي"),
+                        BotCommand("مؤقتا", "لايقاف التشغيل مؤقتا"),
+                        BotCommand("استمرار", "استمرار تشغيل المتوقفة مؤقتا"),
+                        BotCommand("انضم", "انضمام حساب المساعد الى المجموعة"),
+                        BotCommand("غادر", "مغادرة حساب المساعد من المجموعة"),
                         BotCommand(
-                            "playmode",
-                            "Aʟʟᴏᴡs ʏᴏᴜ ᴛᴏ ᴄʜᴀɴɢᴇ ᴛʜᴇ ᴅᴇғᴀᴜʟᴛ ᴘʟᴀʏᴍᴏᴅᴇ ғᴏʀ ʏᴏᴜʀ ᴄʜᴀᴛ",
+                            "مطور السورس",
+                            "لعرض مطور سورس البوت .",
                         ),
                         BotCommand(
-                            "settings",
-                            "Oᴘᴇɴ ᴛʜᴇ sᴇᴛᴛɪɴɢs ᴏғ ᴛʜᴇ ᴍᴜsɪᴄ ʙᴏᴛ ғᴏʀ ʏᴏᴜʀ ᴄʜᴀᴛ.",
+                            "الاوامر",
+                            "لعرض اوامر البوت في المجموعة .",
                         ),
                     ]
                 )
