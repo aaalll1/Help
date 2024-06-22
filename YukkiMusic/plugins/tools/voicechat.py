@@ -73,36 +73,6 @@ async def endvc(client, message: Message):
             await hell.edit_text(e)
 
 
-@app.on_message(filters.command("vclink"))
-async def vclink(client, message: Message):
-    userbot = await get_assistant(message.chat.id)
-    hell = await message.reply_text("جارٍ الحصول على رابط المكالمة الصوتية...")
-
-    try:
-        # Resolve the chat information
-        chat_id = await userbot.resolve_peer(message.chat.id)
-        
-        # Export the chat invite link (works for both groups and channels)
-        invite = await userbot.export_chat_invite_link(chat_id)
-        
-        # Edit the message to show the invite link
-        await hell.edit_text(f"رابط المكالمة الصوتية: {invite}")
-    
-    except ChatAdminRequired:
-        await hell.edit_text(
-            "يجب منح البوت صلاحية إدارة المكالمات الصوتية لاستخدام هذا الأمر."
-        )
-    except BadRequest as e:
-        if e.MESSAGE == "Not enough rights to access this feature":
-            await hell.edit_text("يجب منح البوت صلاحية الوصول إلى الميزة.")
-        else:
-            logging.exception(e)
-            await hell.edit_text(f"خطأ: {e}")
-    except Exception as e:
-        logging.exception(e)
-        await hell.edit_text(f"خطأ غير معروف: {e}")
-
-
 @app.on_message(filters.command("vcmembers"))
 async def vcmembers(client, message: Message):
     userbot = await get_assistant(message.chat.id)
