@@ -51,7 +51,7 @@ def dbb():
     global clonedb
     db = {}
     clonedb = {}
-    LOGGER(__name__).info(f"Database Initialized.")
+    LOGGER(__name__).info(f"تم رفع قاعدة البيانات .")
 
 
 def sudo():
@@ -76,7 +76,7 @@ def sudo():
         if sudoers:
             for x in sudoers:
                 SUDOERS.add(x)
-    LOGGER(__name__).info(f"Sudoers Loaded.")
+    LOGGER(__name__).info(f"تم تحميل قائمة المطورين .")
 
 
 def heroku():
@@ -86,8 +86,8 @@ def heroku():
             try:
                 Heroku = heroku3.from_key(config.HEROKU_API_KEY)
                 HAPP = Heroku.app(config.HEROKU_APP_NAME)
-                LOGGER(__name__).info(f"Heroku App Configured")
+                LOGGER(__name__).info(f"تم انشاء الأيبي بنجاح")
             except BaseException:
                 LOGGER(__name__).warning(
-                    f"Please make sure your Heroku API Key and Your App name are configured correctly in the heroku."
+                    f"ايبي هيروكو خطأ ."
                 )
