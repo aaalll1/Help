@@ -117,7 +117,7 @@ async def commands_set(_, query: CallbackQuery):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⦗ أوامر الأدمن ⦘", callback_data="developer_commands"),
+                    InlineKeyboardButton("⦗ أوامر المشرفين ⦘", callback_data="developer_commands"),
                 ],
                 [
                     InlineKeyboardButton("⦗ الرجوع ⦘", callback_data="command_list"),
@@ -153,7 +153,6 @@ async def user_commands_set(_, query: CallbackQuery):
     await query.edit_message_text(
         f"""-› تم فتح اوامر التشغيل ♡゙  .
 – – – – – –
-
 -› شغل - لتشغيل ملفات صوتية في القناة 
 -› مباشر - لتشغيل رابط بث مبارة مباشر 
 -› يوت -  تحميل ملف صوت من اليوتيوب 
@@ -162,14 +161,7 @@ async def user_commands_set(_, query: CallbackQuery):
 -› تخطي - تخطي اغنية من قوائم التشغيل 
 -› تكرار - وعدد الرقم حتى يتم تكرارة
 -› تقديم - وعدد الثواني لتقديم الصوت المشغل
--› كتم الصوت - كتم صوت حساب المساعد 
--› الغاء الكتم - رفع كتم صوت حساب المساعد
--› مزج - مزج قائمة الانتضار وتشغيل عشوائي
--› مؤقتا -  ايقاف الملف الصوتي المشغل مؤقتا 
--› استمرار - استمرار تشغيل الملف الصوتي 
--› انضم - دعوة المساعد الى مجموعة التشغيل
--› غادر - لمغادرة المساعد من مجموعة التشغيل
-
+– – – – – –
 × للمزيد تابع قناة التحديثات : @{Muntazer} .""",
         reply_markup=InlineKeyboardMarkup(
             [
@@ -182,13 +174,19 @@ async def user_commands_set(_, query: CallbackQuery):
 
 @app.on_callback_query(filters.regex("developer_commands"))
 async def developer_commands_set(_, query: CallbackQuery):
-    await query.answer("تم فتح اوامر الأدمن")
+    await query.answer("- تم فتح اوامر المشرفين .")
     await query.edit_message_text(
-        f"""هذه هيه اوامر المالك
-        
-        
-منضر اوامر المالك
-
+        f"""-› تم فتح اوامر المشرفين ♡゙  .
+– – – – – –
+-› كتم الصوت - كتم صوت حساب المساعد 
+-› الغاء الكتم - رفع كتم صوت حساب المساعد
+-› مزج - مزج قائمة الانتضار وتشغيل عشوائي
+-› مؤقتا -  ايقاف الملف الصوتي المشغل مؤقتا 
+-› استمرار - استمرار تشغيل الملف الصوتي 
+-› انضم - دعوة المساعد الى مجموعة التشغيل
+-› غادر - لمغادرة المساعد من مجموعة التشغيل
+– – – – – –
+× للمزيد تابع قناة التحديثات : @{Muntazer} .
 """,
         reply_markup=InlineKeyboardMarkup(
             [
