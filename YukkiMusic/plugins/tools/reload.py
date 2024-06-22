@@ -15,7 +15,7 @@ from YukkiMusic.utils.decorators import ActualAdminCB, AdminActual, language
 from YukkiMusic.utils.formatters import alpha_to_int
 
 
-@app.on_message(command(["التحديث", "اوقف", "أدمن", "حدث"]) & filters.group & ~BANNED_USERS)
+@app.on_message(command(["التحديث", "اوقف", "أدمن", "حدث"]) & ~BANNED_USERS)
 @language
 async def reload_admin_cache(client, message: Message, _):
     try:
