@@ -2,6 +2,7 @@ from pyrogram import filters
 from pyrogram.errors import ChatAdminRequired, InviteRequestSent, UserAlreadyParticipant
 from strings.filters import command
 from YukkiMusic import app
+from YukkiMusic.misc import SUDOERS
 from YukkiMusic.utils.database import get_assistant
 from pyrogram.types import Message 
 
@@ -44,7 +45,7 @@ async def invite_assistant(client, message):
         await message.reply_text(f"-› حدث خطأ .: {e}")
         
 
-@app.on_message(command(["برا","اطلع","غادر"]))
+@app.on_message(command(["برا","اطلع","غادر"]) & SUDOERS)
 async def leave_group(client, message):
     try:
         # Get the music bot assistant
