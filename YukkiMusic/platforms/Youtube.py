@@ -251,30 +251,70 @@ class YouTubeAPI:
         def audio_dl():
             ydl_optssx = {
                 "format": "bestaudio/best",
-                "outtmpl": "downloads/%(id)s.%(ext)s",
-                "geo_bypass": True,
-                "nocheckcertificate": True,
+                "quiet": True,
+                "outtmpl": f"{config.DOWNLOAD_DIR}/{title}.%(ext)s",
+                "noplaylist": True,
                 "username": self.email,
                 "password": self.password,
             }
             with YoutubeDL(ydl_optssx) as ydl:
                 ydl.download([link])
-            return ydl
 
         def video_dl():
-            ydl_optszx = {
-                "format": "best",
-                "outtmpl": "downloads/%(id)s.%(ext)s",
-                "geo_bypass": True,
-                "nocheckcertificate": True,
+            ydl_optssx = {
+                "format": format_id,
+                "quiet": True,
+                "outtmpl": f"{config.DOWNLOAD_DIR}/{title}.%(ext)s",
+                "noplaylist": True,
                 "username": self.email,
                 "password": self.password,
             }
-            with YoutubeDL(ydl_optszx) as ydl:
+            with YoutubeDL(ydl_optssx) as ydl:
                 ydl.download([link])
-            return ydl
 
-        if video:
-            return await loop.run_in_executor(None, video_dl)
+        if songaudio:
+            await loop.run_in_executor(None, audio_dl)
+        elif songvideo:
+            await loop.run_in_executor(None, video_dl)
+        elif video:
+            await loop.run_in_executor(None, video_dl)
         else:
-            return await loop.run_in_executor(None, audio_dl)
+            await loop.run_in_executor(None, audio_dl)
+
+        return f"{config.DOWNLOAD_DIR}/{title}.%(ext)s"
+
+    async def yt_dlp_audio(self, link: str, title: Union[bool, str] = None):
+        loop = asyncio.get_running_loop()
+
+        def audio_dl():
+            ydl_optssx = {
+                "format": "bestaudio/best",
+                "quiet": True,
+                "outtmpl": f"{config.DOWNLOAD_DIR}/{title}.%(ext)s",
+                "noplaylist": True,
+                "username": self.email,
+                "password": self.password,
+            }
+            with YoutubeDL(ydl_optssx) as ydl:
+                ydl.download([link])
+
+        await loop.run_in_executor(None, audio_dl)
+        return f"{config.DOWNLOAD_DIR}/{title}.%(ext)s"
+
+    async def yt_dlp_video(self, link: str, title: Union[bool, str] = None):
+        loop = asyncio.get_running_loop()
+
+        def video_dl():
+            ydl_optssx = {
+                "format": "bestvideo+bestaudio/best",
+                "quiet": True,
+                "outtmpl": f"{config.DOWNLOAD_DIR}/{title}.%(ext)s",
+                "noplaylist": True,
+                "username": self.email,
+                "password": self.password,
+            }
+            with YoutubeDL(ydl_optssx) as ydl:
+                ydl.download([link])
+
+        await loop.run_in_executor(None, video_dl)
+        return f"{config.DOWNLOAD_DIR}/{title}.%(ext)s"
