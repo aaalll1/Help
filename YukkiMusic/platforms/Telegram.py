@@ -111,7 +111,7 @@ class TeleAPI:
                     [
                         [
                             InlineKeyboardButton(
-                                text="🚦 ᴄᴀɴᴄᴇʟ ᴅᴏᴡɴʟᴏᴀᴅɪɴɢ",
+                                text="- الغاء التحميل .",
                                 callback_data="stop_downloading",
                             ),
                         ]
@@ -125,19 +125,11 @@ class TeleAPI:
                     downloader[message.id] = eta
                     eta = get_readable_time(eta)
                     if not eta:
-                        eta = "0 sec"
+                        eta = "0 ثانية"
                     total_size = convert_bytes(total)
                     completed_size = convert_bytes(current)
                     speed = convert_bytes(speed)
-                    text = f"""
-**{app.mention} ᴛᴇʟᴇɢʀᴀᴍ ᴍᴇᴅɪᴀ ᴅᴏᴡɴʟᴏᴀᴅᴇʀ**
-
-**ᴛᴏᴛᴀʟ ғɪʟᴇ sɪᴢᴇ:** {total_size}
-**ᴄᴏᴍᴘʟᴇᴛᴇᴅ:** {completed_size} 
-**ᴘᴇʀᴄᴇɴᴛᴀɢᴇ:** {percentage[:5]}%
-
-**sᴘᴇᴇᴅ:** {speed}/s
-**ᴇʟᴘᴀsᴇᴅ ᴛɪᴍᴇ:** {eta}"""
+                    text = f"""- جاري التحميل ."""
                     try:
                         await mystic.edit_text(text, reply_markup=upl)
                     except:
@@ -156,7 +148,7 @@ class TeleAPI:
                     progress=progress,
                 )
                 await mystic.edit_text(
-                    "sᴜᴄᴄᴇssғᴜʟʟʏ ᴅᴏᴡɴʟᴏᴀᴅᴇᴅ...\n ᴘʀᴏᴄᴇssɪɴɢ ғɪʟᴇ ɴᴏᴡ"
+                    "- تم التحميل ."
                 )
                 downloader.pop(message.id)
             except:
