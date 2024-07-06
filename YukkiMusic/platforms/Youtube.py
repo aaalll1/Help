@@ -21,18 +21,13 @@ async def shell_cmd(cmd):
     )
     out, errorz = await proc.communicate()
     if errorz:
-        error_msg = errorz.decode("utf-8")
-        if "failed to fetch track details" in error_msg.lower():
-            # Restart the bot
-            await restart_bot()
-        return error_msg
+        if "unavailable videos are hidden" in (errorz.decode("utf-8")).lower():
+            return out.decode("utf-8")
+        else:
+            return errorz.decode("utf-8")
     return out.decode("utf-8")
 
-async def restart_bot():
-    # Restart the bot logic here
-    # Example: You might use `os.execv` to restart the script
-    os.execv(sys.executable, ['python'] + sys.argv)
-    
+
 class YouTubeAPI:
     def __init__(self):
         self.base = "https://www.youtube.com/watch?v="
@@ -129,17 +124,12 @@ class YouTubeAPI:
             "yt-dlp",
             "-g",
             "-f",
-            "best",
+            "best[height<=?720][width<=?1280]",
             f"{link}",
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )
         stdout, stderr = await proc.communicate()
-        if stderr:
-            error_msg = stderr.decode()
-            if "failed to fetch track details" in error_msg.lower():
-                # Restart the bot
-                await restart_bot()
         if stdout:
             return 1, stdout.decode().split("\n")[0]
         else:
@@ -189,7 +179,7 @@ class YouTubeAPI:
         if "&" in link:
             link = link.split("&")[0]
         ytdl_opts = {"quiet": True}
-        ydl = YoutubeDL(ytdl_opts)
+        ydl = yt_dlp.YoutubeDL(ytdl_opts)
         with ydl:
             formats_available = []
             r = ydl.extract_info(link, download=False)
@@ -261,7 +251,7 @@ class YouTubeAPI:
                 "quiet": True,
                 "no_warnings": True,
             }
-            x = YoutubeDL(ydl_optssx)
+            x = yt_dlp.YoutubeDL(ydl_optssx)
             info = x.extract_info(link, False)
             xyz = os.path.join("downloads", f"{info['id']}.{info['ext']}")
             if os.path.exists(xyz):
@@ -271,14 +261,14 @@ class YouTubeAPI:
 
         def video_dl():
             ydl_optssx = {
-                "format": "bestvideo+bestaudio",
+                "format": "(bestvideo[height<=?720][width<=?1280][ext=mp4])+(bestaudio[ext=m4a])",
                 "outtmpl": "downloads/%(id)s.%(ext)s",
                 "geo_bypass": True,
                 "nocheckcertificate": True,
                 "quiet": True,
                 "no_warnings": True,
             }
-            x = YoutubeDL(ydl_optssx)
+            x = yt_dlp.YoutubeDL(ydl_optssx)
             info = x.extract_info(link, False)
             xyz = os.path.join("downloads", f"{info['id']}.{info['ext']}")
             if os.path.exists(xyz):
@@ -299,7 +289,7 @@ class YouTubeAPI:
                 "prefer_ffmpeg": True,
                 "merge_output_format": "mp4",
             }
-            x = YoutubeDL(ydl_optssx)
+            x = yt_dlp.YoutubeDL(ydl_optssx)
             x.download([link])
 
         def song_audio_dl():
@@ -320,7 +310,7 @@ class YouTubeAPI:
                     }
                 ],
             }
-            x = YoutubeDL(ydl_optssx)
+            x = yt_dlp.YoutubeDL(ydl_optssx)
             x.download([link])
 
         if songvideo:
@@ -332,7 +322,7 @@ class YouTubeAPI:
             fpath = f"downloads/{title}.mp3"
             return fpath
         elif video:
-            if await is_on_off(config.YTDOWNLOADER):
+            if await is_on_off(1):
                 direct = True
                 downloaded_file = await loop.run_in_executor(None, video_dl)
             else:
@@ -340,17 +330,12 @@ class YouTubeAPI:
                     "yt-dlp",
                     "-g",
                     "-f",
-                    "best",
+                    "best[height<=?720][width<=?1280]",
                     f"{link}",
                     stdout=asyncio.subprocess.PIPE,
                     stderr=asyncio.subprocess.PIPE,
                 )
                 stdout, stderr = await proc.communicate()
-                if stderr:
-                    error_msg = stderr.decode()
-                    if "failed to fetch track details" in error_msg.lower():
-                        # Restart the bot
-                        await restart_bot()
                 if stdout:
                     downloaded_file = stdout.decode().split("\n")[0]
                     direct = None
@@ -359,4 +344,4 @@ class YouTubeAPI:
         else:
             direct = True
             downloaded_file = await loop.run_in_executor(None, audio_dl)
-        return downloaded_file, direct
+        return downloaded_file, direct       
