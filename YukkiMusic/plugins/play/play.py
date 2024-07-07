@@ -102,7 +102,8 @@ async def play_commnd(
     url,
     fplay,
 ):
-    if not await check_is_joined(message):
+        # التحقق من اشتراك المستخدم في القناة المطلوبة
+    await must_join_channel(client, message)
         return
     mystic = await message.reply_text(
         _["play_2"].format(channel) if channel else _["play_1"]
