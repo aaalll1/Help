@@ -373,14 +373,13 @@ async def updater_(client, message, _):
 import asyncio
 import os
 import shutil
-from config import LOG_GROUP_ID  # استيراد LOG_GROUP_ID من ملف config
+from config import LOG_GROUP_ID 
 
-# وظيفة لإعادة التشغيل
 async def restart_app():
     try:
         await app.send_message(
             chat_id=LOG_GROUP_ID,
-            text=f"{app.mention} \n- تم اعادة التشغيل بنجاح .",  # إرسال رسالة إلى المجموعة المحددة
+            text=f"- {app.mention} \n- ستتم اعادة التشغيل بنجاح .",
         )
     except:
         pass
@@ -392,12 +391,11 @@ async def restart_app():
     except:
         pass
 
-    os.system(f"kill -9 {os.getpid()} && python3 -m YukkiMusic")  # إعادة تشغيل التطبيق
+    os.system(f"kill -9 {os.getpid()} && python3 -m YukkiMusic")  
 
-# مؤقت لإعادة التشغيل كل ساعتين
 async def restart_timer():
     while True:
-        await asyncio.sleep(2 * 60 * 60)  # الانتظار لمدة ساعتين
+        await asyncio.sleep(2 * 60 * 60) 
         await restart_app()
 
 @app.on_message(command(["اعادة تشغيل", "⦗ اعادة تشغيل ⦘"]) & SUDOERS)
@@ -408,6 +406,5 @@ async def manual_restart(_, message):
         "⦗ اعادة التشغيل جاريٍ انتضر قليلاً ... ⦘"
     )
 
-# بدء مؤقت إعادة التشغيل عند تشغيل التطبيق
 loop = asyncio.get_event_loop()
 loop.create_task(restart_timer())
