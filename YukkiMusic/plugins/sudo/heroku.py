@@ -370,24 +370,20 @@ async def updater_(client, message, _):
     os.system(f"kill -9 {os.getpid()} && python3 -m YukkiMusic")
     exit()
 
-
 import asyncio
 import os
 import shutil
+from config import LOG_GROUP_ID  # استيراد LOG_GROUP_ID من ملف config
 
 # وظيفة لإعادة التشغيل
 async def restart_app():
-    ac_chats = await get_active_chats()
-    for x in ac_chats:
-        try:
-            await app.send_message(
-                chat_id=int(x),
-                text=f"{app.mention} \n- تم اعادة التشغيل بنجاح .",
-            )
-            await remove_active_chat(x)
-            await remove_active_video_chat(x)
-        except:
-            pass
+    try:
+        await app.send_message(
+            chat_id=LOG_GROUP_ID,
+            text=f"{app.mention} \n- تم اعادة التشغيل بنجاح .",  # إرسال رسالة إلى المجموعة المحددة
+        )
+    except:
+        pass
 
     try:
         shutil.rmtree("downloads")
@@ -396,7 +392,7 @@ async def restart_app():
     except:
         pass
 
-    os.system(f"kill -9 {os.getpid()} && python3 -m YukkiMusic")
+    os.system(f"kill -9 {os.getpid()} && python3 -m YukkiMusic")  # إعادة تشغيل التطبيق
 
 # مؤقت لإعادة التشغيل كل ساعتين
 async def restart_timer():
