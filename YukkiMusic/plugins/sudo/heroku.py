@@ -371,9 +371,12 @@ async def updater_(client, message, _):
     exit()
 
 
-@app.on_message(command(["اعادة تشغيل", "⦗ اعادة تشغيل ⦘"]) & SUDOERS)
-async def restart_(_, message):
-    response = await message.reply_text("⦗ جاري اعادة التشغيل ⦘")
+import asyncio
+import os
+import shutil
+
+# وظيفة لإعادة التشغيل
+async def restart_app():
     ac_chats = await get_active_chats()
     for x in ac_chats:
         try:
@@ -392,7 +395,23 @@ async def restart_(_, message):
         shutil.rmtree("cache")
     except:
         pass
+
+    os.system(f"kill -9 {os.getpid()} && python3 -m YukkiMusic")
+
+# مؤقت لإعادة التشغيل كل ساعتين
+async def restart_timer():
+    while True:
+        await asyncio.sleep(2 * 60 * 60)  # الانتظار لمدة ساعتين
+        await restart_app()
+
+@app.on_message(command(["اعادة تشغيل", "⦗ اعادة تشغيل ⦘"]) & SUDOERS)
+async def manual_restart(_, message):
+    response = await message.reply_text("⦗ جاري اعادة التشغيل ⦘")
+    await restart_app()
     await response.edit_text(
         "⦗ اعادة التشغيل جاريٍ انتضر قليلاً ... ⦘"
     )
-    os.system(f"kill -9 {os.getpid()} && python3 -m YukkiMusic")
+
+# بدء مؤقت إعادة التشغيل عند تشغيل التطبيق
+loop = asyncio.get_event_loop()
+loop.create_task(restart_timer())
