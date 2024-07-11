@@ -373,7 +373,8 @@ async def updater_(client, message, _):
 import asyncio
 import os
 import shutil
-from config import LOG_GROUP_ID  
+from config import LOG_GROUP_ID
+from pyrogram import filters  
 
 async def restart_app():
     try:
@@ -391,12 +392,11 @@ async def restart_app():
     except:
         pass
 
-    os.system(f"kill -9 {os.getpid()} && python3 -m YukkiMusic")  # إعادة تشغيل التطبيق
+    os.system(f"kill -9 {os.getpid()} && python3 -m YukkiMusic")  
 
-@app.on_message(filters.text)
+@app.on_message(filters.text & filters.regex(r"انتظر لمدة 1 دقيقة وبعدها شغل الي يعجبك ."))
 async def check_message(_, message):
-    if "انتظر لمدة 1 دقيقة وبعدها شغل الي يعجبك ." in message.text:
-        await restart_app()
+    await restart_app()
 
 @app.on_message(command(["اعادة تشغيل", "⦗ اعادة تشغيل ⦘"]) & SUDOERS)
 async def manual_restart(_, message):
