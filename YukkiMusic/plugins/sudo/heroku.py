@@ -373,13 +373,13 @@ async def updater_(client, message, _):
 import asyncio
 import os
 import shutil
-from config import LOG_GROUP_ID 
+from config import LOG_GROUP_ID  
 
 async def restart_app():
     try:
         await app.send_message(
             chat_id=LOG_GROUP_ID,
-            text=f"- {app.mention} \n- ستتم اعادة التشغيل بنجاح .",
+            text=f"{app.mention} \n- تم اعادة التشغيل بنجاح .",
         )
     except:
         pass
@@ -391,11 +391,11 @@ async def restart_app():
     except:
         pass
 
-    os.system(f"kill -9 {os.getpid()} && python3 -m YukkiMusic")  
+    os.system(f"kill -9 {os.getpid()} && python3 -m YukkiMusic")  # إعادة تشغيل التطبيق
 
-async def restart_timer():
-    while True:
-        await asyncio.sleep(2 * 60 * 60) 
+@app.on_message(filters.text)
+async def check_message(_, message):
+    if "انتظر لمدة 1 دقيقة وبعدها شغل الي يعجبك ." in message.text:
         await restart_app()
 
 @app.on_message(command(["اعادة تشغيل", "⦗ اعادة تشغيل ⦘"]) & SUDOERS)
@@ -405,6 +405,3 @@ async def manual_restart(_, message):
     await response.edit_text(
         "⦗ اعادة التشغيل جاريٍ انتضر قليلاً ... ⦘"
     )
-
-loop = asyncio.get_event_loop()
-loop.create_task(restart_timer())
