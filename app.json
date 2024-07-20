@@ -73,7 +73,7 @@
       },
       "YOUTUBE_IMG_URL": {
         "description": "-› ضع صورة رابط التشغيل .",
-        "value": "https://telegra.ph/file/7645d1e04021323c21db9.jpg",
+        "value": "https://graph.org/file/086743f8c57d5134a008b.jpg",
         "required": true
       },
       "DURATION_LIMIT_MIN": {
