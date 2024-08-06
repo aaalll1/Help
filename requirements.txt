@@ -41,9 +41,9 @@ telethon==1.33.1
 telegraph==2.2.0
 tgcrypto
 urllib3
-yt-dlp
-git+https://github.com/alexmercerind/youtube-search-python@main
-git+https://github.com/joetats/youtube_search@master
+yt-dlp==2024.7.9
+youtube-search
+youtube-search-python
 uuid==1.30
 SafoneAPI
 pybind11>=2.12
