@@ -20,7 +20,7 @@ lyricsgenius
 lexica-api
 MukeshAPI
 motor
-pillow==9.5.0
+pillow
 pyfiglet
 opencv-python-headless==4.9.0.80
 profanity
@@ -28,9 +28,9 @@ pytz
 psutil
 pytube
 pykeyboard
-py-tgcalls==1.2.9
+py-tgcalls==1.2.2
 ntgcalls==1.1.2
-pyrogram==2.0.101
+git+https://github.com/KurimuzonAkuma/pyrogram@dev
 python-dotenv
 pyyaml
 requests
@@ -42,9 +42,8 @@ telegraph==2.2.0
 tgcrypto
 urllib3
 yt-dlp
-youtube_dl
-youtube-search-python
-youtube_search
+git+https://github.com/alexmercerind/youtube-search-python@main
+git+https://github.com/joetats/youtube_search@master
 uuid==1.30
 SafoneAPI
 pybind11>=2.12
