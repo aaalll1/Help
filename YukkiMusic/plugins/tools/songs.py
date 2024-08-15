@@ -10,6 +10,7 @@ from YukkiMusic import app
 from config import SUPPORT_CHANNEL, Muntazer
 from pyrogram.errors import UserNotParticipant, ChatAdminRequired, ChatWriteForbidden
 
+
 # دالة للتحقق من اشتراك المستخدم في القناة
 async def must_join_channel(app, msg):
     if not Muntazer:
@@ -17,7 +18,7 @@ async def must_join_channel(app, msg):
     try:
         if msg.from_user is None:
             return
-        
+
         try:
             await app.get_chat_member(Muntazer, msg.from_user.id)
         except UserNotParticipant:
@@ -59,7 +60,14 @@ async def song(_, message: Message):
     m = await message.reply_text("⦗ جارِ البحث يرجى الانتضار ⦘", quote=True)
 
     query = " ".join(str(i) for i in message.command[1:])
-    ydl_opts = {"format": "bestaudio[ext=m4a]"}
+    
+    # استخدام ملف cookies في البحث
+    cookies_path = cookie_txt_file()
+
+    ydl_opts = {
+        "format": "bestaudio[ext=m4a]",
+        "cookies": cookies_path,  # تمرير ملف الكوكيز
+    }
 
     try:
         if is_valid_youtube_url(query):
@@ -132,18 +140,17 @@ async def song(_, message: Message):
         await m.edit_text(error_message)
 
 
-    except Exception as ex:
-        error_message = f"- فشل .\n\n**السبب :** `{ex}`"
-        await m.edit_text(error_message)
-
 @app.on_message(command(["تحميل", "video"]))
 async def video_search(client, message):
+    cookies_path = cookie_txt_file()
+    
     ydl_opts = {
         "format": "best",
         "keepvideo": True,
         "prefer_ffmpeg": False,
         "geo_bypass": True,
         "outtmpl": "%(title)s.%(ext)s",
+        "cookies": cookies_path,  # تمرير ملف الكوكيز
         "quite": True,
     }
     query = " ".join(message.command[1:])
