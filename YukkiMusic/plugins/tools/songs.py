@@ -2,6 +2,10 @@ import os
 import re
 import requests
 import yt_dlp
+import random
+import glob
+import json
+import asyncio
 from strings.filters import command
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
@@ -10,6 +14,34 @@ from YukkiMusic import app
 from config import SUPPORT_CHANNEL, Muntazer
 from pyrogram.errors import UserNotParticipant, ChatAdminRequired, ChatWriteForbidden
 
+# دالة للحصول على مسار ملف الكوكيز
+def cookie_txt_file():
+    folder_path = f"{os.getcwd()}/cookies"
+    filename = f"{os.getcwd()}/cookies/logs.csv"
+    txt_files = glob.glob(os.path.join(folder_path, '*.txt'))
+    if not txt_files:
+        raise FileNotFoundError("No .txt files found in the specified folder.")
+    cookie_txt_file = random.choice(txt_files)
+    with open(filename, 'a') as file:
+        file.write(f'Chosen File: {cookie_txt_file}\n')
+    return f"""cookies/{str(cookie_txt_file).split("/")[-1]}"""
+
+# دالة للتحقق من حجم الملف
+async def check_file_size(link):
+    async def get_format_info(link):
+        proc = await asyncio.create_subprocess_exec(
+            "yt-dlp",
+            "--cookies", cookie_txt_file(),
+            "-J",
+            link,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
+        stdout, stderr = await proc.communicate()
+        if proc.returncode != 0:
+            print(f'Error:\n{stderr.decode()}')
+            return None
+        return json.loads(stdout.decode())
 
 # دالة للتحقق من اشتراك المستخدم في القناة
 async def must_join_channel(app, msg):
@@ -41,11 +73,9 @@ async def must_join_channel(app, msg):
     except ChatAdminRequired:
         print(f"I'm not admin in the MUST_JOIN chat {Muntazer}!")
 
-
 def is_valid_youtube_url(url):
     # Check if the provided URL is a valid YouTube URL
     return url.startswith(("https://www.youtube.com", "http://www.youtube.com", "youtube.com"))
-
 
 @app.on_message(command(["يوت", "yt", "تنزيل", "بحث"]))
 async def song(_, message: Message):
