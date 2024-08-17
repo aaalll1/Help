@@ -2,47 +2,14 @@ import os
 import re
 import requests
 import yt_dlp
-import random
-import glob
-import json
-import asyncio
 from strings.filters import command
 from pyrogram import filters
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, CallbackQuery
 from youtube_search import YoutubeSearch
 from YukkiMusic import app
 from config import SUPPORT_CHANNEL, Muntazer
 from pyrogram.errors import UserNotParticipant, ChatAdminRequired, ChatWriteForbidden
-
-# دالة للحصول على مسار ملف الكوكيز
-def cookie_txt_file():
-    folder_path = f"{os.getcwd()}/cookies"
-    filename = f"{os.getcwd()}/cookies/logs.csv"
-    txt_files = glob.glob(os.path.join(folder_path, '*.txt'))
-    if not txt_files:
-        raise FileNotFoundError("No .txt files found in the specified folder.")
-    cookie_txt_file = random.choice(txt_files)
-    with open(filename, 'a') as file:
-        file.write(f'Chosen File: {cookie_txt_file}\n')
-    return f"""cookies/{str(cookie_txt_file).split("/")[-1]}"""
-
-# دالة للتحقق من حجم الملف
-async def check_file_size(link):
-    async def get_format_info(link):
-        proc = await asyncio.create_subprocess_exec(
-            "yt-dlp",
-            "--cookies", cookie_txt_file(),
-            "-J",
-            link,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
-        )
-        stdout, stderr = await proc.communicate()
-        if proc.returncode != 0:
-            print(f'Error:\n{stderr.decode()}')
-            return None
-        return json.loads(stdout.decode())
-
+last_clicked_button = {}
 # دالة للتحقق من اشتراك المستخدم في القناة
 async def must_join_channel(app, msg):
     if not Muntazer:
@@ -50,7 +17,7 @@ async def must_join_channel(app, msg):
     try:
         if msg.from_user is None:
             return
-
+        
         try:
             await app.get_chat_member(Muntazer, msg.from_user.id)
         except UserNotParticipant:
@@ -73,9 +40,11 @@ async def must_join_channel(app, msg):
     except ChatAdminRequired:
         print(f"I'm not admin in the MUST_JOIN chat {Muntazer}!")
 
+
 def is_valid_youtube_url(url):
     # Check if the provided URL is a valid YouTube URL
     return url.startswith(("https://www.youtube.com", "http://www.youtube.com", "youtube.com"))
+
 
 @app.on_message(command(["يوت", "yt", "تنزيل", "بحث"]))
 async def song(_, message: Message):
@@ -90,14 +59,7 @@ async def song(_, message: Message):
     m = await message.reply_text("⦗ جارِ البحث يرجى الانتضار ⦘", quote=True)
 
     query = " ".join(str(i) for i in message.command[1:])
-    
-    # استخدام ملف cookies في البحث
-    cookies_path = cookie_txt_file()
-
-    ydl_opts = {
-        "format": "bestaudio[ext=m4a]",
-        "cookies": cookies_path,  # تمرير ملف الكوكيز
-    }
+    ydl_opts = {"format": "bestaudio[ext=m4a]"}
 
     try:
         if is_valid_youtube_url(query):
@@ -170,17 +132,18 @@ async def song(_, message: Message):
         await m.edit_text(error_message)
 
 
+    except Exception as ex:
+        error_message = f"- فشل .\n\n**السبب :** `{ex}`"
+        await m.edit_text(error_message)
+
 @app.on_message(command(["تحميل", "video"]))
 async def video_search(client, message):
-    cookies_path = cookie_txt_file()
-    
     ydl_opts = {
         "format": "best",
         "keepvideo": True,
         "prefer_ffmpeg": False,
         "geo_bypass": True,
         "outtmpl": "%(title)s.%(ext)s",
-        "cookies": cookies_path,  # تمرير ملف الكوكيز
         "quite": True,
     }
     query = " ".join(message.command[1:])
@@ -230,3 +193,66 @@ async def video_search(client, message):
 
     except Exception as e:
         return await msg.edit(f"🚫 **error:** {e}")
+
+
+@app.on_message(command("رابط"))
+async def tom_youtube(client, message):
+    global video_link, audio_link, title, duration, rating, views, description
+
+    url = message.text.split(None, 1)[1]
+    response = requests.get(f"https://youtube.dev-tomtom.repl.co/tom={url}")
+    data = response.json()
+    tom_info = data[0]["Tom"]
+    audio_link = tom_info["audio_link"]
+    video_link = tom_info["download_link_video"]
+    photo_link = tom_info["photo"]
+    title = tom_info["title"]
+    duration = tom_info["duration"]
+    rating = tom_info["rating"]
+    views = tom_info["views"]
+    description = tom_info["description"]
+    
+
+    keyboard = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton("تحميل الصوت", callback_data=f"audio_{url}"),
+                InlineKeyboardButton("تحميل الفيديو", callback_data=f"video_{url}"),
+            ]
+        ]
+    )
+    
+    
+    msg = await message.reply_photo(photo_link, caption=f"Name = {title} \n\nDuration = {duration} \n\nRating = {rating} \n\nViews = {views}", reply_markup=keyboard)
+
+
+@app.on_callback_query()
+async def handle_callback_query(client, callback_query: CallbackQuery):
+    global video_link
+    global audio_link
+    button_type = callback_query.data.split("_")[0]
+    name = callback_query.data.split("_")[1]
+    
+
+    msg = await callback_query.message.reply_text("يرجى الانتظار جار الرفع  ...")
+    last_clicked_button[callback_query.message.chat.id] = msg.id
+    
+    if button_type == "audio":
+        obj = SmartDL(audio_link, progress_bar=False, verify=False)
+        obj.start()
+        obj.wait()
+        audio = obj.get_dest()
+      
+        await callback_query.message.reply_audio(audio, title=f"{title}")
+    
+    elif button_type == "video":
+        obj = SmartDL(video_link, progress_bar=False, verify=False)
+        obj.start()
+        obj.wait()
+        video=obj.get_dest()
+       
+        await callback_query.message.reply_video(video, caption=f"{title}")
+    
+
+    await client.delete_messages(chat_id=callback_query.message.chat.id, message_ids=[last_clicked_button.get(callback_query.message.chat.id)])
+
