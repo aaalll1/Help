@@ -1,0 +1,45 @@
+services:
+  - type: web
+    plan: free
+    name: joker
+    env: python
+    buildCommand: pip install -U -r requirements.txt
+    startCommand: python3 ser.py & python3 -m JoKeRUB
+    region: frankfurt
+    envVars:
+      - key: API_ID
+        value: 40e7041d06ea7b6ee1cf39b3188b3452
+      - key: API_HASH
+        value: 9514755
+      - key: BOT_TOKEN
+        value: 7280847617:AAGg6zO5er3H0EmPPqemCUOJKoIrhkf282s
+      - key: MONGO_DB_URI
+        value: mongodb+srv://omsnkok:muntazer@cluster0.ywxsjao.mongodb.net
+      - key: MUSIC_BOT_NAME
+        value: Freedom
+      - key: assistant
+        value: @Zo_r0
+      - key: Muntazer
+        value: Scorpion_scorp
+      - key: OWNER
+        value: 7275336620
+      - key: SUPPORT_GROUP
+        value: https://t.me/Scorpion_scorp
+      - key: SUPPORT_CHANNEL
+        value: https://t.me/Scorpion_scorp
+      - key: START_IMG_URL
+        value: https://graph.org/file/3cf49673f408204004418.jpg
+      - key: YOUTUBE_IMG_URL
+        value: https://graph.org/file/086743f8c57d5134a008b.jpg
+      - key: DURATION_LIMIT_MIN
+        value: 50000
+      - key: OWNER_ID
+        value: 7275336620
+      - key: STRING_SESSION
+        value: 1BJWap1wBu35V6imlg2XP4mhosRbQNibgYR7ejIRwBJVB45BB23IItfN6DTPJv2ay5ZzW5xHIiyqudbGnjhMcYorfKiGhFYh_EVZO54z_gQa3crZb9AGki-ASJK0mh2vweMalsrUByWGyh7PJAr1FpVpLB7ZUktEunIdls5Z7dfCBhwpeBVPdJDsNw2fKavS5DCBdglg-GDqBjso2jsz_7KjpX6cCgGrJMDtVOeYEiLvCTB8ZPxmcnebjfFco4S8YkjxPdSkAD20z5XZape913BPcWy-FgsXnP3lcmZmsWYQojQh8rc5i0sNQ33y7IpzTYGt-f85Knhsu4MitGuxR5WV_f6zieJU=
+      - key: LOG_GROUP_ID
+        value: -1002224282760
+      - key: UPSTREAM_REPO
+        value: https://github.com/fps90/Help
+      - key: UPSTREAM_BRANCH
+        value: master
