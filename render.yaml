@@ -4,7 +4,7 @@ services:
     name: joker
     env: python
     buildCommand: pip install -U -r requirements.txt
-    startCommand: python3 ser.py & python3 -m JoKeRUB
+    startCommand: gunicorn ser:app & bash start
     region: frankfurt
     envVars:
       - key: API_ID
