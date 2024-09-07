@@ -18,7 +18,7 @@ services:
       - key: MUSIC_BOT_NAME
         value: Freedom
       - key: assistant
-        value: @Zo_r0
+        value: Zo_r0
       - key: Muntazer
         value: Scorpion_scorp
       - key: OWNER
